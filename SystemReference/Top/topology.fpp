@@ -45,6 +45,8 @@ module SystemReference {
     instance textLogger
     instance uplink
     instance systemResources
+    instance imu
+    instance imuI2cBus
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -96,6 +98,7 @@ module SystemReference {
       rateGroup1Comp.RateGroupMemberOut[2] -> chanTlm.Run
       rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
       rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
+      rateGroup1Comp.RateGroupMemberOut[5] -> imu.Run
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
@@ -127,6 +130,12 @@ module SystemReference {
       uplink.bufferOut -> fileUplink.bufferSendIn
       uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
       fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
+
+    }
+
+    connections I2c {
+        imu.read -> imuI2cBus.read
+        imu.write -> imuI2cBus.write
 
     }
 

@@ -321,4 +321,8 @@ module SystemReference {
 
   instance systemResources: Svc.SystemResources base id 0x4B00
 
+  instance imu: Gnc.Imu base id 0x4C00
+
+  instance imuI2cBus: Drv.LinuxI2cDriver  base id 0x4D00
+
 }
