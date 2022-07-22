@@ -113,7 +113,7 @@ void Imu::updateGyro(){
     m_gyro.setvector(vector);
     m_gyro.settime(this->getTime());
 
-    this->tlmWrite_accelerometer(m_gyro.getvector(), m_gyro.gettime());
+    this->tlmWrite_gyroscope(m_gyro.getvector(), m_gyro.gettime());
   } else {
     this->log_WARNING_HI_TelemetryError(statusGyro);
     m_gyro.setstatus(Svc::MeasurementStatus::FAILURE);

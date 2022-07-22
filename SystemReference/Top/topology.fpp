@@ -95,10 +95,10 @@ module SystemReference {
 
       # Rate group 1
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup1] -> rateGroup1Comp.CycleIn
-      rateGroup1Comp.RateGroupMemberOut[2] -> chanTlm.Run
-      rateGroup1Comp.RateGroupMemberOut[3] -> fileDownlink.Run
-      rateGroup1Comp.RateGroupMemberOut[4] -> systemResources.run
-      rateGroup1Comp.RateGroupMemberOut[5] -> imu.Run
+      rateGroup1Comp.RateGroupMemberOut[0] -> chanTlm.Run
+      rateGroup1Comp.RateGroupMemberOut[1] -> fileDownlink.Run
+      rateGroup1Comp.RateGroupMemberOut[2] -> systemResources.run
+      rateGroup1Comp.RateGroupMemberOut[3] -> imu.Run
 
       # Rate group 2
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup2] -> rateGroup2Comp.CycleIn
@@ -107,8 +107,8 @@ module SystemReference {
       # Rate group 3
       rateGroupDriverComp.CycleOut[Ports_RateGroups.rateGroup3] -> rateGroup3Comp.CycleIn
       rateGroup3Comp.RateGroupMemberOut[0] -> $health.Run
-      rateGroup3Comp.RateGroupMemberOut[2] -> blockDrv.Sched
-      rateGroup3Comp.RateGroupMemberOut[3] -> fileUplinkBufferManager.schedIn
+      rateGroup3Comp.RateGroupMemberOut[1] -> blockDrv.Sched
+      rateGroup3Comp.RateGroupMemberOut[2] -> fileUplinkBufferManager.schedIn
 
     }
 
