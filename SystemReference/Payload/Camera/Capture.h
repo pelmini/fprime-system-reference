@@ -5,7 +5,7 @@
 #ifndef SYSTEMREFERENCE_CAPTURE_H
 #define SYSTEMREFERENCE_CAPTURE_H
 
-extern char * dev_name;
+extern const char *dev_name;
 
 
 void open_device();
