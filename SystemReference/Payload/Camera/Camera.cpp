@@ -29,6 +29,8 @@ namespace Payload {
     )
   {
     CameraComponentBase::init(queueDepth, instance);
+    dev_name="/dev/video0";
+    open_device();
   }
 
   Camera ::

@@ -8,6 +8,9 @@
 #define Camera_HPP
 
 #include "SystemReference/Payload/Camera/CameraComponentAc.hpp"
+extern "C"{
+#include "SystemReference/Payload/Camera/Capture.h"
+};
 
 namespace Payload {
 

@@ -586,72 +586,72 @@ static const struct option
        { 0, 0, 0, 0 }
 };
 
-int main(int argc, char **argv)
-{
- dev_name = "/dev/video0";
-
- for (;;) {
-   int idx;
-   int c;
-
-   c = getopt_long(argc, argv,
-                   short_options, long_options, &idx);
-
-   if (-1 == c)
-     break;
-
-   switch (c) {
-   case 0: /* getopt_long() flag */
-     break;
-
-   case 'd':
-     dev_name = optarg;
-     break;
-
-   case 'h':
-     usage(stdout, argc, argv);
-     exit(EXIT_SUCCESS);
-
-   case 'm':
-     io = IO_METHOD_MMAP;
-     break;
-
-   case 'r':
-     io = IO_METHOD_READ;
-     break;
-
-   case 'u':
-     io = IO_METHOD_USERPTR;
-     break;
-
-   case 'o':
-     out_buf++;
-     break;
-
-   case 'f':
-     force_format++;
-     break;
-
-   case 'c':
-     errno = 0;
-     frame_count = strtol(optarg, NULL, 0);
-     if (errno)
-       errno_exit(optarg);
-     break;
-
-   default:
-     usage(stderr, argc, argv);
-     exit(EXIT_FAILURE);
-   }
- }
-
- open_device();
- init_device();
- start_capturing();
- mainloop();
- stop_capturing();
- uninit_device();
- close_device();
- fprintf(stderr, "\\n");
- return 0;
-}
+//int main(int argc, char **argv)
+//{
+// dev_name = "/dev/video0";
+//
+// for (;;) {
+//   int idx;
+//   int c;
+//
+//   c = getopt_long(argc, argv,
+//                   short_options, long_options, &idx);
+//
+//   if (-1 == c)
+//     break;
+//
+//   switch (c) {
+//   case 0: /* getopt_long() flag */
+//     break;
+//
+//   case 'd':
+//     dev_name = optarg;
+//     break;
+//
+//   case 'h':
+//     usage(stdout, argc, argv);
+//     exit(EXIT_SUCCESS);
+//
+//   case 'm':
+//     io = IO_METHOD_MMAP;
+//     break;
+//
+//   case 'r':
+//     io = IO_METHOD_READ;
+//     break;
+//
+//   case 'u':
+//     io = IO_METHOD_USERPTR;
+//     break;
+//
+//   case 'o':
+//     out_buf++;
+//     break;
+//
+//   case 'f':
+//     force_format++;
+//     break;
+//
+//   case 'c':
+//     errno = 0;
+//     frame_count = strtol(optarg, NULL, 0);
+//     if (errno)
+//       errno_exit(optarg);
+//     break;
+//
+//   default:
+//     usage(stderr, argc, argv);
+//     exit(EXIT_FAILURE);
+//   }
+// }
+//
+// open_device();
+// init_device();
+// start_capturing();
+// mainloop();
+// stop_capturing();
+// uninit_device();
+// close_device();
+// fprintf(stderr, "\\n");
+// return 0;
+//}

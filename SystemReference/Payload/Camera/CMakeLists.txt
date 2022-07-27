@@ -8,6 +8,7 @@
 ####
 set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/Camera.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/Camera.cpp"
         )
 register_fprime_module()
 

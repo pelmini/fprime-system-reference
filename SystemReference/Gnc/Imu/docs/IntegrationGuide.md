@@ -11,7 +11,7 @@ This guide will walk through each step in the process. The steps to integrate a 
 6. Write FPP model 
 7. Implement design through code 
 
-### Define component requirements
+## Define component requirements
 The first step is to define the type of requirements that the sensor should fulfill. Let us use the MPU-6050 as an example. 
 To integrate a MPU-6050 into the project, we must specify the required communication interface for the sensor, the 
 type of data we want from the sensor and how the project will use the data. 
