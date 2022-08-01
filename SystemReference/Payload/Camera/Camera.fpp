@@ -12,6 +12,9 @@ module Payload {
         @ Port that outputs taken photo to be downloaded
         output port sendPhoto: Fw.BufferSend
 
+        output port allocate: Fw.BufferGet
+
+        output port deallocate: Fw.BufferSend
         # ----------------------------------------------------------------------
         # Special ports
         # ----------------------------------------------------------------------

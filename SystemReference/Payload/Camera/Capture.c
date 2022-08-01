@@ -22,7 +22,6 @@
 #include <sys/time.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
-
 #include <linux/videodev2.h>
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
@@ -74,96 +73,13 @@ static void process_image(const void *p, int size)
  fflush(stdout);
 }
 
-static int read_frame(void)
+static int read_frame(void *cameraBuffer, int size, int *readSize)
 {
- struct v4l2_buffer buf;
- unsigned int i;
-
- switch (io) {
- case IO_METHOD_READ:
-   if (-1 == read(fd, buffers[0].start, buffers[0].length)) {
-     switch (errno) {
-     case EAGAIN:
-       return 0;
-
-     case EIO:
-       /* Could ignore EIO, see spec. */
-
-       /* fall through */
-
-     default:
-       errno_exit("read");
-     }
+  *readSize = read(fd, cameraBuffer, size);
+   if (-1 == *readSize && errno != EAGAIN) {
+      return -1;
    }
-
-   process_image(buffers[0].start, buffers[0].length);
-   break;
-
- case IO_METHOD_MMAP:
-   CLEAR(buf);
-
-   buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-   buf.memory = V4L2_MEMORY_MMAP;
-
-   if (-1 == xioctl(fd, VIDIOC_DQBUF, &buf)) {
-     switch (errno) {
-     case EAGAIN:
-       return 0;
-
-     case EIO:
-       /* Could ignore EIO, see spec. */
-
-       /* fall through */
-
-     default:
-       errno_exit("VIDIOC_DQBUF");
-     }
-   }
-
-   assert(buf.index < n_buffers);
-
-   process_image(buffers[buf.index].start, buf.bytesused);
-
-   if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
-     errno_exit("VIDIOC_QBUF");
-   break;
-
- case IO_METHOD_USERPTR:
-   CLEAR(buf);
-
-   buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-   buf.memory = V4L2_MEMORY_USERPTR;
-
-   if (-1 == xioctl(fd, VIDIOC_DQBUF, &buf)) {
-     switch (errno) {
-     case EAGAIN:
-       return 0;
-
-     case EIO:
-       /* Could ignore EIO, see spec. */
-
-       /* fall through */
-
-     default:
-       errno_exit("VIDIOC_DQBUF");
-     }
-   }
-
-   for (i = 0; i < n_buffers; ++i)
-     if (buf.m.userptr == (unsigned long)buffers[i].start
-         && buf.length == buffers[i].length)
-       break;
-
-   assert(i < n_buffers);
-
-   process_image((void *)buf.m.userptr, buf.bytesused);
-
-   if (-1 == xioctl(fd, VIDIOC_QBUF, &buf))
-     errno_exit("VIDIOC_QBUF");
-   break;
- }
-
- return 1;
+ return 0;
 }
 
 static void mainloop(void)
@@ -409,7 +325,7 @@ static void init_userp(unsigned int buffer_size)
  }
 }
 
-static void init_device(void)
+static int init_device(void)
 {
  struct v4l2_capability cap;
  struct v4l2_cropcap cropcap;
@@ -519,6 +435,7 @@ static void init_device(void)
    init_userp(fmt.fmt.pix.sizeimage);
    break;
  }
+ return fmt.fmt.pix.sizeimage;
 }
 
 static void close_device(void)

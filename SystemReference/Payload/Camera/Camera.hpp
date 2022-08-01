@@ -8,6 +8,7 @@
 #define Camera_HPP
 
 #include "SystemReference/Payload/Camera/CameraComponentAc.hpp"
+#include "Fw/Types/MemAllocator.hpp"
 extern "C"{
 #include "SystemReference/Payload/Camera/Capture.h"
 };
@@ -37,6 +38,7 @@ namespace Payload {
           const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
       );
 
+      void open(const char *dev_name);
       //! Destroy object Camera
       //!
       ~Camera();
@@ -74,7 +76,16 @@ namespace Payload {
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
+      // ----------------------------------------------------------------------
+      // Helper Functions
+      // ----------------------------------------------------------------------
 
+      Fw::Buffer readImage();
+
+      U32 m_cmdCount;
+      U32 m_photoCount;
+      U32 m_imgSize;
+      Fw::Buffer m_cameraBuffer;
     };
 
 } // end namespace Payload
