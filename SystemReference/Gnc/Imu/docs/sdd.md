@@ -17,18 +17,18 @@ provided by the manufacturer.
 
 ## 2. Requirements
 
-| Requirement | Description                                                                             | Verification Method |
-|-------------|-----------------------------------------------------------------------------------------|---------------------|
-| GNC-IMU-001 | The 'Gnc::Imu' component shall produce telemetry of accelerometer data in vector form   | Unit Test           |
-| GNC-IMU-002 | The 'Gnc::Imu' component shall produce telemetry of gyroscope data in vector form       | Unit Test           |
-| GNC-IMU-003 | The 'Gnc::Imu' component shall be able to communicate with registers using I2C protocol | Inspection          |
+| Requirement | Description                                                                                     | Verification Method |
+|-------------|-------------------------------------------------------------------------------------------------|---------------------|
+| GNC-IMU-001 | The 'Gnc::Imu' component shall produce telemetry of accelerometer data in vector form           | Unit Test           |
+| GNC-IMU-002 | The 'Gnc::Imu' component shall produce telemetry of gyroscope data in vector form               | Unit Test           |
+| GNC-IMU-003 | The 'Gnc::Imu' component shall interact with the MPU-6050 via I2C                               | Inspection          |
+| GNC-IMU-004 | The 'Gnc::Imu' component shall supply the latest accelerometer an gyroscope data upon port call | Unit-Test           |
 
 ## 3. Design 
 The diagram below shows the `Imu` component.
 
-<div>
-<img src="img/imu.png" width=700/>
-</div>
+![IMU Design](./img/imu.png)
+
 
 ### 3.2. Ports
 `Imu` has the following ports: 
@@ -37,33 +37,29 @@ The diagram below shows the `Imu` component.
 |-----------------|-------------------|-------------------|----------------------------------------------------|
 | `output`        | `read`            | `Drv.I2c`         | Port that outputs the read data from sensor        |
 | `output`        | `write`           | `Drv.I2c`         | Port that outputs written data from sensor         |
-| `guarded input` | `getGyroscope`    | `Gnc.ImuDataPort` | Port that gets gyroscope data                      |
-| `guarded input` | `getAcceleration` | `Gnc.ImuDataPort` | Port that gets acceleration data                   |
+| `guarded input` | `getGyroscope`    | `Gnc.ImuDataPort` | Port that returns gyroscope data                   |
+| `guarded input` | `getAcceleration` | `Gnc.ImuDataPort` | Port that returns acceleration data                |
 | `guarded input` | `run`             | `Svc.Sched`       | Port that updates accelerometer and gyroscope data |
 
 ### 3.3. State
 `Imu` maintains the following state:
-1. `m_gyro`: An instance of `Gnc::ImuData` that stores the gyroscope data
-2. `m_accel`: An instance of `Gnc::ImuData` that stores the acceleration data
+1. `m_gyro`: An instance of `Gnc::ImuData` that stores the latest gyroscope data
+2. `m_accel`: An instance of `Gnc::ImuData` that stores the latest acceleration data
 3. `m_i2cDevAddress`: A type `U8` that stores the address of the MPU6050 device
 
-### 3.4. Model Configuration
-At component instantiation time, `Imu` has a struct defined in `ImuPort.fpp` that consists of a vector, status of the
-data, and the time stamp of the data. 
+### 3.4. Port Handlers
 
-### 3.5. Port Handlers
-
-#### 3.5.1. getAcceleration
+#### 3.4.1. getAcceleration
 The `getAcceleration` port handler does the following: 
 1. Sets the measurement status to `STALE`
 2. Returns the acceleration data
 
-#### 3.5.2. getGyroscope
+#### 3.4.2. getGyroscope
 The `getGyroscope` port handler does the following:
 1. Sets the measurement status to `STALE`
 2. Returns the gyroscope data
 
-#### 3.5.3. Run
+#### 3.4.3. Run
 Calls the `updateAccel` and `updateGyro` helper functions. 
 
 ### 3.6. Helper Functions

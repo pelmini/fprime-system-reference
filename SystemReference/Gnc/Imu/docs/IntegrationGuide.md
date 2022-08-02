@@ -1,45 +1,122 @@
-# Integration Guide 
+# How To Integrate a New Gnc Component
 
-The purpose of this guide is to lay out the general process to set up and integrate sensors into a project. 
-This guide will walk through each step in the process. The steps to integrate a sensor are: 
+F' projects will typically have some sort of Gnc sensor in order to control the movement of the spacecraft. To perform
+this function, these projects will need to integrate with Gnc Hardware such as a IMU. This guide will outline
+the process to integrate a Gnc component. 
 
-1. Define component requirements. 
-2. Match driver interface of sensor to F' driver. 
-3. Define data extraction and storage process 
-4. Outline how data should be processed
-5. Define Commands, Parameters and Events 
-6. Write FPP model 
-7. Implement design through code 
+## Who Should Follow This Guide? 
 
-## Define component requirements
-The first step is to define the type of requirements that the sensor should fulfill. Let us use the MPU-6050 as an example. 
-To integrate a MPU-6050 into the project, we must specify the required communication interface for the sensor, the 
-type of data we want from the sensor and how the project will use the data. 
+Projects who wish to use the standard F' driver models seen [here](https://github.com/nasa/fprime/tree/0ae2321bb552174ce607075b1283029d6d75a6d6/Drv) but wish to use project specific communications hardware.
 
-## Match driver interface of sensor to F' driver 
-The second step of the integration process is to match the driver's between the sensor and F'. Using the MPU-6050 as an 
-example again, the MPU-6050 uses an I2C interface, therefore its corresponding matching driver from F' is the LinuxI2C 
-driver that can be found in the `Drv` directory.  
+### Assumptions
 
-## Define data extraction and storage process 
-The third step is to define how data should be read and store in order to fulfill the requirements defined in step 1.
-For instance, in the case of a MPU-6050, the sensor is a six degree of freedom accelerometer and gyroscope which
-generates acceleration and rotational data. Furthermore, since the sensor collects data based on the x, y, and z axis,
-the collected data can be stored as a vector. 
+This guide makes the following assumptions about the user following the guide and the project setup that will deploy the
+component.
 
-## Outline how data should be processed
-The fourth step is to design how the data collected from the sensor should be processed, and whether the processed data
-should be sent to the application or through telemetry channels. This is also the step where it needs to be determined 
-if all the data from the sensor is needed or only a sample is required. For instance if only a sample of the data
-is needed a pull design may be more efficient than a push design. 
+1. User is familiar with standard F´ concepts
+2. User understands the [application-manager-drive](https://nasa.github.io/fprime/UsersGuide/best/app-man-drv.html) pattern
+3. User is familiar with the F´ development process
+4. User understands how to integrate components into an F´ topology
 
-## Define Commands, Parameters and Events 
-In this step, specify the types of commands, events, and parameters that will be needed to execute the behavior that
-is wanted from the project. Some event examples include: error occurrence, connection, and disconnections. Whereas for commands 
-and parameters some examples include: power on, power off, and configuration for commands.  
+## Example Hardware Description 
 
-## Write FPP model 
-Create an FPP model that reflects the features outlined and defined in steps 1-4. 
+Throughout this guide, we will be using the process of integrating an MPU6050 Imu sensor and its I2C interface as an example. 
 
-## Implement design through code
-Implement the design through C++ and the data sheet provided by the manufacturer. 
+## Step 1: Define Component Requirements
+
+The first step is to define the type of requirements that the sensor should fulfill. These requirements should 
+capture: 
+
+1. Ports and Interfaces
+2. Events, telemetry, and commands
+3. Component behavior
+
+The example requirements for an Imu component is shown below: 
+
+| Requirement | Description                                                                             | Verification Method |
+|-------------|-----------------------------------------------------------------------------------------|---------------------|
+| GNC-IMU-001 | The 'Gnc::Imu' component shall produce telemetry of accelerometer data in vector form   | Unit Test           |
+| GNC-IMU-002 | The 'Gnc::Imu' component shall produce telemetry of gyroscope data in vector form       | Unit Test           |
+| GNC-IMU-003 | The 'Gnc::Imu' component shall be able to communicate with registers using I2C protocol | Inspection          |
+
+
+## Step 2: Component Design 
+
+The second step to integrating the Imu component is designing the component. This section will go through each design 
+and each decision behind the design. Projects should implement design decisions based on component requirements. 
+
+The final FPP model for the MPU6050 Imu component can be found [here](https://github.com/fprime-community/fprime-system-reference/blob/pelmini-branch/SystemReference/Gnc/Imu/Imu.fpp).
+
+### 2.1 Base Component Design 
+
+First, a project should choose the basic component properties. Namely, the component must be `active`, `passive` or
+`queued`. Properties of the component will be dependent on the complexity of the required behavior from the hardware. 
+
+For the MPU6050 example, since the device will only be reading and writing accelerometer and gyroscope data through 
+by a push approach instead of a pull, having the component be passive is sufficient as there is no need for control 
+over the timing of how the data is collected. 
+
+### 2.2 Port Design 
+
+Required ports are typically dependent on the outlined requirements, as well as the underlying driver of the sensor. 
+Furthermore, rate group and standard ports are often needed. 
+
+The example component uses ['Drv::LinuxI2cDriver'](https://github.com/nasa/fprime/tree/master/Drv/LinuxI2cDriver),
+which implements the `Drv.I2c` interface. The component also contains `Gnc::ImuDataPort`, a rate group port, 
+and standard F´ ports for events, channels, and telemetry. An example port chart can be seen below: 
+
+| Kind            | Name              | Port Type         | Usage                                              |
+|-----------------|-------------------|-------------------|----------------------------------------------------|
+| `output`        | `read`            | `Drv.I2c`         | Port that outputs the read data from sensor        |
+| `output`        | `write`           | `Drv.I2c`         | Port that outputs written data from sensor         |
+| `guarded input` | `getGyroscope`    | `Gnc.ImuDataPort` | Port that returns gyroscope data                   |
+| `guarded input` | `getAcceleration` | `Gnc.ImuDataPort` | Port that returns acceleration data                |
+| `guarded input` | `run`             | `Svc.Sched`       | Port that updates accelerometer and gyroscope data |
+**Note:** standard event, telemetry, and command ports are not listed above.
+
+### 2.3 Event Design 
+
+Component implementors are free to define whatever events are needed for their project. Typically, Gnc components will 
+emit an error event when requesting telemetry. 
+
+In this example, the Imu component will define one event:
+
+| Event          | Severity   | Description                              |
+|----------------|------------|------------------------------------------|
+| TelemetryError | WARNING_HI | Error occurred when requesting telemetry |
+
+### 2.4 Telemetry Design
+
+Component implementors are free to define whatever telemetry/channels are needed for their project. Typically, Gnc
+components emit all sorts of information needed for guidance and navigation.
+
+In this example, the Imu component will define two telemetry channels:
+
+| Telemetry Channel | Type   | Description                             |
+|-------------------|--------|-----------------------------------------|
+| accelerometer     | Vector | X, Y, Z acceleration from accelerometer |
+| gyroscope         | Vector | X, Y, Z degrees from gyroscope          |
+
+### 2.5 Commands Design
+
+Component implementors are free to define whatever commands are needed for their project. Some example of commands to consider 
+would include power on, power off. 
+
+In this example, no commands were defined. 
+
+## Implementation and Testing
+
+Projects will need to implement the port handlers and implementation for their communication component on their own.
+Specific implementations will diverge based on hardware and design choices.
+
+In order to help in this process, the example component implementation is available for [reference](https://github.com/fprime-community/fprime-system-reference/blob/pelmini-branch/SystemReference/Gnc/Imu/Imu.cpp).
+
+## Topology Integration
+
+Once the design and implementation is done, the component can be added to a projects' topology. 
+Project may attach additional support components as needed.
+
+## Conclusion
+
+In this guide, we have covered the design of new communications component and seen how to integrate it into the
+topology. At this point, projects should be up and running with whatever communications hardware they deploy.
