@@ -2,8 +2,8 @@
 // Created by Vivian Bai on 7/26/22.
 //
 
-#ifndef SYSTEMREFERENCE_CAPTURE_H
-#define SYSTEMREFERENCE_CAPTURE_H
+#ifndef CAPTURE_H
+#define CAPTURE_H
 
 extern const char *dev_name;
 
@@ -16,4 +16,4 @@ int init_device();
 void uninit_device();
 void close_device();
 static int read_frame(void *cameraBuffer, int size, int *readSize);
-#endif // SYSTEMREFERENCE_CAPTURE_H
+#endif // CAPTURE_H
