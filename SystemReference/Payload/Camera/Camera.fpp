@@ -1,3 +1,6 @@
+enum ImgSize { SIZE_640x480, SIZE_800x600 }
+enum ImgFormat { RGB, YUYV }
+
 module Payload {
 
     @ Component for Camera
@@ -45,10 +48,16 @@ module Payload {
         # ----------------------------------------------------------------------
 
         @ Command to save photo
-        async command Save
+        async command Save opcode 0x00
 
         @ Command to take photo
-        async command Take
+        async command Take opcode 0x01
+
+        @ Command to set the exposure time
+        async command ExposureTime( $time: U32 ) opcode 0x02
+
+        @ Command to configure image
+        async command ConfigImg( $size: ImgSize, $format: ImgFormat) opcode 0x03
 
         # ----------------------------------------------------------------------
         # Events
@@ -58,6 +67,16 @@ module Payload {
         event CameraError \
         severity warning high \
         format "Camera setup failed" \
+
+        @ Event where exposure time is set
+        event ExposureTimeSet( $time: U32) \
+        severity warning high \
+        format "The exposure time has been set to {} seconds" \
+
+        @ Event image configuration has been set
+        event SetImgConfig( $size: ImgSize, $format: ImgFormat)\
+        severity warning high \
+        format "The image has size {}, and the format {}" \
 
         # ----------------------------------------------------------------------
         # Telemetry

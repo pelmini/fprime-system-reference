@@ -76,6 +76,23 @@ namespace Payload {
           const U32 cmdSeq /*!< The command sequence number*/
       );
 
+      //! Implementation for ExposureTime command handler
+      //! Command to set the exposure time
+      void ExposureTime_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          U32 time /*!< The exposure time*/
+      );
+
+      //! Implementation for ConfigImg command handler
+      //! Command to configure image
+      void ConfigImg_cmdHandler(
+          const FwOpcodeType opCode, /*!< The opcode*/
+          const U32 cmdSeq, /*!< The command sequence number*/
+          ImgSize size, /*!< The image size*/
+          ImgFormat format /*!< The image format*/
+      );
+
       // ----------------------------------------------------------------------
       // Helper Functions
       // ----------------------------------------------------------------------

@@ -56,6 +56,17 @@ void Camera ::Take_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq) {
   this->tlmWrite_photosTaken(m_photoCount++);
   this->tlmWrite_commandNum(m_cmdCount++);
 }
+void Camera ::ExposureTime_cmdHandler(const FwOpcodeType opCode,
+                                      const U32 cmdSeq, U32 time) {
+  // TODO
+  this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
+
+void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
+                                   ImgSize size, ImgFormat format) {
+  // TODO
+  this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+}
 
 Fw::Buffer Camera::readImage() {
   int readSize = 0;
