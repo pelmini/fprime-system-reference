@@ -11,6 +11,7 @@ set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/Camera.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/Capture.c"
         )
+set(CMAKE_C_EXTENSIONS ON)
 register_fprime_module()
 
 # Register the unit test build

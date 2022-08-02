@@ -15,5 +15,5 @@ int init_device();
 //void stop_capturing();
 void uninit_device();
 void close_device();
-static int read_frame(void *cameraBuffer, int size, int *readSize);
+int read_frame(void *cameraBuffer, int size, int *readSize);
 #endif // CAPTURE_H

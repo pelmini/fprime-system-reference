@@ -38,7 +38,7 @@ struct buffer {
 };
 
 static char            *dev_name;
-static enum io_method   io = IO_METHOD_MMAP;
+//static enum io_method   io = IO_METHOD_MMAP;
 static int              fd = -1;
 struct buffer          *buffers;
 static unsigned int     n_buffers;
@@ -73,7 +73,7 @@ static void process_image(const void *p, int size)
  fflush(stdout);
 }
 
-static int read_frame(void *cameraBuffer, int size, int *readSize)
+int read_frame(void *cameraBuffer, int size, int *readSize)
 {
   *readSize = read(fd, cameraBuffer, size);
    if (-1 == *readSize && errno != EAGAIN) {
