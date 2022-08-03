@@ -88,9 +88,12 @@ void Imu::updateAccel(){
 
   if (statusAccelerate == Drv::I2cStatus::I2C_OK) {
     FW_ASSERT(IMU_MAX_DATA_SIZE >= 6);
-    printf("IN ACCEL IF, I2CSTATUS -OK");
+    printf("IN ACCEL IF, I2CSTATUS -OK \n");
     m_accel.setstatus(Svc::MeasurementStatus::OK);
 
+    printf("DATA 1: %d\n", data[0]);
+    printf("DATA 2: %d\n", data[1]);
+    printf("DATA 3: %d\n", data[2]);
     vector[0] = static_cast<F32>((((U16)data[0]) << 8) | ((U16)data[1]));
     vector[1] = static_cast<F32>((((U16)data[2]) << 8) | ((U16)data[3]));
     vector[2] = static_cast<F32>((((U16)data[4]) << 8) | ((U16)data[5]));

@@ -54,10 +54,10 @@ module Gnc {
         # ----------------------------------------------------------------------
 
         @ X, Y, Z acceleration from accelerometer
-        telemetry accelerometer: Vector id 0 update on change
+        telemetry accelerometer: Vector id 0 update
 
         @ X, Y, Z degrees from gyroscope
-        telemetry gyroscope: Vector id 1 update on change
+        telemetry gyroscope: Vector id 1 update
 
     }
 }
