@@ -23,6 +23,18 @@ void Imu ::init(const NATIVE_INT_TYPE instance) {
   ImuComponentBase::init(instance);
 }
 
+void Imu::preamble(){
+    Fw::Buffer buffer;
+    U8 data[IMU_REG_SIZE*2];
+    buffer.setData(data);
+    buffer.setSize(sizeof(data));
+
+    FW_ASSERT(sizeof(data) > 0);
+    data[0] = 0x6B;
+    data[1] = 0;
+    write_out(0, I2C_DEV0_ADDR, buffer);
+}
+
 Imu ::~Imu() {}
 
 // ----------------------------------------------------------------------
@@ -80,7 +92,6 @@ void Imu::updateAccel(){
 
   buffer.setData(data);
   buffer.setSize(IMU_MAX_DATA_SIZE);
-  t_time = this->getTime();
 
   Drv::I2cStatus statusAccelerate = readRegisterBlock(IMU_RAW_ACCEL_ADDR, buffer);
   printf("BACK IN UPDATE\n");
@@ -98,9 +109,9 @@ void Imu::updateAccel(){
     vector[1] = static_cast<F32>((((U16)data[2]) << 8) | ((U16)data[3]));
     vector[2] = static_cast<F32>((((U16)data[4]) << 8) | ((U16)data[5]));
     m_accel.setvector(vector);
-
     m_accel.settime(this->getTime());
-    this->tlmWrite_accelerometer(m_accel.getvector());
+
+    this->tlmWrite_accelerometer(m_accel.getvector(), m_accel.gettime());
   } else {
     this->log_WARNING_HI_TelemetryError(statusAccelerate);
     m_accel.setstatus(Svc::MeasurementStatus::FAILURE);

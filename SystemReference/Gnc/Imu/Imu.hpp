@@ -22,7 +22,7 @@ public:
   static const U16 IMU_MAX_DATA_SIZE = 6;
   static const U16 IMU_REG_SIZE = 1;
   static const U8 IMU_RAW_ACCEL_ADDR = 0x3B;
-  static const U8 IMU_RAW_GYRO_ADDR = 0x48;
+  static const U8 IMU_RAW_GYRO_ADDR = 0x43;
 
   // ----------------------------------------------------------------------
   // Construction, initialization, and destruction
@@ -37,6 +37,11 @@ public:
   //!
   void init(const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
   );
+
+  //! Force device to wake up
+  //!
+  void preamble();
+
 
   //! Destroy object Imu
   //!
