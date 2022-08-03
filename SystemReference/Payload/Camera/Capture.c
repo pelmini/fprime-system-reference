@@ -22,7 +22,7 @@ struct buffer {
  size_t  length;
 };
 
-static char            *dev_name;
+//static char            *dev_name;
 static int              fd = -1;
 struct buffer          *buffers;
 static unsigned int     n_buffers;
@@ -187,7 +187,7 @@ static void init_userp(unsigned int buffer_size)
  }
 }
 
-static int init_device(void)
+int init_device(void)
 {
  struct v4l2_capability cap;
  struct v4l2_cropcap cropcap;
