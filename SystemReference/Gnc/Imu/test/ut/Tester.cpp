@@ -34,16 +34,32 @@ void Tester ::testGetAccelTlm(){
   Gnc::ImuData accelData;
   accelData = this->invoke_to_getAcceleration(0);
   ASSERT_EQ(accelData.getstatus(), Svc::MeasurementStatus::STALE);
-  this->invoke_to_Run(0,0);
-  ASSERT_EQ(component.m_accel.getstatus(), Svc::MeasurementStatus::OK);
+  for(U32 i = 0; i < 5; i++) {
+    this->invoke_to_Run(0, 0);
+    Gnc::ImuData newData = this->invoke_to_getAcceleration(0);
+    ASSERT_EQ(newData.getstatus(), Svc::MeasurementStatus::OK);
+    ASSERT_EQ(component.m_accel.getstatus(), Svc::MeasurementStatus::STALE);
+    ASSERT_FALSE(newData.getvector()[0] == accelData.getvector()[0] &&
+                 newData.getvector()[1] == accelData.getvector()[1] &&
+                 newData.getvector()[2] == accelData.getvector()[2]);
+    accelData = newData;
+  }
 }
 
 void Tester ::testGetGyroTlm(){
   Gnc::ImuData gyroData;
-  gyroData = this->invoke_to_getAcceleration(0);
+  gyroData = this->invoke_to_getGyroscope(0);
   ASSERT_EQ(gyroData.getstatus(), Svc::MeasurementStatus::STALE);
-  this->invoke_to_Run(0,0);
-  ASSERT_EQ(component.m_gyro.getstatus(), Svc::MeasurementStatus::OK);
+  for(U32 i = 0; i < 5; i++) {
+    this->invoke_to_Run(0, 0);
+    Gnc::ImuData newData = this->invoke_to_getGyroscope(0);
+    ASSERT_EQ(newData.getstatus(), Svc::MeasurementStatus::OK);
+    ASSERT_EQ(component.m_gyro.getstatus(), Svc::MeasurementStatus::STALE);
+    ASSERT_FALSE(newData.getvector()[0] == gyroData.getvector()[0] &&
+                 newData.getvector()[1] == gyroData.getvector()[1] &&
+                 newData.getvector()[2] == gyroData.getvector()[2]);
+    gyroData = newData;
+  }
 }
 
 void Tester::testError() {

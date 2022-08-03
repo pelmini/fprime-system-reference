@@ -1,15 +1,15 @@
-# How To Integrate a New Gnc Component
+# How To Integrate a New GNC Device
 
-F´ projects will typically have a set of Gnc sensors in order to control the movement of the spacecraft. These projects may
-follow this guide to get a basic understanding of integerating similar sensors into F´. This guide will outline the process
+F´ projects will typically have a set of GNC sensors in order to control the movement of the spacecraft. These projects may
+follow this guide to get a basic understanding of integrating similar sensors into F´. This guide will outline the process
 integrate Gnc sensors. 
 
 ## Who Should Follow This Guide? 
 
 Projects who wish to use the standard F driver models [here](https://github.com/nasa/fprime/tree/0ae2321bb552174ce607075b1283029d6d75a6d6/Drv)
-to communicate with Gnc sensors.
+to communicate with GNC sensors.
 
-### Assumptions
+### Assumptions and Definitions 
 
 This guide makes the following assumptions about the user following the guide and the project setup that will deploy the
 component.
@@ -18,10 +18,15 @@ component.
 2. User understands the [application-manager-drive](https://nasa.github.io/fprime/UsersGuide/best/app-man-drv.html) pattern
 3. User is familiar with the F´ development process
 4. User understands how to integrate components into an F´ topology
+5. User has the device's data sheet on hand
+
+This guide also uses the following terminology:
+- GNC: Guidance, navigation and controls 
+- IMU: Inertial measurement unit
 
 ## Example Hardware Description 
 
-Throughout this guide, we will be using  an MPU6050 Imu sensor and its I2C interface as an example for how to integrate IMU sensors.
+Throughout this guide, we will be using  an MPU6050 IMU sensor and its I2C interface as an example for how to integrate IMU sensors.
 We are primarily interested in the accelerometer and gyroscope data that the sensor provides.
 
 ## Step 1: Define Component Requirements
@@ -44,10 +49,10 @@ The example requirements for an Imu component is shown below:
 
 ## Step 2: Component Design 
 
-The second step to integrating a Gnc component is designing the component model. This section will go through each design stage
+The second step to integrating a GNC sensor is designing the component model. This section will go through each design stage
 and each decision behind the design. Projects should implement design decisions based on their component requirements. 
 
-The final FPP model for the MPU6050 Imu component can be found [here](https://github.com/fprime-community/fprime-system-reference/blob/devel/SystemReference/Gnc/Imu/Imu.fpp).
+The final FPP model for the MPU6050 IMU component can be found [here](https://github.com/fprime-community/fprime-system-reference/blob/devel/SystemReference/Gnc/Imu/Imu.fpp).
 
 ### 2.1 Base Component Design 
 
@@ -61,12 +66,12 @@ group driving the sensor.
 ### 2.2 Port Design 
 
 Ports are typically dependent on the outlined requirements, as well as the underlying driver of the sensor. 
-Furthermore, projects often use rate groups to drive Gnc sensor reading and take advantager of telemetry, events,
+Furthermore, projects often use rate groups to drive Gnc sensor reading and take advantage of telemetry, events,
 parameters, and commands.
 
 The example component uses ['Drv::LinuxI2cDriver'](https://github.com/nasa/fprime/tree/master/Drv/LinuxI2cDriver)
 which uses the `Drv.I2c` for basic reads and writes. The component also defines a `Gnc::ImuDataPort` port for
-returning telemetry to other components. A rate group port is used for the 1Hz timing, and standard F´ ports
+returning telemetry to other components. A rate group port is used for the 1Hz timing, and standard F´ports
 for events, channels, and telemetry ar needed. An example port chart can be seen below: 
 
 | Kind            | Name              | Port Type         | Usage                                              |
@@ -80,10 +85,10 @@ for events, channels, and telemetry ar needed. An example port chart can be seen
 
 ### 2.3 Event Design 
 
-Component implementors are free to define whatever events are needed for their project. Typically, Gnc components will 
+Component implementors are free to define whatever events are needed for their project. Typically, GNC components will 
 emit an error event when the underlying hardware calls fail.
 
-In this example, the Imu component will define one event:
+In this example, the IMU component will define one event:
 
 | Event          | Severity   | Description                              |
 |----------------|------------|------------------------------------------|
@@ -92,9 +97,9 @@ In this example, the Imu component will define one event:
 ### 2.4 Telemetry Design
 
 Component implementors are free to define whatever telemetry/channels are needed for their project. Typically, Gnc
-components emit telemetry representing the stat of the given Gnc sensor.
+components emit telemetry representing the stat of the given GNC sensor.
 
-In this example, the Imu component will define two telemetry channels one for each of the sensor readings taken:
+In this example, the IMU component will define two telemetry channels one for each of the sensor readings taken:
 
 | Telemetry Channel | Type   | Description                             |
 |-------------------|--------|-----------------------------------------|
@@ -123,4 +128,4 @@ Project may attach additional support components as needed.
 ## Conclusion
 
 In this guide, we have covered the design of new Gnc components and seen how to integrate it into the
-topology. At this point, projects should be able to integrate Gnc componens as needed.
+topology. At this point, projects should be able to integrate GNC components as needed.
