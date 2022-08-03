@@ -29,9 +29,9 @@ int init_device();
 //void start_capturing();
 //void mainloop();
 //void stop_capturing();
-uint32_t set_format(uint32_t height, uint32_t width, uint32_t imgFormat);
+u_int32_t set_format(u_int32_t height, u_int32_t width, u_int32_t imgFormat);
 void uninit_device();
 void close_device();
-int read_frame(void *cameraBuffer, uint32_t size, size_t *readSize);
-void set_exposure_time(uint32_t exposureTime);
+int read_frame(void *cameraBuffer,u_int32_t size, size_t *readSize);
+void set_exposure_time(u_int32_t exposureTime);
 #endif // CAPTURE_H

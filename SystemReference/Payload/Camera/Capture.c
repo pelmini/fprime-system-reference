@@ -57,7 +57,7 @@ static void process_image(const void *p, int size)
  fflush(stdout);
 }
 
-int read_frame(void *cameraBuffer, uint32_t size, size_t *readSize)
+int read_frame(void *cameraBuffer, u_int32_t size, size_t *readSize)
 {
   *readSize = read(fd, cameraBuffer, size);
    if (-1 == *readSize && errno != EAGAIN) {
@@ -66,7 +66,7 @@ int read_frame(void *cameraBuffer, uint32_t size, size_t *readSize)
  return 0;
 }
 
-static void uninit_device(void)
+static void uinit_device(void)
 {
  unsigned int i;
  free(buffers[0].start);
@@ -243,7 +243,7 @@ static int init_device(void)
  }
 }
 
-uint32_t set_format(uint32_t height, uint32_t width, uint32_t imgFormat)
+u_int32_t set_format(u_int32_t height, u_int32_t width, u_int32_t imgFormat)
 {
   struct v4l2_format fmt;
   unsigned int min;
@@ -286,14 +286,14 @@ uint32_t set_format(uint32_t height, uint32_t width, uint32_t imgFormat)
 // https://stackoverflow.com/questions/61581125/v4l2-absolute-exposure-setting-has-almost-not-effect
 // https://forums.raspberrypi.com/viewtopic.php?t=281994
 // https://linuxtv.org/downloads/v4l-dvb-apis-new/userspace-api/v4l/ext-ctrls-camera.html?highlight=exposure
-void set_exposure_time(uint32_t exposureTime){
+void set_exposure_time(u_int32_t exposureTime){
   struct v4l2_control control;
   control.id = V4L2_CID_EXPOSURE_ABSOLUTE;
   control.value = exposureTime;
   xioctl(fd, VIDIOC_S_CTRL, &control);
 }
 
-static void close_device(void)
+void close_device(void)
 {
  if (-1 == close(fd))
    errno_exit("close");
@@ -301,7 +301,7 @@ static void close_device(void)
  fd = -1;
 }
 
-static void open_device(void)
+void open_device(void)
 {
  struct stat st;
 
