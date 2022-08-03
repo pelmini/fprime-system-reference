@@ -71,7 +71,8 @@ void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
   uint32_t height;
 
   if (m_imgFormat == format.YUYV){
-    V4L2Format = V4L2_PIX_FMT_YUYV;
+
+    V4L2Format = extern struct V4L2_PIX_FMT_YUYV;
   } else if (m_imgFormat == format.RGB){
     V4L2Format = V4L2_PIX_FMT_RGB24;
   }

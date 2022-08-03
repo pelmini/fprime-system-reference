@@ -1,5 +1,5 @@
-enum ImgResolution { SIZE_640x480, SIZE_800x600 }
-enum ImgFormat { RGB, YUYV }
+enum ImgResolution { SIZE_640x480 = 0 , SIZE_800x600 = 1 }
+enum ImgFormat { RGB = 1, YUYV = 1 }
 
 module Payload {
 
