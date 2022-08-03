@@ -40,7 +40,7 @@ public:
 
   //! Force device to wake up
   //!
-  void preamble();
+  void powerOn();
 
 
   //! Destroy object Imu
@@ -90,6 +90,7 @@ public:
   Gnc::ImuData m_gyro;
   Gnc::ImuData m_accel;
   U8 m_i2cDevAddress;
+  bool m_setup;
 };
 
 } // end namespace Gnc

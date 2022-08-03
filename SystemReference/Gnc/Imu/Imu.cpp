@@ -14,7 +14,7 @@ namespace Gnc {
 // ----------------------------------------------------------------------
 
 Imu ::Imu(const char *const compName)
-    : ImuComponentBase(compName) {
+    : ImuComponentBase(compName), m_setup(false) {
   this->m_i2cDevAddress = I2C_DEV0_ADDR;
 
 }
@@ -23,7 +23,7 @@ void Imu ::init(const NATIVE_INT_TYPE instance) {
   ImuComponentBase::init(instance);
 }
 
-void Imu::preamble(){
+void Imu::powerOn(){
     Fw::Buffer buffer;
     U8 data[IMU_REG_SIZE*2];
     buffer.setData(data);
@@ -44,6 +44,10 @@ Imu ::~Imu() {}
 void Imu ::Run_handler(const NATIVE_INT_TYPE portNum,
                        NATIVE_UINT_TYPE context) {
     printf("WE ARE IN RUN HANDLER\n");
+    if (!m_setup){
+      powerOn();
+      m_setup = true;
+    }
     updateAccel();
     updateGyro();
 }
