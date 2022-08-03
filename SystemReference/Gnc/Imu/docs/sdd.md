@@ -4,6 +4,8 @@
 ## 1. Introduction
 'Gnc::Imu' is an F' passive component that collects data from the MPU6050 6-DoF Accelerometer and Gyro. 
 The sensor uses an I2C interface to collect data and at AD0 low logic has an address of 0x68. 
+Since there are different power modes for the MPU6050, in order for the sensor to begin collecting
+data it needs to be "awakened" by the entry of 0 at the "Power Management 1" register at 0x6B. 
 I2C data bytes are defined to be 8-bits long, where the 8th bit represents the read/write bit that 
 indicates whether data is being received or written. 
 Registers 43-48 (in hexadecimal) are used to store the most recent gyroscope measurement. 
@@ -45,7 +47,8 @@ The diagram below shows the `Imu` component.
 `Imu` maintains the following state:
 1. `m_gyro`: An instance of `Gnc::ImuData` that stores the latest gyroscope data
 2. `m_accel`: An instance of `Gnc::ImuData` that stores the latest acceleration data
-3. `m_i2cDevAddress`: A type `U8` that stores the address of the MPU6050 device
+3. `m_i2cDevAddress`: A type `U8` that stores the address of the MPU6050 sensor
+4. `m_setup`: An instance of `bool` that indicates if sensor has been properly activated or not
 
 ### 3.4. Port Handlers
 
@@ -60,15 +63,15 @@ The `getGyroscope` port handler does the following:
 2. Returns the gyroscope data
 
 #### 3.4.3. Run
-Calls the `updateAccel` and `updateGyro` helper functions. 
+Ensures that the sensor has been properly setup and calls the `updateAccel` and `updateGyro` helper functions. 
 
 ### 3.6. Helper Functions
 
 #### 3.6.1 read 
 Returns the read data from the sensor.
 
-#### 3.6.2 write
-Returns the written data from the sensor. 
+#### 3.6.2 setupReadRegister
+Returns the written data from the sensor in order for the data to be read. 
 
 #### 3.6.3 readRegisterBlock
 Reads the data from the sensors registers. Returns a status of type `Drv::I2cStatus` if the read was successful or not. 
@@ -83,8 +86,12 @@ Reads the data from the gyroscope registers of the sensor. Depending on the stat
 gyroscope data and emit it as telemetry while setting the measurement status as `OK`, or it will emit an event that 
 telemetry error occurred while setting the measurement status as `FAILURE`.
 
+#### 3.6.6 powerOn
+Activates the sensor, by setting the Power Management 1 register to 0. 
+
 ## 4. Change Log
 
-| Date       | Description |
-|------------|---|
+| Date       | Description   |
+|------------|---------------|
 | 2022-07-19 | Initial Draft |
+| 2022-08-3  | Edit          |

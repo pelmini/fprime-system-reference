@@ -8,7 +8,7 @@
 #include <STest/STest/Pick/Pick.hpp>
 
 #define INSTANCE 0
-#define MAX_HISTORY_SIZE 10
+#define MAX_HISTORY_SIZE 100
 
 namespace Gnc {
 
@@ -103,7 +103,6 @@ Drv::I2cStatus Tester ::from_write_handler(const NATIVE_INT_TYPE portNum,
                                            U32 addr, Fw::Buffer &serBuffer) {
   this->pushFromPortEntry_write(addr, serBuffer);
   const U32 size = serBuffer.getSize();
-  FW_ASSERT(size == Imu::IMU_REG_SIZE);
   FW_ASSERT(size > 0);
   U8 *const data = (U8*) serBuffer.getData();
   FW_ASSERT(data[0] == Imu::IMU_RAW_ACCEL_ADDR || Imu::IMU_RAW_GYRO_ADDR);

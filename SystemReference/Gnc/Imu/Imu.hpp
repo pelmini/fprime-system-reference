@@ -77,7 +77,7 @@ public:
   // ----------------------------------------------------------------------
 
   Drv::I2cStatus read(U8 dev_addr, Fw::Buffer &buffer);
-  Drv::I2cStatus write(U8 dev_addr, U8 reg);
+  Drv::I2cStatus setupReadRegister(U8 dev_addr, U8 reg);
   Drv::I2cStatus readRegisterBlock(U8 registerAdd, Fw::Buffer &buffer);
   void updateAccel();
   void updateGyro();
