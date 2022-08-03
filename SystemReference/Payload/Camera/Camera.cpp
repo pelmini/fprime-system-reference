@@ -16,7 +16,7 @@ namespace Payload {
 
 Camera ::Camera(const char *const compName)
     : CameraComponentBase(compName), m_cmdCount(0), m_photoCount(0),
-      m_imgSize(0) {}
+    m_imgSize(0), m_exposureTime(100000){}
 
 void Camera ::init(const NATIVE_INT_TYPE queueDepth,
                    const NATIVE_INT_TYPE instance) {
@@ -25,7 +25,7 @@ void Camera ::init(const NATIVE_INT_TYPE queueDepth,
 
 void Camera ::open(const char *dev_name) {
   dev_name = "/dev/video0";
-  m_imgSize = init_device();
+  init_device();
   open_device();
 }
 Camera ::~Camera() {
@@ -57,19 +57,44 @@ void Camera ::Take_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq) {
   this->tlmWrite_commandNum(m_cmdCount++);
 }
 void Camera ::ExposureTime_cmdHandler(const FwOpcodeType opCode,
-                                      const U32 cmdSeq, U32 time) {
-  // TODO
+                                      const U32 cmdSeq, uint32_t time) {
+  time = m_exposureTime;
+  set_exposure_time(time);
+  this->log_WARNING_HI_ExposureTimeSet(time);
   this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
 void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
-                                   ImgSize size, ImgFormat format) {
-  // TODO
+                                   ImgResolution resolution, ImgFormat format) {
+  uint32_t V4L2Format;
+  uint32_t width;
+  uint32_t height;
+
+  if (m_imgFormat == format.YUYV){
+    V4L2Format = V4L2_PIX_FMT_YUYV;
+  } else if (m_imgFormat == format.RGB){
+    V4L2Format = V4L2_PIX_FMT_RGB24;
+  }
+
+  if(m_imgResolution == resolution.SIZE_640x480 ){
+    width = 640;
+    height = 480;
+  } else if (m_imgResolution == resolution.SIZE_800x600){
+    width = 800;
+    height = 600;
+  }
+
+  m_imgSize = set_format(height, width, V4L2Format);
+  this->log_WARNING_HI_SetImgConfig(m_imgResolution, format);
   this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
+// ----------------------------------------------------------------------
+// Helper Functions
+// ----------------------------------------------------------------------
+
 Fw::Buffer Camera::readImage() {
-  int readSize = 0;
+  size_t readSize = 0;
   Fw::Buffer imageBuffer = this->allocate_out(0, m_imgSize);
   read_frame(imageBuffer.getData(), m_imgSize, &readSize);
   return imageBuffer;

@@ -1,4 +1,4 @@
-enum ImgSize { SIZE_640x480, SIZE_800x600 }
+enum ImgResolution { SIZE_640x480, SIZE_800x600 }
 enum ImgFormat { RGB, YUYV }
 
 module Payload {
@@ -57,7 +57,7 @@ module Payload {
         async command ExposureTime( $time: U32 ) opcode 0x02
 
         @ Command to configure image
-        async command ConfigImg( $size: ImgSize, $format: ImgFormat) opcode 0x03
+        async command ConfigImg( resolution: ImgResolution, $format: ImgFormat) opcode 0x03
 
         # ----------------------------------------------------------------------
         # Events
@@ -74,7 +74,7 @@ module Payload {
         format "The exposure time has been set to {} seconds" \
 
         @ Event image configuration has been set
-        event SetImgConfig( $size: ImgSize, $format: ImgFormat)\
+        event SetImgConfig( resolution: ImgResolution, $format: ImgFormat)\
         severity warning high \
         format "The image has size {}, and the format {}" \
 

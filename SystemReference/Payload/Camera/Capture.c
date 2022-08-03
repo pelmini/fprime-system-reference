@@ -72,7 +72,7 @@ static void process_image(const void *p, int size)
  fflush(stdout);
 }
 
-int read_frame(void *cameraBuffer, int size, int *readSize)
+int read_frame(void *cameraBuffer, uint32_t size, size_t *readSize)
 {
   *readSize = read(fd, cameraBuffer, size);
    if (-1 == *readSize && errno != EAGAIN) {
@@ -256,35 +256,56 @@ static int init_device(void)
  } else {
    /* Errors ignored. */
  }
+}
 
+uint32_t set_format(uint32_t height, uint32_t width, uint32_t imgFormat)
+{
+  struct v4l2_format fmt;
+  unsigned int min;
 
- CLEAR(fmt);
+  CLEAR(fmt);
 
- fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
- if (force_format) {
-   fmt.fmt.pix.width       = 640;
-   fmt.fmt.pix.height      = 480;
-   fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
-   fmt.fmt.pix.field       = V4L2_FIELD_INTERLACED;
+  fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+  if (force_format) {
+    fmt.fmt.pix.width       = width;
+    fmt.fmt.pix.height      = height;
+    if (imgFormat == V4L2_PIX_FMT_YUYV){
+      fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+    } else {
+      fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
+    }
+    fmt.fmt.pix.field = V4L2_FIELD_INTERLACED;
 
-   if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
-     errno_exit("VIDIOC_S_FMT");
+    if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
+      errno_exit("VIDIOC_S_FMT");
 
-   /* Note VIDIOC_S_FMT may change width and height. */
- } else {
-   /* Preserve original settings as set by v4l2-ctl for example */
-   if (-1 == xioctl(fd, VIDIOC_G_FMT, &fmt))
-     errno_exit("VIDIOC_G_FMT");
- }
+    /* Note VIDIOC_S_FMT may change width and height. */
+  } else {
+    /* Preserve original settings as set by v4l2-ctl for example */
+    if (-1 == xioctl(fd, VIDIOC_G_FMT, &fmt))
+      errno_exit("VIDIOC_G_FMT");
+  }
 
- /* Buggy driver paranoia. */
- min = fmt.fmt.pix.width * 2;
- if (fmt.fmt.pix.bytesperline < min)
-   fmt.fmt.pix.bytesperline = min;
- min = fmt.fmt.pix.bytesperline * fmt.fmt.pix.height;
- if (fmt.fmt.pix.sizeimage < min)
-   fmt.fmt.pix.sizeimage = min;
- return fmt.fmt.pix.sizeimage;
+  /* Buggy driver paranoia. */
+  min = fmt.fmt.pix.width * 2;
+  if (fmt.fmt.pix.bytesperline < min) {
+    fmt.fmt.pix.bytesperline = min;
+  }
+  min = fmt.fmt.pix.bytesperline * fmt.fmt.pix.height;
+  if (fmt.fmt.pix.sizeimage < min) {
+    fmt.fmt.pix.sizeimage = min;
+  }
+  return fmt.fmt.pix.sizeimage;
+}
+
+// https://stackoverflow.com/questions/61581125/v4l2-absolute-exposure-setting-has-almost-not-effect
+// https://forums.raspberrypi.com/viewtopic.php?t=281994
+// https://linuxtv.org/downloads/v4l-dvb-apis-new/userspace-api/v4l/ext-ctrls-camera.html?highlight=exposure
+void set_exposure_time(uint32_t exposureTime){
+  struct v4l2_control control;
+  control.id = V4L2_CID_EXPOSURE_ABSOLUTE;
+  control.value = exposureTime;
+  xioctl(fd, VIDIOC_S_CTRL, &control);
 }
 
 static void close_device(void)

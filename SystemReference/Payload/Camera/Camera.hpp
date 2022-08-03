@@ -81,7 +81,7 @@ namespace Payload {
       void ExposureTime_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          U32 time /*!< The exposure time*/
+          uint32_t time /*!< The exposure time*/
       );
 
       //! Implementation for ConfigImg command handler
@@ -89,7 +89,7 @@ namespace Payload {
       void ConfigImg_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          ImgSize size, /*!< The image size*/
+          ImgResolution resolution, /*!< The image size*/
           ImgFormat format /*!< The image format*/
       );
 
@@ -102,7 +102,12 @@ namespace Payload {
       U32 m_cmdCount;
       U32 m_photoCount;
       U32 m_imgSize;
+      U32 m_exposureTime;
       Fw::Buffer m_cameraBuffer;
+
+      ImgResolution m_imgResolution;
+      ImgFormat m_imgFormat;
+
     };
 
 } // end namespace Payload
