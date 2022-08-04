@@ -20,7 +20,7 @@ Tester ::Tester()
     : CameraGTestBase("Tester", MAX_HISTORY_SIZE), component("Camera") {
   this->initComponents();
   this->connectPorts();
-  this->component.open(dev_name, 0, 0);
+  this->component.open(testDeviceName, 0, 0);
 }
 
 Tester ::~Tester() {}

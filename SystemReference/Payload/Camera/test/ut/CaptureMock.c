@@ -1,1 +1,1 @@
-const char *dev_name = "/dev/video0";
+const char *testDeviceName = "/dev/video0";
