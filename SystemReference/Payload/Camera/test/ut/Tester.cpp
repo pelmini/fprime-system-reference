@@ -60,7 +60,7 @@ void Tester::testExposureTime() {
 }
 
 void Tester::testTakePhoto(){
-  this->sendCmd_TakePhoto(0,0);
+  this->sendCmd_Take(0,0);
   this->component.doDispatch();
 
   ASSERT_CMD_RESPONSE_SIZE(1);
@@ -71,7 +71,7 @@ void Tester::testTakePhoto(){
 }
 
 void Tester::testSavePhoto(){
-  this->sendCmd_SavePhoto(0,0);
+  this->sendCmd_Save(0,0);
   this->component.doDispatch();
 
   ASSERT_CMD_RESPONSE_SIZE(1);
