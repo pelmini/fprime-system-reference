@@ -167,9 +167,9 @@ namespace Payload {
         STest::Pick::lowerUpper(0, 1));
 
     if(imgResolution.e == 0){
-      ASSERT_EQ(imgResolution, ImgResolution::SIZE_640x480);
+      FW_ASSERT(imgResolution == ImgResolution::SIZE_640x480);
     } else if (imgResolution.e == 1){
-      ASSERT_EQ(imgResolution, ImgResolution::SIZE_800x600);
+      FW_ASSERT(imgResolution == ImgResolution::SIZE_800x600);
     }
     return imgResolution;
   }
@@ -178,9 +178,9 @@ namespace Payload {
         STest::Pick::lowerUpper(0, 1));
 
     if(imgFormat.e == 0){
-      ASSERT_EQ(imgFormat, ImgFormat::RGB);
+      FW_ASSERT(imgFormat == ImgFormat::RGB);
     } else if (imgFormat.e == 1){
-      ASSERT_EQ(imgFormat, ImgFormat::YUYV);
+      FW_ASSERT(imgFormat == ImgFormat::YUYV);
     }
     return imgFormat;
   }
