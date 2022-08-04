@@ -66,7 +66,7 @@ int read_frame(void *cameraBuffer, u_int32_t size, size_t *readSize)
  return 0;
 }
 
-static void uninit_device(void)
+void uninit_device(void)
 {
  unsigned int i;
  free(buffers[0].start);
