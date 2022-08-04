@@ -54,7 +54,6 @@ static void errno_exit(const char *s)
 static int xioctl(int fh, int request, void *arg)
 {
  int r;
-
  do {
    r = ioctl(fh, request, arg);
  } while (-1 == r && EINTR == errno);
@@ -242,19 +241,6 @@ int init_device(void)
  if (0 == xioctl(fd, VIDIOC_CROPCAP, &cropcap)) {
    crop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
    crop.c = cropcap.defrect; /* reset to default */
-
-   if (-1 == xioctl(fd, VIDIOC_S_CROP, &crop)) {
-     switch (errno) {
-     case EINVAL:
-       /* Cropping not supported. */
-       break;
-     default:
-       /* Errors ignored. */
-       break;
-     }
-   }
- } else {
-   /* Errors ignored. */
  }
 }
 
@@ -266,25 +252,15 @@ u_int32_t set_format(u_int32_t height, u_int32_t width, u_int32_t imgFormat)
   CLEAR(fmt);
 
   fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  if (force_format) {
-    fmt.fmt.pix.width       = width;
-    fmt.fmt.pix.height      = height;
-    if (imgFormat == V4L2_PIX_FMT_YUYV){
-      fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
-    } else {
-      fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
-    }
-    fmt.fmt.pix.field = V4L2_FIELD_INTERLACED;
 
-    if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
-      errno_exit("VIDIOC_S_FMT");
-
-    /* Note VIDIOC_S_FMT may change width and height. */
+  fmt.fmt.pix.width       = width;
+  fmt.fmt.pix.height      = height;
+  if (imgFormat == V4L2_PIX_FMT_YUYV){
+    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
   } else {
-    /* Preserve original settings as set by v4l2-ctl for example */
-    if (-1 == xioctl(fd, VIDIOC_G_FMT, &fmt))
-      errno_exit("VIDIOC_G_FMT");
+    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
   }
+  fmt.fmt.pix.field = V4L2_FIELD_INTERLACED;
 
   /* Buggy driver paranoia. */
   min = fmt.fmt.pix.width * 2;
