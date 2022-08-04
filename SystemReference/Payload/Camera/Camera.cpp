@@ -64,10 +64,9 @@ void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
   uint32_t width;
   uint32_t height;
 
-  printf("IMG FORMAT: %d \n", m_imgFormat.e);
-  printf("FORMAT: %d \n", format.YUYV); 
+
   if (m_imgFormat == format.YUYV){
-    V4L2Format =  V4L2_PIX_FMT_YUYV;
+    V4L2Format = V4L2_PIX_FMT_YUYV;
   } else if (m_imgFormat == format.RGB){
     V4L2Format = V4L2_PIX_FMT_RGB24;
   }
