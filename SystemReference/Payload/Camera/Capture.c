@@ -140,7 +140,7 @@ int open_device(const char *device_name, int fd) {
     return -1;
   }
 
-  fd = open(dev_name, O_RDWR /* required */ | O_NONBLOCK, 0);
+  fd = open(device_name, O_RDWR /* required */ | O_NONBLOCK, 0);
 
   if (-1 == fd) {
     fprintf(stderr, "Cannot open '%s': %d, %s\\n", device_name, errno,
