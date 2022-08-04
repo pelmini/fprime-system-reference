@@ -12,6 +12,9 @@
 #include "STest/Random/Random.hpp"
 #include "STest/Pick/Pick.hpp"
 #include <Fw/Types/BasicTypes.hpp>
+extern "C"{
+#include "SystemReference/Payload/Camera/test/ut/capture_mock.c"
+};
 
 namespace Payload {
 

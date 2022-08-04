@@ -24,14 +24,10 @@
 extern const char *dev_name;
 
 
-void open_device();
-int init_device();
-//void start_capturing();
-//void mainloop();
-//void stop_capturing();
-u_int32_t set_format(u_int32_t height, u_int32_t width, u_int32_t imgFormat);
-void uninit_device();
-void close_device();
-int read_frame(void *cameraBuffer,u_int32_t size, size_t *readSize);
-void set_exposure_time(u_int32_t exposureTime);
+int open_device(const char *device_name, int fd);
+int init_device(const char *device_name, int fd);
+u_int32_t set_format(u_int32_t height, u_int32_t width, u_int32_t imgFormat, int fd);
+int close_device(int fd);
+int read_frame(void *cameraBuffer,u_int32_t size, size_t *readSize, int fd);
+void set_exposure_time(u_int32_t exposureTime, int fd);
 #endif // CAPTURE_H

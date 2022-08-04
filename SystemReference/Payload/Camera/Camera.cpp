@@ -16,7 +16,7 @@ namespace Payload {
 
 Camera ::Camera(const char *const compName)
     : CameraComponentBase(compName), m_cmdCount(0), m_photoCount(0),
-    m_imgSize(0){}
+    m_imgSize(0), m_fileDescriptor(-1){}
 
 void Camera ::init(const NATIVE_INT_TYPE queueDepth,
                    const NATIVE_INT_TYPE instance) {
@@ -24,13 +24,12 @@ void Camera ::init(const NATIVE_INT_TYPE queueDepth,
 }
 
 void Camera ::open(const char *dev_name) {
-  printf("WE ARE IN CAMERA COMPONENT\n");
   dev_name = "/dev/video0";
-  init_device();
-  open_device();
+  init_device(dev_name, m_fileDescriptor);
+  open_device(dev_name, m_fileDescriptor);
 }
 Camera ::~Camera() {
-  close_device();
+  close_device(m_fileDescriptor);
 }
 
 // ----------------------------------------------------------------------
@@ -53,7 +52,7 @@ void Camera ::Take_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq) {
 void Camera ::ExposureTime_cmdHandler(const FwOpcodeType opCode,
                                       const U32 cmdSeq, uint32_t time) {
 //  time = 100;
-  set_exposure_time(time);
+  set_exposure_time(time, m_fileDescriptor);
   this->log_ACTIVITY_HI_ExposureTimeSet(time); //Make activity
   this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   this->tlmWrite_commandNum(m_cmdCount++);
@@ -80,7 +79,7 @@ void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
     height = 600;
   }
 
-  m_imgSize = set_format(height, width, V4L2Format);
+  m_imgSize = set_format(height, width, V4L2Format, m_fileDescriptor);
   this->log_ACTIVITY_HI_SetImgConfig(m_imgResolution, format);
   this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   this->tlmWrite_commandNum(m_cmdCount++);
@@ -93,7 +92,7 @@ void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
 Fw::Buffer Camera::readImage() {
   size_t readSize = 0;
   Fw::Buffer imageBuffer = this->allocate_out(0, m_imgSize);
-  read_frame(imageBuffer.getData(), m_imgSize, &readSize);
+  read_frame(imageBuffer.getData(), m_imgSize, &readSize, m_fileDescriptor);
   return imageBuffer;
 }
 
