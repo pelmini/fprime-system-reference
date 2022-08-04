@@ -43,6 +43,7 @@ void Tester::testImgConfiguration() {
   ASSERT_EVENTS_SetImgConfig(0, m_imgResolution, m_imgFormat);
   ASSERT_TLM_SIZE(1);
   ASSERT_TLM_commandNum_SIZE(1);
+  this->clearHistory();
 }
 
 void Tester::testExposureTime() {
@@ -57,6 +58,7 @@ void Tester::testExposureTime() {
   ASSERT_EVENTS_ExposureTimeSet(0, m_exposure_time);
   ASSERT_TLM_SIZE(1);
   ASSERT_TLM_commandNum_SIZE(1);
+  this->clearHistory();
 }
 
 void Tester::testTakePhoto(){
@@ -68,6 +70,7 @@ void Tester::testTakePhoto(){
   ASSERT_TLM_SIZE(2);
   ASSERT_TLM_commandNum_SIZE(1);
   ASSERT_TLM_photosTaken_SIZE(1);
+  this->clearHistory();
 }
 
 void Tester::testSavePhoto(){
@@ -78,6 +81,7 @@ void Tester::testSavePhoto(){
   ASSERT_CMD_RESPONSE(0, Camera::OPCODE_EXPOSURETIME, 0, Fw::CmdResponse::OK);
   ASSERT_TLM_SIZE(1);
   ASSERT_TLM_commandNum_SIZE(1);
+  this->clearHistory();
 }
 
 // ----------------------------------------------------------------------
