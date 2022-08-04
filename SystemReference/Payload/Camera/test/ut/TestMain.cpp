@@ -4,10 +4,10 @@
 
 #include "Tester.hpp"
 
-//TEST(Nominal, ToDo) {
-//    Ref::Tester tester;
-//    tester.toDo();
-//}
+TEST(Nominal, exposureTime) {
+    Payload::Tester tester;
+    tester.testExposureTime();
+}
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
