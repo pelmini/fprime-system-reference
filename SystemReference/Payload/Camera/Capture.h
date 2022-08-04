@@ -30,7 +30,7 @@ int init_device();
 //void mainloop();
 //void stop_capturing();
 u_int32_t set_format(u_int32_t height, u_int32_t width, u_int32_t imgFormat);
-void uninit_device();
+static void uninit_device();
 void close_device();
 int read_frame(void *cameraBuffer,u_int32_t size, size_t *readSize);
 void set_exposure_time(u_int32_t exposureTime);

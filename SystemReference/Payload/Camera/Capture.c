@@ -25,10 +25,10 @@ struct buffer {
 //static char            *dev_name;
 static int              fd = -1;
 struct buffer          *buffers;
-static unsigned int     n_buffers;
-static int              out_buf;
+//static unsigned int     n_buffers;
+//static int              out_buf;
 static int              force_format;
-static int              frame_count = 70;
+//static int              frame_count = 70;
 
 static void errno_exit(const char *s)
 {
@@ -47,15 +47,15 @@ static int xioctl(int fh, int request, void *arg)
  return r;
 }
 
-static void process_image(const void *p, int size)
-{
- if (out_buf)
-   fwrite(p, size, 1, stdout);
-
- fflush(stderr);
- fprintf(stderr, ".");
- fflush(stdout);
-}
+//static void process_image(const void *p, int size)
+//{
+// if (out_buf)
+//   fwrite(p, size, 1, stdout);
+//
+// fflush(stderr);
+// fprintf(stderr, ".");
+// fflush(stdout);
+//}
 
 int read_frame(void *cameraBuffer, u_int32_t size, size_t *readSize)
 {
@@ -66,126 +66,126 @@ int read_frame(void *cameraBuffer, u_int32_t size, size_t *readSize)
  return 0;
 }
 
-static void uinit_device(void)
+static void uninit_device(void)
 {
  unsigned int i;
  free(buffers[0].start);
  free(buffers);
 }
 
-static void init_read(unsigned int buffer_size)
-{
- buffers = calloc(1, sizeof(*buffers));
+//static void init_read(unsigned int buffer_size)
+//{
+// buffers = calloc(1, sizeof(*buffers));
+//
+// if (!buffers) {
+//   fprintf(stderr, "Out of memory\\n");
+//   exit(EXIT_FAILURE);
+// }
+//
+// buffers[0].length = buffer_size;
+// buffers[0].start = malloc(buffer_size);
+//
+// if (!buffers[0].start) {
+//   fprintf(stderr, "Out of memory\\n");
+//   exit(EXIT_FAILURE);
+// }
+//}
 
- if (!buffers) {
-   fprintf(stderr, "Out of memory\\n");
-   exit(EXIT_FAILURE);
- }
+//static void init_mmap(void)
+//{
+// struct v4l2_requestbuffers req;
+//
+// CLEAR(req);
+//
+// req.count = 4;
+// req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+// req.memory = V4L2_MEMORY_MMAP;
+//
+// if (-1 == xioctl(fd, VIDIOC_REQBUFS, &req)) {
+//   if (EINVAL == errno) {
+//     fprintf(stderr, "%s does not support "
+//                     "memory mappingn", dev_name);
+//     exit(EXIT_FAILURE);
+//   } else {
+//     errno_exit("VIDIOC_REQBUFS");
+//   }
+// }
+//
+// if (req.count < 2) {
+//   fprintf(stderr, "Insufficient buffer memory on %s\\n",
+//           dev_name);
+//   exit(EXIT_FAILURE);
+// }
+//
+// buffers = calloc(req.count, sizeof(*buffers));
+//
+// if (!buffers) {
+//   fprintf(stderr, "Out of memory\\n");
+//   exit(EXIT_FAILURE);
+// }
+//
+// for (n_buffers = 0; n_buffers < req.count; ++n_buffers) {
+//   struct v4l2_buffer buf;
+//
+//   CLEAR(buf);
+//
+//   buf.type        = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+//   buf.memory      = V4L2_MEMORY_MMAP;
+//   buf.index       = n_buffers;
+//
+//   if (-1 == xioctl(fd, VIDIOC_QUERYBUF, &buf))
+//     errno_exit("VIDIOC_QUERYBUF");
+//
+//   buffers[n_buffers].length = buf.length;
+//   buffers[n_buffers].start =
+//       mmap(NULL /* start anywhere */,
+//            buf.length,
+//            PROT_READ | PROT_WRITE /* required */,
+//            MAP_SHARED /* recommended */,
+//            fd, buf.m.offset);
+//
+//   if (MAP_FAILED == buffers[n_buffers].start)
+//     errno_exit("mmap");
+// }
+//}
 
- buffers[0].length = buffer_size;
- buffers[0].start = malloc(buffer_size);
-
- if (!buffers[0].start) {
-   fprintf(stderr, "Out of memory\\n");
-   exit(EXIT_FAILURE);
- }
-}
-
-static void init_mmap(void)
-{
- struct v4l2_requestbuffers req;
-
- CLEAR(req);
-
- req.count = 4;
- req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
- req.memory = V4L2_MEMORY_MMAP;
-
- if (-1 == xioctl(fd, VIDIOC_REQBUFS, &req)) {
-   if (EINVAL == errno) {
-     fprintf(stderr, "%s does not support "
-                     "memory mappingn", dev_name);
-     exit(EXIT_FAILURE);
-   } else {
-     errno_exit("VIDIOC_REQBUFS");
-   }
- }
-
- if (req.count < 2) {
-   fprintf(stderr, "Insufficient buffer memory on %s\\n",
-           dev_name);
-   exit(EXIT_FAILURE);
- }
-
- buffers = calloc(req.count, sizeof(*buffers));
-
- if (!buffers) {
-   fprintf(stderr, "Out of memory\\n");
-   exit(EXIT_FAILURE);
- }
-
- for (n_buffers = 0; n_buffers < req.count; ++n_buffers) {
-   struct v4l2_buffer buf;
-
-   CLEAR(buf);
-
-   buf.type        = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-   buf.memory      = V4L2_MEMORY_MMAP;
-   buf.index       = n_buffers;
-
-   if (-1 == xioctl(fd, VIDIOC_QUERYBUF, &buf))
-     errno_exit("VIDIOC_QUERYBUF");
-
-   buffers[n_buffers].length = buf.length;
-   buffers[n_buffers].start =
-       mmap(NULL /* start anywhere */,
-            buf.length,
-            PROT_READ | PROT_WRITE /* required */,
-            MAP_SHARED /* recommended */,
-            fd, buf.m.offset);
-
-   if (MAP_FAILED == buffers[n_buffers].start)
-     errno_exit("mmap");
- }
-}
-
-static void init_userp(unsigned int buffer_size)
-{
- struct v4l2_requestbuffers req;
-
- CLEAR(req);
-
- req.count  = 4;
- req.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
- req.memory = V4L2_MEMORY_USERPTR;
-
- if (-1 == xioctl(fd, VIDIOC_REQBUFS, &req)) {
-   if (EINVAL == errno) {
-     fprintf(stderr, "%s does not support "
-                     "user pointer i/on", dev_name);
-     exit(EXIT_FAILURE);
-   } else {
-     errno_exit("VIDIOC_REQBUFS");
-   }
- }
-
- buffers = calloc(4, sizeof(*buffers));
-
- if (!buffers) {
-   fprintf(stderr, "Out of memory\\n");
-   exit(EXIT_FAILURE);
- }
-
- for (n_buffers = 0; n_buffers < 4; ++n_buffers) {
-   buffers[n_buffers].length = buffer_size;
-   buffers[n_buffers].start = malloc(buffer_size);
-
-   if (!buffers[n_buffers].start) {
-     fprintf(stderr, "Out of memory\\n");
-     exit(EXIT_FAILURE);
-   }
- }
-}
+//static void init_userp(unsigned int buffer_size)
+//{
+// struct v4l2_requestbuffers req;
+//
+// CLEAR(req);
+//
+// req.count  = 4;
+// req.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+// req.memory = V4L2_MEMORY_USERPTR;
+//
+// if (-1 == xioctl(fd, VIDIOC_REQBUFS, &req)) {
+//   if (EINVAL == errno) {
+//     fprintf(stderr, "%s does not support "
+//                     "user pointer i/on", dev_name);
+//     exit(EXIT_FAILURE);
+//   } else {
+//     errno_exit("VIDIOC_REQBUFS");
+//   }
+// }
+//
+// buffers = calloc(4, sizeof(*buffers));
+//
+// if (!buffers) {
+//   fprintf(stderr, "Out of memory\\n");
+//   exit(EXIT_FAILURE);
+// }
+//
+// for (n_buffers = 0; n_buffers < 4; ++n_buffers) {
+//   buffers[n_buffers].length = buffer_size;
+//   buffers[n_buffers].start = malloc(buffer_size);
+//
+//   if (!buffers[n_buffers].start) {
+//     fprintf(stderr, "Out of memory\\n");
+//     exit(EXIT_FAILURE);
+//   }
+// }
+//}
 
 int init_device(void)
 {
