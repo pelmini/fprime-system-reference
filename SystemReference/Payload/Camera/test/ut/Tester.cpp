@@ -6,6 +6,7 @@
 
 #include "Tester.hpp"
 
+
 #define INSTANCE 0
 #define MAX_HISTORY_SIZE 10
 #define QUEUE_DEPTH 10
@@ -161,4 +162,27 @@ namespace Payload {
     );
   }
 
-} // end namespace Payload
+  ImgResolution Tester::pickImgResolution() {
+    const ImgResolution imgResolution = static_cast<const ImgResolution::t>(
+        STest::Pick::lowerUpper(0, 1));
+
+    if(imgResolution.e == 0){
+      ASSERT_EQ(imgResolution, ImgResolution::SIZE_640x480);
+    } else if (imgResolution.e == 1){
+      ASSERT_EQ(imgResolution, ImgResolution::SIZE_800x600);
+    }
+    return imgResolution;
+  }
+  ImgFormat Tester::pickImgFormat() {
+    const ImgFormat imgFormat = static_cast<const ImgFormat::t>(
+        STest::Pick::lowerUpper(0, 1));
+
+    if(imgFormat.e == 0){
+      ASSERT_EQ(imgFormat, ImgFormat::RGB);
+    } else if (imgFormat.e == 1){
+      ASSERT_EQ(imgFormat, ImgFormat::YUYV);
+    }
+    return imgFormat;
+  }
+
+  } // end namespace Payload

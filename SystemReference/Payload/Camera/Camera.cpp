@@ -16,7 +16,7 @@ namespace Payload {
 
 Camera ::Camera(const char *const compName)
     : CameraComponentBase(compName), m_cmdCount(0), m_photoCount(0),
-    m_imgSize(0), m_exposureTime(100000){}
+    m_imgSize(0){}
 
 void Camera ::init(const NATIVE_INT_TYPE queueDepth,
                    const NATIVE_INT_TYPE instance) {
@@ -58,10 +58,11 @@ void Camera ::Take_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq) {
 }
 void Camera ::ExposureTime_cmdHandler(const FwOpcodeType opCode,
                                       const U32 cmdSeq, uint32_t time) {
-  time = m_exposureTime;
+//  time = 100;
   set_exposure_time(time);
-  this->log_WARNING_HI_ExposureTimeSet(time);
+  this->log_ACTIVITY_HI_ExposureTimeSet(time); //Make activity
   this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+  this->tlmWrite_commandNum(m_cmdCount++);
 }
 
 void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
@@ -71,7 +72,6 @@ void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
   uint32_t height;
 
   if (m_imgFormat == format.YUYV){
-
     V4L2Format =  V4L2_PIX_FMT_YUYV;
   } else if (m_imgFormat == format.RGB){
     V4L2Format = V4L2_PIX_FMT_RGB24;
@@ -86,8 +86,9 @@ void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
   }
 
   m_imgSize = set_format(height, width, V4L2Format);
-  this->log_WARNING_HI_SetImgConfig(m_imgResolution, format);
+  this->log_ACTIVITY_HI_SetImgConfig(m_imgResolution, format);
   this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+  this->tlmWrite_commandNum(m_cmdCount++);
 }
 
 // ----------------------------------------------------------------------

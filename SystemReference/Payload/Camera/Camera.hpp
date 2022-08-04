@@ -102,7 +102,6 @@ namespace Payload {
       U32 m_cmdCount;
       U32 m_photoCount;
       U32 m_imgSize;
-      U32 m_exposureTime;
       Fw::Buffer m_cameraBuffer;
 
       ImgResolution m_imgResolution;

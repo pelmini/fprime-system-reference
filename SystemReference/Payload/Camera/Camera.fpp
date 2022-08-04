@@ -70,12 +70,12 @@ module Payload {
 
         @ Event where exposure time is set
         event ExposureTimeSet( $time: U32) \
-        severity warning high \
+        severity activity high \
         format "The exposure time has been set to {} seconds" \
 
         @ Event image configuration has been set
         event SetImgConfig( resolution: ImgResolution, $format: ImgFormat)\
-        severity warning high \
+        severity activity high \
         format "The image has size {}, and the format {}" \
 
         # ----------------------------------------------------------------------

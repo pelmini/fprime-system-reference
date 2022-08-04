@@ -9,6 +9,9 @@
 
 #include "GTestBase.hpp"
 #include "SystemReference/Payload/Camera/Camera.hpp"
+#include "STest/Random/Random.hpp"
+#include "STest/Pick/Pick.hpp"
+#include <Fw/Types/BasicTypes.hpp>
 
 namespace Payload {
 
@@ -80,6 +83,12 @@ namespace Payload {
       //! Initialize components
       //!
       void initComponents();
+
+      //! Pick an image size
+      static ImgResolution pickImgResolution();
+
+      //! Pick an image format
+      static ImgFormat pickImgFormat();
 
     private:
 
