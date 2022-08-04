@@ -37,7 +37,7 @@ void Tester::testImgConfiguration() {
 void Tester::testExposureTime() {
   this->m_exposure_time = pickExposureTime();
 
-  this->sendCmd_ExposureTime(0, m_exposure_time);
+  this->sendCmd_ExposureTime(0, 0, m_exposure_time);
   this->component.doDispatch();
   ASSERT_CMD_RESPONSE_SIZE(1);
   ASSERT_CMD_RESPONSE(0, Camera::OPCODE_EXPOSURETIME, 0, Fw::CmdResponse::OK);
