@@ -7,7 +7,22 @@
 * see https://linuxtv.org/docs.php for more information
 */
 
-#include <Capture.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+
+#include <getopt.h>             /* getopt_long() */
+
+#include <fcntl.h>              /* low-level i/o */
+#include <unistd.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/mman.h>
+#include <sys/ioctl.h>
+#include <linux/videodev2.h>
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 
@@ -251,17 +266,25 @@ u_int32_t set_format(u_int32_t height, u_int32_t width, u_int32_t imgFormat)
   CLEAR(fmt);
 
   fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  fmt.fmt.pix.width       = width;
-  fmt.fmt.pix.height      = height;
-  if (imgFormat == V4L2_PIX_FMT_YUYV){
-    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
-  } else {
-    fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
-  }
-  fmt.fmt.pix.field = V4L2_FIELD_INTERLACED;
+  if (force_format) {
+    fmt.fmt.pix.width       = width;
+    fmt.fmt.pix.height      = height;
+    if (imgFormat == V4L2_PIX_FMT_YUYV){
+      fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+    } else {
+      fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
+    }
+    fmt.fmt.pix.field = V4L2_FIELD_INTERLACED;
 
-  if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
-    errno_exit("VIDIOC_S_FMT");
+    if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt))
+      errno_exit("VIDIOC_S_FMT");
+
+    /* Note VIDIOC_S_FMT may change width and height. */
+  } else {
+    /* Preserve original settings as set by v4l2-ctl for example */
+    if (-1 == xioctl(fd, VIDIOC_G_FMT, &fmt))
+      errno_exit("VIDIOC_G_FMT");
+  }
 
   /* Buggy driver paranoia. */
   min = fmt.fmt.pix.width * 2;
