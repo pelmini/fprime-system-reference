@@ -32,14 +32,14 @@
 //  IO_METHOD_USERPTR,
 // };
 
-struct buffer {
-  void *start;
-  size_t length;
-};
+//struct buffer {
+//  void *start;
+//  size_t length;
+//};
 
 const char *dev_name;
 static int fd = -1;
-struct buffer *buffers;
+//struct buffer *buffers;
 // static unsigned int     n_buffers;
 // static int              out_buf;
 static int force_format;
@@ -206,6 +206,7 @@ int init_device(void) {
   struct v4l2_format fmt;
   unsigned int min;
 
+  printf("HELLO 1");
   if (-1 == xioctl(fd, VIDIOC_QUERYCAP, &cap)) {
     if (EINVAL == errno) {
       fprintf(stderr, "%s is no V4L2 device\\n", dev_name);
@@ -215,11 +216,13 @@ int init_device(void) {
     }
   }
 
+  printf("HELLO 2");
   if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
     fprintf(stderr, "%s is no video capture device\\n", dev_name);
     exit(EXIT_FAILURE);
   }
 
+  printf("HELLO 3");
   if (!(cap.capabilities & V4L2_CAP_READWRITE)) {
     fprintf(stderr, "%s does not support read i/o\\n", dev_name);
     exit(EXIT_FAILURE);
@@ -231,6 +234,7 @@ int init_device(void) {
 
   cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
+  printf("HELLO 4");
   if (0 == xioctl(fd, VIDIOC_CROPCAP, &cropcap)) {
     crop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     crop.c = cropcap.defrect; /* reset to default */
