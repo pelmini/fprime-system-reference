@@ -13,7 +13,7 @@
 #include "STest/Pick/Pick.hpp"
 #include <Fw/Types/BasicTypes.hpp>
 extern "C"{
-#include "SystemReference/Payload/Camera/test/ut/CaptureMock.c"
+#include "SystemReference/Payload/Camera/test/ut/CaptureMock.h"
 };
 
 namespace Payload {

@@ -19,6 +19,7 @@ set(UT_SOURCE_FILES
 	"${CMAKE_CURRENT_LIST_DIR}/Camera.fpp"
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-        )
+		"${CMAKE_CURRENT_LIST_DIR}/test/ut/CaptureMock.c"
+		)
 set(UT_MOD_DEPS STest)
 register_fprime_ut()
