@@ -28,8 +28,28 @@ Tester ::~Tester() {}
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester ::toDo() {
-  // TODO
+void Tester::testImgConfiguration() {
+  this->m_imgFormat = pickImgFormat();
+  this->m_imgSize = pickImgResolution();
+
+}
+
+void Tester::testExposureTime() {
+  this->m_exposure_time = pickExposureTime();
+
+  this->sendCmd_ExposureTime(0, m_exposure_time);
+  this->component.doDispatch();
+  ASSERT_CMD_RESPONSE_SIZE(1);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_EXPOSURETIME, 0, Fw::CmdResponse::OK);
+
+}
+
+void Tester::testTakePhoto(){
+
+}
+
+void Tester::testSavePhoto(){
+
 }
 
 // ----------------------------------------------------------------------
@@ -109,6 +129,7 @@ ImgResolution Tester::pickImgResolution() {
   }
   return imgResolution;
 }
+
 ImgFormat Tester::pickImgFormat() {
   const ImgFormat imgFormat =
       static_cast<const ImgFormat::t>(STest::Pick::lowerUpper(0, 1));
@@ -119,6 +140,11 @@ ImgFormat Tester::pickImgFormat() {
     FW_ASSERT(imgFormat == ImgFormat::YUYV);
   }
   return imgFormat;
+}
+
+NATIVE_UINT_TYPE Tester::pickExposureTime() {
+  NATIVE_UINT_TYPE time = STest::Pick::lowerUpper(0, 10);
+  return time;
 }
 
 } // end namespace Payload

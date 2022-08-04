@@ -39,9 +39,17 @@ namespace Payload {
       // Tests
       // ----------------------------------------------------------------------
 
-      //! To do
+      //! Test to check if image is properly configured
       //!
-      void toDo();
+      void testImgConfiguration();
+
+      //! Test to check if exposure time is properly set
+      //!
+      void testExposureTime();
+
+      void testTakePhoto();
+
+      void testSavePhoto();
 
     private:
 
@@ -90,6 +98,9 @@ namespace Payload {
       //! Pick an image format
       static ImgFormat pickImgFormat();
 
+      //! Pick an exposure time
+      static NATIVE_UINT_TYPE pickExposureTime();
+
     private:
 
       // ----------------------------------------------------------------------
@@ -99,6 +110,10 @@ namespace Payload {
       //! The component under test
       //!
       Camera component;
+
+      ImgResolution m_imgSize;
+      ImgFormat m_imgFormat;
+      U32 m_exposure_time;
 
   };
 
