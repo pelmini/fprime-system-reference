@@ -4,10 +4,10 @@
 
 #include "Tester.hpp"
 
-TEST(Nominal, exposureTime) {
-    Payload::Tester tester;
-    tester.testExposureTime();
-}
+//TEST(Nominal, exposureTime) {
+//    Payload::Tester tester;
+//    tester.testExposureTime();
+//}
 
 TEST(Nominal, imgConfig) {
   Payload::Tester tester;
