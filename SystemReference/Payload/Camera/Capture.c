@@ -66,12 +66,12 @@ int read_frame(void *cameraBuffer, u_int32_t size, size_t *readSize)
  return 0;
 }
 
-void uninit_device(void)
-{
- unsigned int i;
- free(buffers[0].start);
- free(buffers);
-}
+//void uninit_device(void)
+//{
+// unsigned int i;
+// free(buffers[0].start);
+// free(buffers);
+//}
 
 //static void init_read(unsigned int buffer_size)
 //{

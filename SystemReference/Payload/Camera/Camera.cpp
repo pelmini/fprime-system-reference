@@ -29,7 +29,6 @@ void Camera ::open(const char *dev_name) {
   open_device();
 }
 Camera ::~Camera() {
-  uninit_device();
   close_device();
 }
 
