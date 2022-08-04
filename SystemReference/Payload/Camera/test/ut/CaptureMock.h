@@ -1,6 +1,7 @@
 #ifndef CAPTUREMOCK_H
 #define CAPTUREMOCK_H
 
+extern const char *testDeviceName;
 
 void mock_open_device(const char *testDeviceName, int fd);
 void mock_init_device(const char *testDeviceName, int fd);
