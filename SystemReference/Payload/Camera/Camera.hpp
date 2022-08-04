@@ -43,18 +43,6 @@ namespace Payload {
       //!
       ~Camera();
 
-    PRIVATE:
-
-      // ----------------------------------------------------------------------
-      // Handler implementations for user-defined typed input ports
-      // ----------------------------------------------------------------------
-
-      //! Handler implementation for Run
-      //!
-      void Run_handler(
-          const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          NATIVE_UINT_TYPE context /*!< The call order*/
-      );
 
     PRIVATE:
 

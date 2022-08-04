@@ -32,12 +32,6 @@ Camera ::~Camera() {
   uninit_device();
   close_device();
 }
-// ----------------------------------------------------------------------
-// Handler implementations for user-defined typed input ports
-// ----------------------------------------------------------------------
-
-void Camera ::Run_handler(const NATIVE_INT_TYPE portNum,
-                          NATIVE_UINT_TYPE context) {}
 
 // ----------------------------------------------------------------------
 // Command handler implementations

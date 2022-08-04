@@ -9,9 +9,6 @@ module Payload {
         # General ports
         # ----------------------------------------------------------------------
 
-        @ Port to send telemetry to ground
-        async input port Run: Svc.Sched
-
         @ Port that outputs taken photo to be downloaded
         output port sendPhoto: Fw.BufferSend
 
