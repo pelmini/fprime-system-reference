@@ -32,6 +32,15 @@ void Tester::testImgConfiguration() {
   this->m_imgFormat = pickImgFormat();
   this->m_imgSize = pickImgResolution();
 
+  this->sendCmd_ConfigImg(0, 0, m_imgSize, m_imgFormat);
+  this->component.doDispatch();
+
+  ASSERT_CMD_RESPONSE_SIZE(1);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_CONFIGIMG, 0, Fw::CmdResponse::OK);
+  ASSERT_EVENTS_SIZE(1);
+  ASSERT_EVENTS_SetImgConfig(0, m_exposure_time);
+  ASSERT_TLM_SIZE(1);
+  ASSERT_TLM_commandNum_SIZE(1);
 }
 
 void Tester::testExposureTime() {
@@ -39,9 +48,13 @@ void Tester::testExposureTime() {
 
   this->sendCmd_ExposureTime(0, 0, m_exposure_time);
   this->component.doDispatch();
+
   ASSERT_CMD_RESPONSE_SIZE(1);
   ASSERT_CMD_RESPONSE(0, Camera::OPCODE_EXPOSURETIME, 0, Fw::CmdResponse::OK);
-
+  ASSERT_EVENTS_SIZE(1);
+  ASSERT_EVENTS_ExposureTimeSet(0, m_exposure_time);
+  ASSERT_TLM_SIZE(1);
+  ASSERT_TLM_commandNum_SIZE(1);
 }
 
 void Tester::testTakePhoto(){
