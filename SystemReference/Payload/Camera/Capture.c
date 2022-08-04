@@ -7,22 +7,7 @@
  * see https://linuxtv.org/docs.php for more information
  */
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include <getopt.h> /* getopt_long() */
-
-#include <errno.h>
-#include <fcntl.h> /* low-level i/o */
-#include <linux/videodev2.h>
-#include <sys/ioctl.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/types.h>
-#include <unistd.h>
+#include "Capture.h"
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 
@@ -200,13 +185,14 @@ int read_frame(void *cameraBuffer, u_int32_t size, size_t *readSize) {
 // }
 
 int init_device(void) {
+  printf("HELLO HELLO\n");
   struct v4l2_capability cap;
   struct v4l2_cropcap cropcap;
   struct v4l2_crop crop;
   struct v4l2_format fmt;
   unsigned int min;
 
-  printf("HELLO 1");
+  printf("HELLO 1\n");
   if (-1 == xioctl(fd, VIDIOC_QUERYCAP, &cap)) {
     if (EINVAL == errno) {
       fprintf(stderr, "%s is no V4L2 device\\n", dev_name);
@@ -216,13 +202,13 @@ int init_device(void) {
     }
   }
 
-  printf("HELLO 2");
+  printf("HELLO 2\n");
   if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
     fprintf(stderr, "%s is no video capture device\\n", dev_name);
     exit(EXIT_FAILURE);
   }
 
-  printf("HELLO 3");
+  printf("HELLO 3\n");
   if (!(cap.capabilities & V4L2_CAP_READWRITE)) {
     fprintf(stderr, "%s does not support read i/o\\n", dev_name);
     exit(EXIT_FAILURE);
@@ -234,7 +220,7 @@ int init_device(void) {
 
   cropcap.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 
-  printf("HELLO 4");
+  printf("HELLO 4\n");
   if (0 == xioctl(fd, VIDIOC_CROPCAP, &cropcap)) {
     crop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     crop.c = cropcap.defrect; /* reset to default */

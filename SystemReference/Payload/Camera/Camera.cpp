@@ -24,6 +24,7 @@ void Camera ::init(const NATIVE_INT_TYPE queueDepth,
 }
 
 void Camera ::open(const char *dev_name) {
+  printf("WE ARE IN CAMERA COMPONENT\n");
   dev_name = "/dev/video0";
   init_device();
   open_device();
