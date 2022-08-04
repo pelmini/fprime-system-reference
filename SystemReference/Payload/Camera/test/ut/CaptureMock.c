@@ -1,7 +1,7 @@
 #include "CaptureMock.h"
 
-const char *testDeviceName;
-int fd;
+extern const char *testDeviceName;
+extern int fd;
 
 
 void mock_open_device(const char *testDeviceName, int fd) {
