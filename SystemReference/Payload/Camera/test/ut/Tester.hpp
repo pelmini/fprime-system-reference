@@ -50,8 +50,12 @@ namespace Payload {
       //!
       void testExposureTime();
 
+      //! Test to check if photo was taken
+      //!
       void testTakePhoto();
 
+      //! Test to check if photo was saved
+      //!
       void testSavePhoto();
 
     private:
@@ -114,9 +118,10 @@ namespace Payload {
       //!
       Camera component;
 
-      ImgResolution m_imgSize;
+      ImgResolution m_imgResolution;
       ImgFormat m_imgFormat;
       U32 m_exposure_time;
+//      Fw::Buffer m_imgBuffer;
 
   };
 

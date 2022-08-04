@@ -14,6 +14,16 @@ TEST(Nominal, imgConfig) {
   tester.testImgConfiguration();
 }
 
+TEST(Nominal, savePhoto) {
+  Payload::Tester tester;
+  tester.testSavePhoto();
+}
+
+TEST(Nominal, takePhoto) {
+  Payload::Tester tester;
+  tester.testTakePhoto();
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();

@@ -23,10 +23,13 @@ void Camera ::init(const NATIVE_INT_TYPE queueDepth,
   CameraComponentBase::init(queueDepth, instance);
 }
 
-void Camera ::open(const char *dev_name) {
+void Camera ::open(const char *dev_name, const FwOpcodeType opCode, const U32 cmdSeq) {
   dev_name = "/dev/video0";
-  init_device(dev_name, m_fileDescriptor);
-  open_device(dev_name, m_fileDescriptor);
+  if ((init_device(dev_name, m_fileDescriptor) &&
+          open_device(dev_name, m_fileDescriptor)) != 0) {
+    this->log_WARNING_HI_CameraError();
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
+  }
 }
 Camera ::~Camera() {
   close_device(m_fileDescriptor);

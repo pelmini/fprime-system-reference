@@ -38,7 +38,7 @@ namespace Payload {
           const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
       );
 
-      void open(const char *dev_name);
+      void open(const char *dev_name, const FwOpcodeType opCode, const U32 cmdSeq);
       //! Destroy object Camera
       //!
       ~Camera();

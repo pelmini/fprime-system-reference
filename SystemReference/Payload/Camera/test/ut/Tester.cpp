@@ -7,7 +7,7 @@
 #include "Tester.hpp"
 
 #define INSTANCE 0
-#define MAX_HISTORY_SIZE 10
+#define MAX_HISTORY_SIZE 100
 #define QUEUE_DEPTH 10
 
 namespace Payload {
@@ -21,7 +21,7 @@ Tester ::Tester()
   const char *dev_name = "/dev/video0";
   this->initComponents();
   this->connectPorts();
-  this->component.open(dev_name);
+  this->component.open(dev_name, 0, 0);
 }
 
 Tester ::~Tester() {}
@@ -32,15 +32,15 @@ Tester ::~Tester() {}
 
 void Tester::testImgConfiguration() {
   this->m_imgFormat = pickImgFormat();
-  this->m_imgSize = pickImgResolution();
+  this->m_imgResolution = pickImgResolution();
 
-  this->sendCmd_ConfigImg(0, 0, m_imgSize, m_imgFormat);
+  this->sendCmd_ConfigImg(0, 0, m_imgResolution, m_imgFormat);
   this->component.doDispatch();
 
   ASSERT_CMD_RESPONSE_SIZE(1);
   ASSERT_CMD_RESPONSE(0, Camera::OPCODE_CONFIGIMG, 0, Fw::CmdResponse::OK);
   ASSERT_EVENTS_SIZE(1);
-  ASSERT_EVENTS_SetImgConfig(0, m_imgSize, m_imgFormat);
+  ASSERT_EVENTS_SetImgConfig(0, m_imgResolution, m_imgFormat);
   ASSERT_TLM_SIZE(1);
   ASSERT_TLM_commandNum_SIZE(1);
 }
@@ -60,11 +60,24 @@ void Tester::testExposureTime() {
 }
 
 void Tester::testTakePhoto(){
+  this->sendCmd_TakePhoto(0,0);
+  this->component.doDispatch();
 
+  ASSERT_CMD_RESPONSE_SIZE(1);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_EXPOSURETIME, 0, Fw::CmdResponse::OK);
+  ASSERT_TLM_SIZE(2);
+  ASSERT_TLM_commandNum_SIZE(1);
+  ASSERT_TLM_photosTaken_SIZE(1);
 }
 
 void Tester::testSavePhoto(){
+  this->sendCmd_SavePhoto(0,0);
+  this->component.doDispatch();
 
+  ASSERT_CMD_RESPONSE_SIZE(1);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_EXPOSURETIME, 0, Fw::CmdResponse::OK);
+  ASSERT_TLM_SIZE(1);
+  ASSERT_TLM_commandNum_SIZE(1);
 }
 
 // ----------------------------------------------------------------------
