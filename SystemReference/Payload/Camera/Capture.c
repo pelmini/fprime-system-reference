@@ -22,7 +22,7 @@ struct buffer {
  size_t  length;
 };
 
-//static char            *dev_name;
+const char            *dev_name;
 static int              fd = -1;
 struct buffer          *buffers;
 //static unsigned int     n_buffers;
