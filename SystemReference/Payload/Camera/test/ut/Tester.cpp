@@ -18,6 +18,7 @@ namespace Payload {
 
 Tester ::Tester()
     : CameraGTestBase("Tester", MAX_HISTORY_SIZE), component("Camera") {
+  const char *dev_name = "/dev/video0";
   this->initComponents();
   this->connectPorts();
   this->component.open(dev_name);
