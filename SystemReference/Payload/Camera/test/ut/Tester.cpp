@@ -69,7 +69,7 @@ void Tester::testTakePhoto(){
   this->component.doDispatch();
 
   ASSERT_CMD_RESPONSE_SIZE(1);
-  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_EXPOSURETIME, 0, Fw::CmdResponse::OK);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_TAKE, 0, Fw::CmdResponse::OK);
   ASSERT_TLM_SIZE(2);
   ASSERT_TLM_commandNum_SIZE(1);
   ASSERT_TLM_photosTaken_SIZE(1);
@@ -82,7 +82,7 @@ void Tester::testSavePhoto(){
   this->component.doDispatch();
 
   ASSERT_CMD_RESPONSE_SIZE(1);
-  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_EXPOSURETIME, 0, Fw::CmdResponse::OK);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_SAVE, 0, Fw::CmdResponse::OK);
   ASSERT_TLM_SIZE(1);
   ASSERT_TLM_commandNum_SIZE(1);
   this->clearHistory();
