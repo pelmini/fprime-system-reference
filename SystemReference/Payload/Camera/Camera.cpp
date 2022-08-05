@@ -63,9 +63,9 @@ void Camera ::ExposureTime_cmdHandler(const FwOpcodeType opCode,
 
 void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
                                    ImgResolution resolution, ImgFormat format) {
-  uint32_t V4L2Format;
-  uint32_t width;
-  uint32_t height;
+  uint32_t V4L2Format = 0;
+  uint32_t width = 0;
+  uint32_t height = 0;
 
 
   if (m_imgFormat == format.YUYV){

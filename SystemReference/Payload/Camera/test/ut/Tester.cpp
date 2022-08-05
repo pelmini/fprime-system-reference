@@ -10,6 +10,8 @@
 #define MAX_HISTORY_SIZE 100
 #define QUEUE_DEPTH 10
 
+const char *testDeviceName;
+
 namespace Payload {
 
 // ----------------------------------------------------------------------

@@ -9,6 +9,9 @@
 
 #include "Capture.h"
 
+const char *device_name;
+int fd;
+
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 
 
@@ -22,7 +25,7 @@ static int xioctl(int fh, int request, void *arg) {
   return r;
 }
 
-int read_frame(void *cameraBuffer, u_int32_t size, size_t *readSize, int fd) {
+int read_frame(void *cameraBuffer, u_int32_t size, size_t *readSize, fd) {
   *readSize = read(fd, cameraBuffer, size);
   if (-1 == *readSize && errno != EAGAIN) {
     return -1;
@@ -30,7 +33,7 @@ int read_frame(void *cameraBuffer, u_int32_t size, size_t *readSize, int fd) {
   return 0;
 }
 
-int init_device(const char *device_name, int fd) {
+int init_device(device_name, fd) {
   struct v4l2_capability cap;
   struct v4l2_cropcap cropcap;
   struct v4l2_crop crop;
@@ -76,7 +79,7 @@ int init_device(const char *device_name, int fd) {
 }
 
 u_int32_t set_format(u_int32_t height, u_int32_t width, u_int32_t imgFormat,
-                     int fd) {
+                     fd) {
   struct v4l2_format fmt;
   unsigned int min;
 
@@ -126,7 +129,7 @@ int close_device(int fd) {
   return 0;
 }
 
-int open_device(const char *device_name, int fd) {
+int open_device(device_name, fd) {
   struct stat st;
 
   if (-1 == stat(device_name, &st)) {

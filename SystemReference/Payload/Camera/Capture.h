@@ -19,10 +19,13 @@
 #include <sys/time.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
-#include <linux/videodev2.h>
 
-extern const char *dev_name;
-
+#if TGT_OS_TYPE_LINUX
+   #include <linux/videodev2.h>
+#else
+   #define V4L2_PIX_FMT_YUYV 0
+   #define V4L2_PIX_FMT_RGB24 1
+#endif
 
 int open_device(const char *device_name, int fd);
 int init_device(const char *device_name, int fd);

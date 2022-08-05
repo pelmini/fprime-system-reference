@@ -16,6 +16,8 @@ set(MOD_DEPS
   # Communication Implementations
   Drv/Udp
   Drv/TcpClient
+  # Non-mock library implementation
+  V4L2CameraLib
 )
 
 register_fprime_module()

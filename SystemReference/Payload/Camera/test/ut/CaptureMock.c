@@ -1,25 +1,24 @@
-#include "CaptureMock.h"
-
-const char *testDeviceName;
-int fd;
+#include "SystemReference/Payload/Camera/Capture.h"
+#include "SystemReference/Payload/Camera/test/ut/CaptureMock.h"
 
 
-void mock_open_device(const char *testDeviceName, int fd) {
+int open_device(const char *testDeviceName, int fd) {
   testDeviceName = "/dev/video0";
+  return 0;
 }
-void mock_init_device(const char *testDeviceName, int fd) {
+int init_device(const char *testDeviceName, int fd) {
   testDeviceName = "/dev/video0";
+  return 0;
 }
-void mock_set_format(u_int32_t height, u_int32_t width, u_int32_t imgFormat,
+u_int32_t set_format(u_int32_t height, u_int32_t width, u_int32_t imgFormat,
                 int fd) {
-
+  return 0;
 }
-void mock_close_device(int fd) {
-
+int close_device(int fd) {
+  return 0;
 }
-void mock_read_frame(void *cameraBuffer, u_int32_t size, size_t *readSize, int fd) {
-
+int read_frame(void *cameraBuffer, u_int32_t size, size_t *readSize, int fd) {
+  return 0;
 }
-void mock_set_exposure_time(u_int32_t exposureTime, int fd) {
-
+void set_exposure_time(u_int32_t exposureTime, int fd) {
 }
