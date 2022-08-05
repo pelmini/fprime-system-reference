@@ -64,6 +64,18 @@ void Tester::testExposureTime() {
   this->clearEvents();
 }
 
+void Tester::testSavePhoto(){
+  this->sendCmd_Save(0,0);
+  this->component.doDispatch();
+
+  ASSERT_CMD_RESPONSE_SIZE(1);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_SAVE, 0, Fw::CmdResponse::OK);
+  ASSERT_TLM_SIZE(1);
+  ASSERT_TLM_commandNum_SIZE(1);
+  this->clearHistory();
+  this->clearEvents();
+}
+
 void Tester::testTakePhoto(){
   this->sendCmd_Take(0,0);
   this->component.doDispatch();
@@ -73,18 +85,6 @@ void Tester::testTakePhoto(){
   ASSERT_TLM_SIZE(2);
   ASSERT_TLM_commandNum_SIZE(1);
   ASSERT_TLM_photosTaken_SIZE(1);
-  this->clearHistory();
-  this->clearEvents();
-}
-
-void Tester::testSavePhoto(){
-  this->sendCmd_Save(0,0);
-  this->component.doDispatch();
-
-  ASSERT_CMD_RESPONSE_SIZE(1);
-  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_SAVE, 0, Fw::CmdResponse::OK);
-  ASSERT_TLM_SIZE(1);
-  ASSERT_TLM_commandNum_SIZE(1);
   this->clearHistory();
   this->clearEvents();
 }
@@ -108,7 +108,6 @@ void Tester ::from_deallocate_handler(const NATIVE_INT_TYPE portNum,
 void Tester ::from_sendPhoto_handler(const NATIVE_INT_TYPE portNum,
                                      Fw::Buffer &fwBuffer) {
   this->pushFromPortEntry_sendPhoto(fwBuffer);
-  component.doDispatch();
   ASSERT_from_sendPhoto(0, fwBuffer);
 }
 

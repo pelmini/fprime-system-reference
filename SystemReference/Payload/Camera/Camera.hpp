@@ -92,9 +92,6 @@ namespace Payload {
       U32 m_imgSize;
       NATIVE_INT_TYPE m_fileDescriptor;
 
-      ImgResolution m_imgResolution;
-      ImgFormat m_imgFormat;
-
     };
 
 } // end namespace Payload

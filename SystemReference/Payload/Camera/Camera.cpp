@@ -68,22 +68,24 @@ void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
   uint32_t height = 0;
 
 
-  if (m_imgFormat == format.YUYV){
+  if (format == ImgFormat::YUYV){
     V4L2Format = V4L2_PIX_FMT_YUYV;
-  } else if (m_imgFormat == format.RGB){
+  } else if (format == ImgFormat::RGB){
     V4L2Format = V4L2_PIX_FMT_RGB24;
   }
 
-  if(m_imgResolution == resolution.SIZE_640x480 ){
+  // Make an event that captures outside format
+
+  if(resolution == ImgResolution::SIZE_640x480){
     width = 640;
     height = 480;
-  } else if (m_imgResolution == resolution.SIZE_800x600){
+  } else if (resolution == ImgResolution::SIZE_800x600){
     width = 800;
     height = 600;
   }
 
   m_imgSize = set_format(height, width, V4L2Format, m_fileDescriptor);
-  this->log_ACTIVITY_HI_SetImgConfig(m_imgResolution, format);
+  this->log_ACTIVITY_HI_SetImgConfig(resolution, format);
   this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
   this->tlmWrite_commandNum(m_cmdCount++);
 }
