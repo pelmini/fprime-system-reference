@@ -7,7 +7,7 @@ int open_device(const char *dev_name, int fd) {
 }
 int init_device(const char *dev_name, int fd) {
   testDeviceName = dev_name;
-  return 0;
+  return init_value;
 }
 uint32_t set_format(uint32_t height, uint32_t width, uint32_t imgFormat,
                 int fd) {

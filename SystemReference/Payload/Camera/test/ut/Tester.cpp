@@ -12,6 +12,7 @@
 
 const char *testDeviceName;
 int open_value;
+int init_value;
 int fd;
 
 //enum ImgResolution { SIZE_640x480 = 0 , SIZE_800x600 = 1,  ERROR};
@@ -146,10 +147,12 @@ void Tester::testSetup() {
 
 void Tester::testSetupError(){
   open_value = -1;
-  component.open("video/Err", 0, 0);
+  component.open("dev/Err", 0, 0);
   ASSERT_EVENTS_SIZE(1);
-//  ASSERT_CMD_RESPONSE(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
-
+  ASSERT_EVENTS_CameraError_SIZE(1);
+  ASSERT_EVENTS_CameraError(0, "dev/Err");
+  this->clearHistory();
+  this->clearEvents();
 }
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
