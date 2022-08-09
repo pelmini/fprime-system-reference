@@ -8,9 +8,8 @@
 #include <SystemReference/Payload/Camera/Camera.hpp>
 #include <SystemReference/Payload/Camera/Capture.h>
 
-// Time is measured in micro seconds due to V4L2 driver
-// Write as a c++ constnat
-#define MAX_EXPOSURE_TIME 100000
+
+const int MAX_EXPOSURE_TIME = 100000;
 
 namespace Payload {
 
@@ -31,7 +30,6 @@ void Camera ::open(const char *dev_name, const FwOpcodeType opCode, const U32 cm
   if ((init_device(dev_name, m_fileDescriptor) &&
           open_device(dev_name, m_fileDescriptor)) != 0) {
     this->log_WARNING_HI_CameraError();
-    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
   }
 }
 Camera ::~Camera() {
@@ -65,6 +63,7 @@ void Camera ::ExposureTime_cmdHandler(const FwOpcodeType opCode,
     this->tlmWrite_commandNum(m_cmdCount++);
   } else {
     this->log_WARNING_HI_InvalidExposureTime(time);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
   }
 }
 
@@ -100,8 +99,11 @@ void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
     m_imgSize = set_format(height, width, V4L2Format, m_fileDescriptor);
     this->log_ACTIVITY_HI_SetImgConfig(resolution, format);
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-    this->tlmWrite_commandNum(m_cmdCount++);
+  } else{
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::EXECUTION_ERROR);
   }
+  this->tlmWrite_commandNum(m_cmdCount++);
+
 }
 
 // ----------------------------------------------------------------------

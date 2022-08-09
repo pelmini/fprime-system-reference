@@ -44,6 +44,11 @@ TEST(nominal, setup){
   tester.testSetup();
 }
 
+TEST(nominal, setupError){
+  Payload::Tester tester;
+  tester.testSetupError();
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();

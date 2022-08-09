@@ -61,7 +61,7 @@ namespace Payload {
 
       void testSetup();
 
-//      void testSetupError();
+      void testSetupError();
 
       void testInvalidSize();
 

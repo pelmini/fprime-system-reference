@@ -11,6 +11,8 @@
 #define QUEUE_DEPTH 10
 
 const char *testDeviceName;
+int open_value;
+int fd;
 
 //enum ImgResolution { SIZE_640x480 = 0 , SIZE_800x600 = 1,  ERROR};
 //
@@ -104,6 +106,8 @@ void Tester::testInvalidFormat() {
   ASSERT_EVENTS_SIZE(1);
   ASSERT_EVENTS_InvalidFormat_SIZE(1);
   ASSERT_EVENTS_InvalidFormat(0, invalidFormat);
+  ASSERT_CMD_RESPONSE_SIZE(1);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_CONFIGIMG, 0, Fw::CmdResponse::EXECUTION_ERROR);
   this->clearHistory();
   this->clearEvents();
 }
@@ -117,6 +121,8 @@ void Tester::testInvalidSize() {
   ASSERT_EVENTS_SIZE(1);
   ASSERT_EVENTS_InvalidSize_SIZE(1);
   ASSERT_EVENTS_InvalidSize(0, invalidResolution);
+  ASSERT_CMD_RESPONSE_SIZE(1);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_CONFIGIMG, 0, Fw::CmdResponse::EXECUTION_ERROR);
   this->clearHistory();
   this->clearEvents();
 }
@@ -138,10 +144,13 @@ void Tester::testSetup() {
   ASSERT_EQ(testDeviceName, "dev/videoTEST");
 }
 
-//void Tester::testSetupError(){
-//  open_value = -1;
-//
-//}
+void Tester::testSetupError(){
+  open_value = -1;
+  component.open("video/Err", 0, 0);
+  ASSERT_EVENTS_SIZE(1);
+//  ASSERT_CMD_RESPONSE(0, 0, 0, Fw::CmdResponse::EXECUTION_ERROR);
+
+}
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------

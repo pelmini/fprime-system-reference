@@ -3,7 +3,7 @@
 
 int open_device(const char *dev_name, int fd) {
 //  testDeviceName = dev_name;
-  return 0;
+  return open_value;
 }
 int init_device(const char *dev_name, int fd) {
   testDeviceName = dev_name;
