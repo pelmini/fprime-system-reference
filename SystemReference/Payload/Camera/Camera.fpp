@@ -66,7 +66,7 @@ module Payload {
         format "Camera setup failed" \
 
         @ Event where exposure time is set
-        event ExposureTimeSet( $time: U32) \
+        event ExposureTimeSet( $time: U32 ) \
         severity activity high \
         format "The exposure time has been set to {} seconds" \
 
@@ -74,6 +74,21 @@ module Payload {
         event SetImgConfig( resolution: ImgResolution, $format: ImgFormat)\
         severity activity high \
         format "The image has size {}, and the format {}" \
+
+        @ Error event where given format for image configuration is invalid
+        event InvalidFormat( $format: ImgFormat ) \
+        severity warning high \
+        format "{} is an invalid format" \
+
+        @ Error event where given size for image configuration is invalid
+        event InvalidSize( resolution: ImgResolution ) \
+        severity warning high \
+        format "{} is an invalid size" \
+
+        @ Error event for invalid time for exposure time
+        event InvalidExposureTime( $time: U32 ) \
+        severity warning high \
+        format "{} is an invalid time"
 
         # ----------------------------------------------------------------------
         # Telemetry

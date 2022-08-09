@@ -59,6 +59,16 @@ namespace Payload {
       //!
       void testSavePhoto();
 
+      void testSetup();
+
+//      void testSetupError();
+
+      void testInvalidSize();
+
+      void testInvalidFormat();
+
+      void testInvalidTime();
+
     private:
 
       // ----------------------------------------------------------------------
@@ -118,11 +128,6 @@ namespace Payload {
       //! The component under test
       //!
       Camera component;
-
-      ImgResolution m_imgResolution;
-      ImgFormat m_imgFormat;
-      U32 m_exposure_time;
-//      Fw::Buffer m_imgBuffer;
 
   };
 

@@ -25,7 +25,7 @@ static int xioctl(int fh, int request, void *arg) {
   return r;
 }
 
-int read_frame(void *cameraBuffer, u_int32_t size, size_t *readSize, fd) {
+int read_frame(void *cameraBuffer, uint32_t size, size_t *readSize, fd) {
   *readSize = read(fd, cameraBuffer, size);
   if (-1 == *readSize && errno != EAGAIN) {
     return -1;
@@ -37,8 +37,6 @@ int init_device(device_name, fd) {
   struct v4l2_capability cap;
   struct v4l2_cropcap cropcap;
   struct v4l2_crop crop;
-  struct v4l2_format fmt;
-  unsigned int min;
 
   if (-1 == xioctl(fd, VIDIOC_QUERYCAP, &cap)) {
     if (EINVAL == errno) {
@@ -78,7 +76,7 @@ int init_device(device_name, fd) {
   return 0;
 }
 
-u_int32_t set_format(u_int32_t height, u_int32_t width, u_int32_t imgFormat,
+u_int32_t set_format(uint32_t height, uint32_t width, uint32_t imgFormat,
                      fd) {
   struct v4l2_format fmt;
   unsigned int min;
@@ -115,7 +113,7 @@ u_int32_t set_format(u_int32_t height, u_int32_t width, u_int32_t imgFormat,
 // https://stackoverflow.com/questions/61581125/v4l2-absolute-exposure-setting-has-almost-not-effect
 // https://forums.raspberrypi.com/viewtopic.php?t=281994
 // https://linuxtv.org/downloads/v4l-dvb-apis-new/userspace-api/v4l/ext-ctrls-camera.html?highlight=exposure
-void set_exposure_time(u_int32_t exposureTime, int fd) {
+void set_exposure_time(uint32_t exposureTime, int fd) {
   struct v4l2_control control;
   control.id = V4L2_CID_EXPOSURE_ABSOLUTE;
   control.value = exposureTime;

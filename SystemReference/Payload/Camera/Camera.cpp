@@ -8,6 +8,10 @@
 #include <SystemReference/Payload/Camera/Camera.hpp>
 #include <SystemReference/Payload/Camera/Capture.h>
 
+// Time is measured in micro seconds due to V4L2 driver
+// Write as a c++ constnat
+#define MAX_EXPOSURE_TIME 100000
+
 namespace Payload {
 
 // ----------------------------------------------------------------------
@@ -24,7 +28,6 @@ void Camera ::init(const NATIVE_INT_TYPE queueDepth,
 }
 
 void Camera ::open(const char *dev_name, const FwOpcodeType opCode, const U32 cmdSeq) {
-  dev_name = "/dev/video0";
   if ((init_device(dev_name, m_fileDescriptor) &&
           open_device(dev_name, m_fileDescriptor)) != 0) {
     this->log_WARNING_HI_CameraError();
@@ -55,10 +58,14 @@ void Camera ::Take_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq) {
 void Camera ::ExposureTime_cmdHandler(const FwOpcodeType opCode,
                                       const U32 cmdSeq, uint32_t time) {
 //  time = 100;
-  set_exposure_time(time, m_fileDescriptor);
-  this->log_ACTIVITY_HI_ExposureTimeSet(time); //Make activity
-  this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-  this->tlmWrite_commandNum(m_cmdCount++);
+  if (time <= MAX_EXPOSURE_TIME){
+    set_exposure_time(time, m_fileDescriptor);
+    this->log_ACTIVITY_HI_ExposureTimeSet(time); //Make activity
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    this->tlmWrite_commandNum(m_cmdCount++);
+  } else {
+    this->log_WARNING_HI_InvalidExposureTime(time);
+  }
 }
 
 void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
@@ -66,15 +73,17 @@ void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
   uint32_t V4L2Format = 0;
   uint32_t width = 0;
   uint32_t height = 0;
+  bool validCommand = true;
 
 
   if (format == ImgFormat::YUYV){
     V4L2Format = V4L2_PIX_FMT_YUYV;
   } else if (format == ImgFormat::RGB){
     V4L2Format = V4L2_PIX_FMT_RGB24;
+  } else {
+    this->log_WARNING_HI_InvalidFormat(format);
+    validCommand = false;
   }
-
-  // Make an event that captures outside format
 
   if(resolution == ImgResolution::SIZE_640x480){
     width = 640;
@@ -82,12 +91,17 @@ void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
   } else if (resolution == ImgResolution::SIZE_800x600){
     width = 800;
     height = 600;
+  } else {
+    this->log_WARNING_HI_InvalidSize(resolution);
+    validCommand = false;
   }
 
-  m_imgSize = set_format(height, width, V4L2Format, m_fileDescriptor);
-  this->log_ACTIVITY_HI_SetImgConfig(resolution, format);
-  this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-  this->tlmWrite_commandNum(m_cmdCount++);
+  if(validCommand){
+    m_imgSize = set_format(height, width, V4L2Format, m_fileDescriptor);
+    this->log_ACTIVITY_HI_SetImgConfig(resolution, format);
+    this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
+    this->tlmWrite_commandNum(m_cmdCount++);
+  }
 }
 
 // ----------------------------------------------------------------------

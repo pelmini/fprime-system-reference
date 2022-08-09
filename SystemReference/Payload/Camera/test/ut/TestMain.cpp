@@ -24,6 +24,26 @@ TEST(Nominal, takePhoto) {
   tester.testTakePhoto();
 }
 
+TEST(nominal, invalidFormat) {
+  Payload::Tester tester;
+  tester.testInvalidFormat();
+}
+
+TEST(nominal, invalidSize) {
+  Payload::Tester tester;
+  tester.testInvalidSize();
+}
+
+TEST(nominal, invalidExposureTime){
+  Payload::Tester tester;
+  tester.testInvalidTime();
+}
+
+TEST(nominal, setup){
+  Payload::Tester tester;
+  tester.testSetup();
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     STest::Random::seed();
