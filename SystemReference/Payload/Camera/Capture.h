@@ -19,6 +19,7 @@
 #include <sys/time.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
+#include <stdint.h>
 
 #if TGT_OS_TYPE_LINUX
    #include <linux/videodev2.h>
