@@ -132,6 +132,10 @@ module SystemReference {
       uplink.bufferDeallocate -> fileUplinkBufferManager.bufferSendIn
       fileUplink.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
 
+      camera.deallocate -> fileUplinkBufferManager.bufferSendIn
+      camera.sendPhoto -> fileUplinkBufferManager.bufferSendIn
+      camera.allocate -> -> fileUplinkBufferManager.bufferGetCallee
+
     }
 
     connections I2c {
