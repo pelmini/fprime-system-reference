@@ -171,6 +171,12 @@ module SystemReference {
 
   }
 
+  instance camera: Payload.Camera base id 0x0E00 \
+    queue size 50 \
+    stack size Default.stackSize \
+    priority 100
+
+
   # ----------------------------------------------------------------------
   # Queued component instances
   # ----------------------------------------------------------------------

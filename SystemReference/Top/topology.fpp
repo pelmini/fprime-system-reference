@@ -47,6 +47,7 @@ module SystemReference {
     instance systemResources
     instance imu
     instance imuI2cBus
+    instance camera
 
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
@@ -136,7 +137,6 @@ module SystemReference {
     connections I2c {
         imu.read -> imuI2cBus.read
         imu.write -> imuI2cBus.write
-
     }
 
   }
