@@ -9,8 +9,8 @@
 
 #include "Capture.h"
 
-const char *device_name;
-int fd;
+//const char *device_name;
+//int fd;
 
 #define CLEAR(x) memset(&(x), 0, sizeof(x))
 
@@ -25,7 +25,7 @@ static int xioctl(int fh, int request, void *arg) {
   return r;
 }
 
-int read_frame(void *cameraBuffer, uint32_t size, size_t *readSize, fd) {
+int read_frame(void *cameraBuffer, uint32_t size, size_t *readSize, int fd) {
   *readSize = read(fd, cameraBuffer, size);
   if (-1 == *readSize && errno != EAGAIN) {
     return -1;
@@ -33,7 +33,7 @@ int read_frame(void *cameraBuffer, uint32_t size, size_t *readSize, fd) {
   return 0;
 }
 
-int init_device(device_name, fd) {
+int init_device(const char *device_name, int fd) {
   struct v4l2_capability cap;
   struct v4l2_cropcap cropcap;
   struct v4l2_crop crop;
@@ -76,8 +76,7 @@ int init_device(device_name, fd) {
   return 0;
 }
 
-u_int32_t set_format(uint32_t height, uint32_t width, uint32_t imgFormat,
-                     fd) {
+u_int32_t set_format(uint32_t height, uint32_t width, uint32_t imgFormat, int fd) {
   struct v4l2_format fmt;
   unsigned int min;
 
@@ -113,21 +112,21 @@ u_int32_t set_format(uint32_t height, uint32_t width, uint32_t imgFormat,
 // https://stackoverflow.com/questions/61581125/v4l2-absolute-exposure-setting-has-almost-not-effect
 // https://forums.raspberrypi.com/viewtopic.php?t=281994
 // https://linuxtv.org/downloads/v4l-dvb-apis-new/userspace-api/v4l/ext-ctrls-camera.html?highlight=exposure
-void set_exposure_time(uint32_t exposureTime, int fd) {
+void set_exposure_time(uint32_t exposureTime, const char *device_name, int fd) {
   struct v4l2_control control;
   control.id = V4L2_CID_EXPOSURE_ABSOLUTE;
   control.value = exposureTime;
   xioctl(fd, VIDIOC_S_CTRL, &control);
 }
 
-int close_device(int fd) {
+int close_device() {
   if (-1 == close(fd))
     return -1;
   fd = -1;
   return 0;
 }
 
-int open_device(device_name, fd) {
+int open_device(const char *device_name, int fd) {
   struct stat st;
 
   if (-1 == stat(device_name, &st)) {
@@ -137,7 +136,7 @@ int open_device(device_name, fd) {
   }
 
   if (!S_ISCHR(st.st_mode)) {
-    fprintf(stderr, "%s is no devicen", device_name);
+    fprintf(stderr, "%s is no device", device_name);
     return -1;
   }
 
