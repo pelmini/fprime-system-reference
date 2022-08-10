@@ -134,7 +134,7 @@ module SystemReference {
 
       camera.deallocate -> fileUplinkBufferManager.bufferSendIn
       camera.sendPhoto -> fileUplinkBufferManager.bufferSendIn
-      camera.allocate -> -> fileUplinkBufferManager.bufferGetCallee
+      camera.allocate -> fileUplinkBufferManager.bufferGetCallee
 
     }
 
