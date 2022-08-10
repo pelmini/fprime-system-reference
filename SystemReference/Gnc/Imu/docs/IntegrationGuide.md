@@ -9,7 +9,7 @@ integrate Gnc sensors.
 Projects who wish to use the standard F driver models [here](https://github.com/nasa/fprime/tree/0ae2321bb552174ce607075b1283029d6d75a6d6/Drv)
 to communicate with GNC sensors.
 
-### Assumptions and Definitions 
+### Assumptions and Definitions for Guide
 
 This guide makes the following assumptions about the user following the guide and the project setup that will deploy the
 component.
@@ -26,7 +26,7 @@ This guide also uses the following terminology:
 
 ## Example Hardware Description 
 
-Throughout this guide, we will be using  an MPU6050 IMU sensor and its I2C interface as an example for how to integrate IMU sensors.
+Throughout this guide, we will be using an MPU6050 IMU sensor and its I2C interface as an example for how to integrate IMU sensors.
 We are primarily interested in the accelerometer and gyroscope data that the sensor provides.
 
 ## Step 1: Define Component Requirements
@@ -37,15 +37,27 @@ capture:
 1. Ports and Interfaces
 2. Events, telemetry, and commands
 3. Component behavior
+4. Assumptions about the interfaces 
+5. Overall system integration 
 
-The example requirements for an Imu component is shown below: 
+Using the MPU6050 IMU sensor as an example, requirements can be derived by the following process. 
+We begin by determining that in accordance to Application Manager Driver Pattern which layer the component would fall under.
+In the case of the MPU6050 IMU sensor it would be integrated into the system project at the manager level.
+This is because the IMU component is defined to only know its current orientation and acceleration, and the driver it should
+talk to in order to collect data. Besides, these aspects the IMU component does not know how the data will be 
+used by the GNC application or even if the collected data will be used at all. The next step is to determine the type of 
+assumptions that are being made in regard to the interface. In the case of MPU6050 IMU sensor, information about the interface
+is provided by the data sheet given by the manufacturer. Therefore, the requirements, design and implementation will be 
+based on the implicit assumption that the provided information on the data sheet is accurate in order to interact with
+the sensor. From these considerations the example requirements derived are shown below:
 
-| Requirement | Description                                                                                      | Verification Method |
-|-------------|--------------------------------------------------------------------------------------------------|---------------------|
-| GNC-IMU-001 | The Gnc::Imu component shall produce telemetry of accelerometer data at 1Hz                      | Unit Test           |
-| GNC-IMU-002 | The Gnc::Imu component shall produce telemetry of gyroscope data at 1Hz                          | Unit Test           |
-| GNC-IMU-003 | The Gnc::Imu component shall be able to communicate with the MPU6050 over I2C                    | Inspection          |
-| GNC-IMU-004 | The Gnc::IMu component shall produce the latest gyroscope and accelerometer data via a port call | Unit Test           |
+| Requirement ID  | Description                                                                                      | Verification Method |
+|-----------------|--------------------------------------------------------------------------------------------------|---------------------|
+| GNC-IMU-001     | The Gnc::Imu component shall produce telemetry of accelerometer data at 1Hz                      | Unit Test           |
+| GNC-IMU-002     | The Gnc::Imu component shall produce telemetry of gyroscope data at 1Hz                          | Unit Test           |
+| GNC-IMU-003     | The Gnc::Imu component shall be able to communicate with the MPU6050 over I2C                    | Inspection          |
+| GNC-IMU-004     | The Gnc::IMu component shall produce the latest gyroscope and accelerometer data via a port call | Unit Test           |
+
 
 ## Step 2: Component Design 
 
@@ -120,9 +132,10 @@ Specific implementations will diverge based on hardware and design choices.
 
 In order to help in this process, the example component implementation is available for [reference](https://github.com/fprime-community/fprime-system-reference/blob/devel/SystemReference/Gnc/Imu/Imu.cpp).
 
+
 ## Topology Integration
 
-Once the design and implementation is done, the component can be added to a projects' topology. 
+Once the design and implementation is done, the component can be added to a projects' topology.
 Project may attach additional support components as needed.
 
 ## Conclusion

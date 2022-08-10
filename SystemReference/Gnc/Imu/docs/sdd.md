@@ -89,7 +89,10 @@ telemetry error occurred while setting the measurement status as `FAILURE`.
 #### 3.6.6 powerOn
 Activates the sensor, by setting the Power Management 1 register to 0. 
 
-## 4. Change Log
+## 4. Sequence Diagram
+
+
+## 5. Change Log
 
 | Date       | Description   |
 |------------|---------------|
