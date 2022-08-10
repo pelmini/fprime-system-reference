@@ -112,14 +112,14 @@ u_int32_t set_format(uint32_t height, uint32_t width, uint32_t imgFormat, int fd
 // https://stackoverflow.com/questions/61581125/v4l2-absolute-exposure-setting-has-almost-not-effect
 // https://forums.raspberrypi.com/viewtopic.php?t=281994
 // https://linuxtv.org/downloads/v4l-dvb-apis-new/userspace-api/v4l/ext-ctrls-camera.html?highlight=exposure
-void set_exposure_time(uint32_t exposureTime, const char *device_name, int fd) {
+void set_exposure_time(uint32_t exposureTime, int fd) {
   struct v4l2_control control;
   control.id = V4L2_CID_EXPOSURE_ABSOLUTE;
   control.value = exposureTime;
   xioctl(fd, VIDIOC_S_CTRL, &control);
 }
 
-int close_device() {
+int close_device(int fd) {
   if (-1 == close(fd))
     return -1;
   fd = -1;
