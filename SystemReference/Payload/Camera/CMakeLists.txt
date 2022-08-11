@@ -18,6 +18,8 @@ else()
 endif()
 set(CMAKE_C_EXTENSIONS OFF)
 
+set(MOD_DEPS V4L2CameraLib)
+
 set(SOURCE_FILES
 		"${CMAKE_CURRENT_LIST_DIR}/Camera.fpp"
 		"${CMAKE_CURRENT_LIST_DIR}/Camera.cpp"
