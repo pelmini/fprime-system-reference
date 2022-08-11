@@ -141,13 +141,13 @@ void Tester::testInvalidTime() {
 }
 
 void Tester::testSetup() {
-  component.open("dev/videoTEST", 0, 0);
+  component.open("dev/videoTEST");
   ASSERT_EQ(testDeviceName, "dev/videoTEST");
 }
 
 void Tester::testSetupError(){
   open_value = -1;
-  component.open("dev/Err", 0, 0);
+  component.open("dev/Err");
   ASSERT_EVENTS_SIZE(1);
   ASSERT_EVENTS_CameraError_SIZE(1);
   ASSERT_EVENTS_CameraError(0, "dev/Err");
