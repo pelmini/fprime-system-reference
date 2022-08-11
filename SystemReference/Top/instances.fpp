@@ -172,11 +172,11 @@ module SystemReference {
   }
 
   instance camera: Payload.Camera base id 0x0E00 \
-    queue size 200 \
+    queue size Default.stackSize \
     stack size Default.stackSize \
     priority 100 \
     {
-       phase Fpp.ToCpp.Phases.instances """
+       phase Fpp.ToCpp.Phases.configComponents"""
        if (camera.open("/dev/video0")) {
             printf("Failed to open camera %s\n", "/dev/video0");
        }
