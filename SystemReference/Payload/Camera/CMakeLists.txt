@@ -6,13 +6,6 @@
 #
 # Note: using PROJECT_NAME as EXECUTABLE_NAME
 ####
-
-set(SOURCE_FILES
-        "${CMAKE_CURRENT_LIST_DIR}/Camera.fpp"
-        "${CMAKE_CURRENT_LIST_DIR}/Camera.cpp"
-        )
-register_fprime_module()
-
 set(CMAKE_C_EXTENSIONS ON)
 add_library(MockV4L2CameraLib "${CMAKE_CURRENT_LIST_DIR}/test/ut/CaptureMock.c")
 # On Linux build the real library, otherwise use the mock implementation
@@ -24,6 +17,12 @@ else()
 	target_link_libraries(MockV4L2CameraLib)
 endif()
 set(CMAKE_C_EXTENSIONS OFF)
+
+set(SOURCE_FILES
+		"${CMAKE_CURRENT_LIST_DIR}/Camera.fpp"
+		"${CMAKE_CURRENT_LIST_DIR}/Camera.cpp"
+		)
+register_fprime_module()
 
 # Register the unit test build
 set(UT_SOURCE_FILES
