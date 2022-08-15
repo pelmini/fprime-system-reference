@@ -9,10 +9,6 @@
 
 #include "SystemReference/Gnc/Gps/GpsComponentAc.hpp"
 
-// Need to define the memory footprint of our buffers. This means defining a count of buffers, and how big each is. In
-// this example, we will allow the Gps component to manage its own buffers.
-#define NUM_UART_BUFFERS 20
-#define UART_READ_BUFF_SIZE 1024
 
 namespace Gnc {
 
@@ -57,7 +53,7 @@ namespace Gnc {
 
       //! Setup buffers to be used be the linux serial driver
       //!
-      void setup(void);
+//      void setup(void);
 
       //! Destroy object Gps
       //!
@@ -93,9 +89,6 @@ namespace Gnc {
     //!< Flag to indicate if device has acquired GPS lock
     bool m_locked;
 
-    //!< Create member variables to store buffers and the data array that those buffers use for storage
-    Fw::Buffer m_recvBuffers[NUM_UART_BUFFERS];
-    BYTE m_uartBuffers[NUM_UART_BUFFERS][UART_READ_BUFF_SIZE];
     };
 
 } // end namespace Gnc

@@ -12,7 +12,6 @@ module Gnc {
         @ Port to provide buffers for serial driver to use
         output port serialBufferOut: Fw.BufferSend
 
-
         # ----------------------------------------------------------------------
         # Special ports
         # ----------------------------------------------------------------------
@@ -58,6 +57,26 @@ module Gnc {
         event GpsLockLost \
         severity warning high \
         format "GPS lock lost" \
+
+        @ Error when GPS data packet is bad
+        event BadGpsPacket \
+        severity warning high \
+        format "Bad GPS packet" \
+
+        @ Error for invalid buffer size
+        event BadBufferSize \
+        severity warning high \
+        format "Bad Buffer Size"
+
+        @ Error for invalid GPGGA
+        event InvalidGPGGA \
+        severity warning high \
+        format "Invalid GPGGA"
+
+        @ Error for parse failure
+        event ParseFail \
+        severity warning high \
+        format "GPS parsing failed"
 
         # ----------------------------------------------------------------------
         # Telemetry
