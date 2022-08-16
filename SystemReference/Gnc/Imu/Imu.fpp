@@ -47,6 +47,7 @@ module Gnc {
             status: Drv.I2cStatus @< the status value returned
         ) \
         severity warning high \
+        throttle 1 \ 
         format "Telemetry request failed with status {}" \
 
         # ----------------------------------------------------------------------
