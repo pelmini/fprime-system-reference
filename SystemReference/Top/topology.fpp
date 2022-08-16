@@ -140,7 +140,7 @@ module SystemReference {
     }
 
     connections Camera {
-         camera.save -> fileUplinkBufferManager.bufferSendIn
+         camera.$save -> fileUplinkBufferManager.bufferSendIn
          camera.process -> fileUplinkBufferManager.bufferSendIn
          camera.allocate -> fileUplinkBufferManager.bufferGetCallee
     }
