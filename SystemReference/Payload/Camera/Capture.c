@@ -31,7 +31,7 @@ int read_frame(void *cameraBuffer, uint32_t size, size_t *readSize, int fd) {
     return -1;
   } else if (-1 == *readSize){
     // need to try again
-    return -2
+    return -2;
   }
   return 0;
 }
