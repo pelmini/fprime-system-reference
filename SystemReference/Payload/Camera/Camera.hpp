@@ -9,7 +9,7 @@
 
 #include "SystemReference/Payload/Camera/CameraComponentAc.hpp"
 #include "Fw/Types/MemAllocator.hpp"
-extern "C"{
+extern "C" {
 #include "SystemReference/Payload/Camera/Capture.h"
 };
 
