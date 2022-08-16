@@ -29,6 +29,9 @@ int read_frame(void *cameraBuffer, uint32_t size, size_t *readSize, int fd) {
   *readSize = read(fd, cameraBuffer, size);
   if (-1 == *readSize && errno != EAGAIN) {
     return -1;
+  } else if (-1 == *readSize){
+    // need to try again
+    return -2
   }
   return 0;
 }
@@ -76,7 +79,7 @@ int init_device(const char *device_name, int fd) {
   return 0;
 }
 
-u_int32_t set_format(uint32_t height, uint32_t width, uint32_t imgFormat, int fd) {
+int set_format(uint32_t height, uint32_t width, uint32_t imgFormat, int fd) {
   struct v4l2_format fmt;
   unsigned int min;
 

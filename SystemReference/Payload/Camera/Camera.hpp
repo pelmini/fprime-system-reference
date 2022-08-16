@@ -50,19 +50,15 @@ namespace Payload {
       // Command handler implementations
       // ----------------------------------------------------------------------
 
-      //! Implementation for Save command handler
-      //! Command to save photo
-      void Save_cmdHandler(
+       //! Implementation for SetAction command handler
+       //! Set camera action
+       void SetAction_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
-          const U32 cmdSeq /*!< The command sequence number*/
-      );
+          const U32 cmdSeq,          /*!< The command sequence number*/
+          Payload::CameraAction cameraAction /*!< State where camera either
+                                              * saves or takes photo */
+       );
 
-      //! Implementation for Take command handler
-      //! Command to take photo
-      void Take_cmdHandler(
-          const FwOpcodeType opCode, /*!< The opcode*/
-          const U32 cmdSeq /*!< The command sequence number*/
-      );
 
       //! Implementation for ExposureTime command handler
       //! Command to set the exposure time
@@ -89,7 +85,8 @@ namespace Payload {
 
       U32 m_cmdCount;
       U32 m_photoCount;
-      U32 m_imgSize;
+      NATIVE_INT_TYPE m_imgSize;
+      bool m_validCommand;
       NATIVE_INT_TYPE m_fileDescriptor;
 
     };

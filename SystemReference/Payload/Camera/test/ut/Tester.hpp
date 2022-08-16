@@ -45,29 +45,65 @@ namespace Payload {
 
       //! Test to check if image is properly configured
       //!
-      void testImgConfiguration();
+      void testImgConfiguration1();
+
+      void testImgConfiguration2();
+
+      void testImgConfiguration3();
+
+      void testImgConfiguration4();
 
       //! Test to check if exposure time is properly set
       //!
       void testExposureTime();
 
-      //! Test to check if photo was taken
+      //! Test to check camera save command
       //!
-      void testTakePhoto();
+      void testCameraActionSave();
 
-      //! Test to check if photo was saved
+      //! Check camera process command
       //!
-      void testSavePhoto();
+      void testCameraActionProcess();
 
+      //! Check setup
+      //!
       void testSetup();
 
+      //! Check setup error
+      //!
       void testSetupError();
 
+      //! Check invalid size error
+      //!
       void testInvalidSize();
 
+      //! Check invalid action command
+      //!
+      void testInvalidAction();
+
+      //! Check invalid format error
+      //!
       void testInvalidFormat();
 
+      //! Check invalid time error
+      //!
       void testInvalidTime();
+
+      //! Check set format error
+      //!
+      void testSetFormatError();
+
+      //! Check invalid frame error
+      //!
+      void testInvalidFrame();
+
+      //! Check retry read
+      //!
+      void testRetryRead();
+
+      //! Check partial image capture
+      //!
+      void testPartialImgCapture();
 
     private:
 
@@ -82,18 +118,18 @@ namespace Payload {
           U32 size 
       );
 
-      //! Handler for from_deallocate
+      //! Handler for from_process
       //!
-      void from_deallocate_handler(
+      void from_process_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
+          Fw::Buffer &fwBuffer
       );
 
-      //! Handler for from_sendPhoto
+      //! Handler for from_save
       //!
-      void from_sendPhoto_handler(
+      void from_save_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer 
+          Fw::Buffer &fwBuffer
       );
 
     private:
@@ -109,12 +145,6 @@ namespace Payload {
       //! Initialize components
       //!
       void initComponents();
-
-      //! Pick an image size
-      static ImgResolution pickImgResolution();
-
-      //! Pick an image format
-      static ImgFormat pickImgFormat();
 
       //! Pick an exposure time
       static NATIVE_UINT_TYPE pickExposureTime();

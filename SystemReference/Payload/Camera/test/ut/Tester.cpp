@@ -13,11 +13,13 @@
 const char *testDeviceName;
 int open_value;
 int init_value;
+int format_value;
+int frame_value;
 int fd;
 
-//enum ImgResolution { SIZE_640x480 = 0 , SIZE_800x600 = 1,  ERROR};
+// enum ImgResolution { SIZE_640x480 = 0 , SIZE_800x600 = 1,  ERROR};
 //
-//enum InvalidResolution { SIZE_350x480 };
+// enum InvalidResolution { SIZE_350x480 };
 
 namespace Payload {
 
@@ -38,9 +40,9 @@ Tester ::~Tester() {}
 // Tests
 // ----------------------------------------------------------------------
 
-void Tester::testImgConfiguration() {
-  ImgFormat imgFormat = pickImgFormat();
-  ImgResolution imgResolution = pickImgResolution();
+void Tester::testImgConfiguration1() {
+  ImgFormat imgFormat = ImgFormat::RGB;
+  ImgResolution imgResolution = ImgResolution::SIZE_640x480;
 
   this->sendCmd_ConfigImg(0, 0, imgResolution, imgFormat);
   this->component.doDispatch();
@@ -52,7 +54,55 @@ void Tester::testImgConfiguration() {
   ASSERT_TLM_SIZE(1);
   ASSERT_TLM_commandNum_SIZE(1);
   this->clearHistory();
-  this->clearEvents();
+}
+
+
+void Tester::testImgConfiguration2() {
+  ImgFormat imgFormat = ImgFormat::YUYV;
+  ImgResolution imgResolution = ImgResolution::SIZE_640x480;
+
+  this->sendCmd_ConfigImg(0, 0, imgResolution, imgFormat);
+  this->component.doDispatch();
+
+  ASSERT_CMD_RESPONSE_SIZE(1);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_CONFIGIMG, 0, Fw::CmdResponse::OK);
+  ASSERT_EVENTS_SIZE(1);
+  ASSERT_EVENTS_SetImgConfig(0, imgResolution, imgFormat);
+  ASSERT_TLM_SIZE(1);
+  ASSERT_TLM_commandNum_SIZE(1);
+  this->clearHistory();
+}
+
+void Tester::testImgConfiguration3() {
+  ImgFormat imgFormat = ImgFormat::RGB;
+  ImgResolution imgResolution = ImgResolution::SIZE_800x600;
+
+  this->sendCmd_ConfigImg(0, 0, imgResolution, imgFormat);
+  this->component.doDispatch();
+
+  ASSERT_CMD_RESPONSE_SIZE(1);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_CONFIGIMG, 0, Fw::CmdResponse::OK);
+  ASSERT_EVENTS_SIZE(1);
+  ASSERT_EVENTS_SetImgConfig(0, imgResolution, imgFormat);
+  ASSERT_TLM_SIZE(1);
+  ASSERT_TLM_commandNum_SIZE(1);
+  this->clearHistory();
+}
+
+void Tester::testImgConfiguration4() {
+  ImgFormat imgFormat = ImgFormat::YUYV;
+  ImgResolution imgResolution = ImgResolution::SIZE_800x600;
+
+  this->sendCmd_ConfigImg(0, 0, imgResolution, imgFormat);
+  this->component.doDispatch();
+
+  ASSERT_CMD_RESPONSE_SIZE(1);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_CONFIGIMG, 0, Fw::CmdResponse::OK);
+  ASSERT_EVENTS_SIZE(1);
+  ASSERT_EVENTS_SetImgConfig(0, imgResolution, imgFormat);
+  ASSERT_TLM_SIZE(1);
+  ASSERT_TLM_commandNum_SIZE(1);
+  this->clearHistory();
 }
 
 void Tester::testExposureTime() {
@@ -69,61 +119,77 @@ void Tester::testExposureTime() {
   ASSERT_TLM_SIZE(1);
   ASSERT_TLM_commandNum_SIZE(1);
   this->clearHistory();
-  this->clearEvents();
 }
 
-void Tester::testSavePhoto() {
-  this->sendCmd_Save(0, 0);
+void Tester::testCameraActionSave(){
+  CameraAction cameraAction = CameraAction::SAVE;
+
+  this->sendCmd_SetAction(0, 0, cameraAction);
   this->component.doDispatch();
 
   ASSERT_CMD_RESPONSE_SIZE(1);
-  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_SAVE, 0, Fw::CmdResponse::OK);
-  ASSERT_TLM_SIZE(1);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_SETACTION, 0, Fw::CmdResponse::OK);
+  ASSERT_TLM_SIZE(2);
   ASSERT_TLM_commandNum_SIZE(1);
+  ASSERT_TLM_photosTaken_SIZE(1);
+  ASSERT_EVENTS_SIZE(1);
+  ASSERT_EVENTS_CameraSave_SIZE(1);
   this->clearHistory();
-  this->clearEvents();
 }
 
-void Tester::testTakePhoto() {
-  this->sendCmd_Take(0, 0);
+void Tester::testCameraActionProcess() {
+  CameraAction cameraAction = CameraAction::PROCESS;
+
+  this->sendCmd_SetAction(0, 0, cameraAction);
   this->component.doDispatch();
 
   ASSERT_CMD_RESPONSE_SIZE(1);
-  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_TAKE, 0, Fw::CmdResponse::OK);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_SETACTION, 0, Fw::CmdResponse::OK);
   ASSERT_TLM_SIZE(2);
   ASSERT_TLM_commandNum_SIZE(1);
   ASSERT_TLM_photosTaken_SIZE(1);
   this->clearHistory();
-  this->clearEvents();
 }
+
+void Tester::testInvalidAction() {
+  CameraAction invalidAction = static_cast<const CameraAction::t>(2);
+  this->sendCmd_SetAction(0, 0, invalidAction);
+  this->component.doDispatch();
+
+  ASSERT_CMD_RESPONSE_SIZE(1);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_SETACTION, 0,
+                      Fw::CmdResponse::EXECUTION_ERROR);
+  this->clearHistory();
+}
+
 
 void Tester::testInvalidFormat() {
   ImgFormat invalidFormat = static_cast<const ImgFormat::t>(3);
-  ImgResolution imgResolution = pickImgResolution();
-  this->sendCmd_ConfigImg(0, 0, imgResolution,
-                          invalidFormat);
+  ImgResolution imgResolution = ImgResolution::SIZE_800x600;
+  this->sendCmd_ConfigImg(0, 0, imgResolution, invalidFormat);
   this->component.doDispatch();
 
   ASSERT_EVENTS_SIZE(1);
-  ASSERT_EVENTS_InvalidFormat_SIZE(1);
-  ASSERT_EVENTS_InvalidFormat(0, invalidFormat);
+  ASSERT_EVENTS_InvalidFormatCmd_SIZE(1);
+  ASSERT_EVENTS_InvalidFormatCmd(0, invalidFormat);
   ASSERT_CMD_RESPONSE_SIZE(1);
-  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_CONFIGIMG, 0, Fw::CmdResponse::EXECUTION_ERROR);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_CONFIGIMG, 0,
+                      Fw::CmdResponse::EXECUTION_ERROR);
   this->clearHistory();
-  this->clearEvents();
 }
 
 void Tester::testInvalidSize() {
   ImgResolution invalidResolution = static_cast<const ImgResolution::t>(2);
-  ImgFormat imgFormat = pickImgFormat();
+  ImgFormat imgFormat = ImgFormat::RGB;
   this->sendCmd_ConfigImg(0, 0, invalidResolution, imgFormat);
   this->component.doDispatch();
 
   ASSERT_EVENTS_SIZE(1);
-  ASSERT_EVENTS_InvalidSize_SIZE(1);
-  ASSERT_EVENTS_InvalidSize(0, invalidResolution);
+  ASSERT_EVENTS_InvalidSizeCmd_SIZE(1);
+  ASSERT_EVENTS_InvalidSizeCmd(0, invalidResolution);
   ASSERT_CMD_RESPONSE_SIZE(1);
-  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_CONFIGIMG, 0, Fw::CmdResponse::EXECUTION_ERROR);
+  ASSERT_CMD_RESPONSE(0, Camera::OPCODE_CONFIGIMG, 0,
+                      Fw::CmdResponse::EXECUTION_ERROR);
   this->clearHistory();
   this->clearEvents();
 }
@@ -134,8 +200,8 @@ void Tester::testInvalidTime() {
   this->component.doDispatch();
 
   ASSERT_EVENTS_SIZE(1);
-  ASSERT_EVENTS_InvalidExposureTime(0, time);
-  ASSERT_EVENTS_InvalidExposureTime_SIZE(1);
+  ASSERT_EVENTS_InvalidExposureTimeCmd(0, time);
+  ASSERT_EVENTS_InvalidExposureTimeCmd_SIZE(1);
   this->clearHistory();
   this->clearEvents();
 }
@@ -143,17 +209,60 @@ void Tester::testInvalidTime() {
 void Tester::testSetup() {
   component.open("dev/videoTEST");
   ASSERT_EQ(testDeviceName, "dev/videoTEST");
+  this->clearHistory();
 }
 
-void Tester::testSetupError(){
+void Tester::testSetupError() {
   open_value = -1;
   component.open("dev/Err");
   ASSERT_EVENTS_SIZE(1);
-  ASSERT_EVENTS_CameraError_SIZE(1);
-  ASSERT_EVENTS_CameraError(0, "dev/Err");
+  ASSERT_EVENTS_CameraOpenError_SIZE(1);
+  ASSERT_EVENTS_CameraOpenError(0, "dev/Err");
   this->clearHistory();
-  this->clearEvents();
+  open_value = 0;
 }
+
+void Tester::testSetFormatError() {
+  ImgFormat imgFormat = ImgFormat::YUYV;
+  ImgResolution imgResolution = ImgResolution::SIZE_800x600;
+  format_value = -1;
+  this->sendCmd_ConfigImg(0, 0, imgResolution, imgFormat);
+  component.doDispatch();
+
+  ASSERT_EVENTS_SetFormatError_SIZE(1);
+  ASSERT_EVENTS_SetFormatError(0, format_value);
+  ASSERT_EVENTS_SIZE(1);
+  this->clearHistory();
+  format_value = 0;
+}
+
+void Tester::testPartialImgCapture() {
+  ImgFormat imgFormat = ImgFormat::YUYV;
+  ImgResolution imgResolution = ImgResolution::SIZE_800x600;
+  frame_value = 0;
+  format_value = 4;
+  this->sendCmd_ConfigImg(0, 0, imgResolution, imgFormat);
+  component.doDispatch();
+  component.readImage();
+  ASSERT_EVENTS_partialImgCapture_SIZE(1);
+  ASSERT_EVENTS_partialImgCapture(0, 0);
+}
+
+void Tester::testInvalidFrame() {
+  frame_value = -1;
+  component.readImage();
+  ASSERT_EVENTS_SIZE(1);
+  ASSERT_EVENTS_invalidFrame_SIZE(1);
+  ASSERT_EVENTS_invalidFrame(0, 0);
+  this->clearHistory();
+}
+
+void Tester::testRetryRead() {
+  frame_value = -2;
+  component.readImage();
+  ASSERT_EVENTS_retryRead_SIZE(1);
+}
+
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
 // ----------------------------------------------------------------------
@@ -165,15 +274,14 @@ Fw::Buffer Tester ::from_allocate_handler(const NATIVE_INT_TYPE portNum,
   return buffer;
 }
 
-void Tester ::from_deallocate_handler(const NATIVE_INT_TYPE portNum,
-                                      Fw::Buffer &fwBuffer) {
-  this->pushFromPortEntry_deallocate(fwBuffer);
+void Tester ::from_process_handler(const NATIVE_INT_TYPE portNum,
+                                   Fw::Buffer &fwBuffer) {
+  this->pushFromPortEntry_process(fwBuffer);
 }
 
-void Tester ::from_sendPhoto_handler(const NATIVE_INT_TYPE portNum,
-                                     Fw::Buffer &fwBuffer) {
-  this->pushFromPortEntry_sendPhoto(fwBuffer);
-  ASSERT_from_sendPhoto(0, fwBuffer);
+void Tester ::from_save_handler(const NATIVE_INT_TYPE portNum,
+                                Fw::Buffer &fwBuffer) {
+  this->pushFromPortEntry_save(fwBuffer);
 }
 
 // ----------------------------------------------------------------------
@@ -207,40 +315,16 @@ void Tester ::connectPorts() {
   this->component.set_cmdResponseOut_OutputPort(
       0, this->get_from_cmdResponseOut(0));
 
-  // deallocate
-  this->component.set_deallocate_OutputPort(0, this->get_from_deallocate(0));
+  // process
+  this->component.set_process_OutputPort(0, this->get_from_process(0));
 
-  // sendPhoto
-  this->component.set_sendPhoto_OutputPort(0, this->get_from_sendPhoto(0));
+  // save
+  this->component.set_save_OutputPort(0, this->get_from_save(0));
 }
 
 void Tester ::initComponents() {
   this->init();
   this->component.init(QUEUE_DEPTH, INSTANCE);
-}
-
-ImgResolution Tester::pickImgResolution() {
-  const ImgResolution imgResolution =
-      static_cast<const ImgResolution::t>(STest::Pick::lowerUpper(0, 1));
-
-  if (imgResolution.e == 0) {
-    FW_ASSERT(imgResolution == ImgResolution::SIZE_640x480);
-  } else if (imgResolution.e == 1) {
-    FW_ASSERT(imgResolution == ImgResolution::SIZE_800x600);
-  }
-  return imgResolution;
-}
-
-ImgFormat Tester::pickImgFormat() {
-  const ImgFormat imgFormat =
-      static_cast<const ImgFormat::t>(STest::Pick::lowerUpper(0, 1));
-
-  if (imgFormat.e == 0) {
-    FW_ASSERT(imgFormat == ImgFormat::RGB);
-  } else if (imgFormat.e == 1) {
-    FW_ASSERT(imgFormat == ImgFormat::YUYV);
-  }
-  return imgFormat;
 }
 
 NATIVE_UINT_TYPE Tester::pickExposureTime() {

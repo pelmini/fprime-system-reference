@@ -9,19 +9,39 @@ TEST(Nominal, exposureTime) {
     tester.testExposureTime();
 }
 
-TEST(Nominal, imgConfig) {
+TEST(Nominal, imgConfig1) {
   Payload::Tester tester;
-  tester.testImgConfiguration();
+  tester.testImgConfiguration1();
 }
 
-TEST(Nominal, savePhoto) {
+TEST(Nominal, imgConfig2) {
   Payload::Tester tester;
-  tester.testSavePhoto();
+  tester.testImgConfiguration2();
 }
 
-TEST(Nominal, takePhoto) {
+TEST(Nominal, imgConfig3) {
   Payload::Tester tester;
-  tester.testTakePhoto();
+  tester.testImgConfiguration3();
+}
+
+TEST(Nominal, imgConfig4) {
+  Payload::Tester tester;
+  tester.testImgConfiguration4();
+}
+
+TEST(Nominal, cameraSave) {
+  Payload::Tester tester;
+  tester.testCameraActionSave();
+}
+
+TEST(Nominal, cameraProcess) {
+  Payload::Tester tester;
+  tester.testCameraActionProcess();
+}
+
+TEST(Nominal, invalidAction) {
+  Payload::Tester tester;
+  tester.testInvalidAction();
 }
 
 TEST(nominal, invalidFormat) {
@@ -33,6 +53,11 @@ TEST(nominal, invalidSize) {
   Payload::Tester tester;
   tester.testInvalidSize();
 }
+
+//TEST(nominal, SetFormatError){
+//  Payload::Tester tester;
+//  tester.testSetFormatError();
+//}
 
 TEST(nominal, invalidExposureTime){
   Payload::Tester tester;
@@ -47,6 +72,26 @@ TEST(nominal, setup){
 TEST(nominal, setupError){
   Payload::Tester tester;
   tester.testSetupError();
+}
+
+TEST(nominal, SetFormatError){
+  Payload::Tester tester;
+  tester.testSetFormatError();
+}
+
+TEST(nominal, PartialRead){
+  Payload::Tester tester;
+  tester.testPartialImgCapture();
+}
+
+TEST(nominal, InvalidFrame){
+  Payload::Tester tester;
+  tester.testInvalidFrame();
+}
+
+TEST(nominal, RetryRead){
+  Payload::Tester tester;
+  tester.testRetryRead();
 }
 
 int main(int argc, char **argv) {
