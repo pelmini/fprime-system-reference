@@ -96,7 +96,7 @@ int set_format(uint32_t height, uint32_t width, uint32_t imgFormat, int fd) {
   fmt.fmt.pix.field = V4L2_FIELD_INTERLACED;
 
   if (-1 == xioctl(fd, VIDIOC_S_FMT, &fmt)) {
-    printf("ERROR: VIDIOC_S_FMT");
+    printf("ERROR: VIDIOC_S_FMT: %s\n", strerror(errno));
     return -1;
   }
 
