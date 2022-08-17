@@ -43,10 +43,10 @@ int init_device(const char *device_name, int fd) {
 
   if (-1 == xioctl(fd, VIDIOC_QUERYCAP, &cap)) {
     if (EINVAL == errno) {
-      fprintf(stderr, "%s is no V4L2 device\\n", device_name);
+      fprintf(stderr, "%s is no V4L2 device\n", device_name);
       return -1;
     } else {
-      printf("ERROR: VIDIOC_QUERYCAP");
+      printf("ERROR: VIDIOC_QUERYCAP \n");
       return -1;
     }
   }

@@ -26,8 +26,7 @@ void Camera ::init(const NATIVE_INT_TYPE queueDepth,
 }
 
 bool Camera ::open(const char *dev_name) {
-  if ((init_device(dev_name, m_fileDescriptor)) ||
-      (open_device(dev_name, m_fileDescriptor)) != 0) {
+  if ((open_device(dev_name, m_fileDescriptor)) != 0 || (init_device(dev_name, m_fileDescriptor)) != 0) {
     this->log_WARNING_HI_CameraOpenError(dev_name);
     return false;
   }
