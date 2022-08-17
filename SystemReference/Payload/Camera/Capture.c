@@ -46,7 +46,7 @@ int init_device(const char *device_name, int fd) {
       fprintf(stderr, "%s is no V4L2 device\n", device_name);
       return -1;
     } else {
-      printf("ERROR: VIDIOC_QUERYCAP: %s \n" , strerror(errno));
+      fprintf(stderr, "ERROR: VIDIOC_QUERYCAP: %s \n" , strerror(errno));
       return -1;
     }
   }
