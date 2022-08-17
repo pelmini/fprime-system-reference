@@ -129,8 +129,9 @@ int close_device(int fd) {
   return 0;
 }
 
-int open_device(const char *device_name, int fd) {
+int open_device(const char *device_name) {
   struct stat st;
+  int fd = -1;
 
   if (-1 == stat(device_name, &st)) {
     fprintf(stderr, "Cannot identify '%s': %d, %s\\n", device_name, errno,
@@ -150,5 +151,5 @@ int open_device(const char *device_name, int fd) {
             strerror(errno));
     return -1;
   }
-  return 0;
+  return fd;
 }

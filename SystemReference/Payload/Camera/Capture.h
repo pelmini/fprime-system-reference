@@ -28,7 +28,7 @@
    #define V4L2_PIX_FMT_RGB24 1
 #endif
 
-int open_device(const char *device_name, int fd);
+int open_device(const char *device_name);
 int init_device(const char *device_name, int fd);
 int set_format(uint32_t height, uint32_t width, uint32_t imgFormat, int fd);
 int close_device(int fd);
