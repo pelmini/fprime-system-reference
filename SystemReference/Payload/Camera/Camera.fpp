@@ -1,7 +1,7 @@
 module Payload {
 
     enum ImgResolution { SIZE_640x480 = 0 , SIZE_800x600 = 1 }
-    enum ImgFormat { RGB = 0, YUYV = 1 }
+    enum ColorFormat { RGB = 0, YUYV = 1 }
     enum CameraAction { SAVE = 0, PROCESS = 1 }
 
     @ Component for Camera
@@ -48,8 +48,8 @@ module Payload {
         # Commands
         # ----------------------------------------------------------------------
 
-        @ Set camera action -> Change to take action
-        async command SetAction(
+        @ Set the action that camera should take
+        async command TakeAction(
             cameraAction: CameraAction @< State where camera either saves or takes photo
             ) \
         opcode 0x01
@@ -63,7 +63,7 @@ module Payload {
         @ Command to configure image
         async command ConfigImg(
             resolution: ImgResolution
-            $format: ImgFormat) \
+            $format: ColorFormat) \
         opcode 0x03
 
         # ----------------------------------------------------------------------
@@ -95,17 +95,17 @@ module Payload {
         @ Event image configuration has been set
         event SetImgConfig(
             resolution: ImgResolution @< Image size,
-            $format: ImgFormat @< Image format
+            $format: ColorFormat @< Image format
             ) \
         severity activity high \
         format "The image has size {}, and the format {}" \
 
         @ Error event where given format for image configuration is invalid
         event InvalidFormatCmd(
-            $format: ImgFormat @< Image format
+            $format: ColorFormat @< Image format
             ) \
         severity warning high \
-        format "{} is an invalid format" \
+        format "{} is an invalid color format" \
 
         @ Error event where given size for image configuration is invalid
         event InvalidSizeCmd(

@@ -19,6 +19,11 @@ int close_device(int fd) {
   return 0;
 }
 int read_frame(void *cameraBuffer, uint32_t size, size_t *readSize, int fd) {
+  *readSize = size;
+  if( testSize != 0) {
+    *readSize = testSize;
+  }
+
   return frame_value;
 }
 void set_exposure_time(uint32_t exposureTime, int fd) {

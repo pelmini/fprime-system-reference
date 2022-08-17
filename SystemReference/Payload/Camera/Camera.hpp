@@ -52,7 +52,7 @@ namespace Payload {
 
        //! Implementation for SetAction command handler
        //! Set camera action
-       void SetAction_cmdHandler(
+       void TakeAction_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq,          /*!< The command sequence number*/
           Payload::CameraAction cameraAction /*!< State where camera either
@@ -74,7 +74,7 @@ namespace Payload {
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
           ImgResolution resolution, /*!< The image size*/
-          ImgFormat format /*!< The image format*/
+          ColorFormat format /*!< The image format*/
       );
 
       // ----------------------------------------------------------------------

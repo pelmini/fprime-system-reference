@@ -44,12 +44,12 @@ TEST(Nominal, invalidAction) {
   tester.testInvalidAction();
 }
 
-TEST(nominal, invalidFormat) {
+TEST(Nominal, invalidFormat) {
   Payload::Tester tester;
   tester.testInvalidFormat();
 }
 
-TEST(nominal, invalidSize) {
+TEST(Nominal, invalidSize) {
   Payload::Tester tester;
   tester.testInvalidSize();
 }
@@ -59,37 +59,37 @@ TEST(nominal, invalidSize) {
 //  tester.testSetFormatError();
 //}
 
-TEST(nominal, invalidExposureTime){
+TEST(Nominal, invalidExposureTime){
   Payload::Tester tester;
   tester.testInvalidTime();
 }
 
-TEST(nominal, setup){
+TEST(Nominal, setup){
   Payload::Tester tester;
   tester.testSetup();
 }
 
-TEST(nominal, setupError){
+TEST(Nominal, setupError){
   Payload::Tester tester;
   tester.testSetupError();
 }
 
-TEST(nominal, SetFormatError){
+TEST(Nominal, SetFormatError){
   Payload::Tester tester;
   tester.testSetFormatError();
 }
 
-TEST(nominal, PartialRead){
+TEST(Nominal, PartialRead){
   Payload::Tester tester;
   tester.testPartialImgCapture();
 }
 
-TEST(nominal, InvalidFrame){
+TEST(Nominal, InvalidFrame){
   Payload::Tester tester;
   tester.testInvalidFrame();
 }
 
-TEST(nominal, RetryRead){
+TEST(Nominal, RetryRead){
   Payload::Tester tester;
   tester.testRetryRead();
 }
