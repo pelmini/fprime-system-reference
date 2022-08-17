@@ -178,8 +178,8 @@ module SystemReference {
     {
        phase Fpp.ToCpp.Phases.configComponents"""
        const char* const devPath = "/dev/video0";
-       if (camera.open(devPath)){
-           printf("Failed to open camera device %s \n", devPath);
+       if (!camera.open(devPath)){
+           printf("Failed to open camera device %s\\n", devPath);
        }
        """
     }
@@ -283,6 +283,8 @@ module SystemReference {
       using namespace ConfigConstants::fileUplinkBufferManager;
       upBuffMgrBins.bins[0].bufferSize = STORE_SIZE;
       upBuffMgrBins.bins[0].numBuffers = QUEUE_SIZE;
+      upBuffMgrBins.bins[1].bufferSize = 1024*1024*32;
+      upBuffMgrBins.bins[1].numBuffers = 3;
       fileUplinkBufferManager.setup(
           MGR_ID,
           0,
