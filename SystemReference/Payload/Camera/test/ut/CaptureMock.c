@@ -1,7 +1,7 @@
 #include "SystemReference/Payload/Camera/Capture.h"
 #include "SystemReference/Payload/Camera/test/ut/CaptureMock.h"
 
-int open_device(const char *dev_name, int fd) {
+int open_device(const char *dev_name) {
 //  testDeviceName = dev_name;
 //  printf("OPEN %d \n", open_value);
   return open_value;

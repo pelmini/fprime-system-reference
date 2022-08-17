@@ -42,16 +42,21 @@ Camera ::~Camera() { close_device(m_fileDescriptor); }
 void Camera ::SetAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
                                    Payload::CameraAction cameraAction) {
   Fw::Buffer imgBuffer = readImage();
-  if (cameraAction == CameraAction::PROCESS) {
+
+  if (imgBuffer.getSize() == 0) {
+    m_validCommand = false;
+  } else if (cameraAction == CameraAction::PROCESS) {
     this->process_out(0, imgBuffer);
     this->log_ACTIVITY_LO_CameraProcess();
+    this->tlmWrite_photosTaken(m_photoCount++);
   } else if (cameraAction == CameraAction::SAVE) {
     this->save_out(0, imgBuffer);
     this->log_ACTIVITY_LO_CameraSave();
+    this->tlmWrite_photosTaken(m_photoCount++);
   } else {
     m_validCommand = false;
   }
-  this->tlmWrite_photosTaken(m_photoCount++);
+
   this->tlmWrite_commandNum(m_cmdCount++);
   this->cmdResponse_out(opCode, cmdSeq,
                         m_validCommand ? Fw::CmdResponse::OK
@@ -122,6 +127,10 @@ Fw::Buffer Camera::readImage() {
   size_t readSize = 0;
   int readStatus = 0;
   Fw::Buffer imageBuffer = this->allocate_out(0, m_imgSize);
+
+  if (imageBuffer.getSize() == 0) {
+    return imageBuffer;
+  }
 
   readStatus =
       read_frame(imageBuffer.getData(), m_imgSize, &readSize, m_fileDescriptor);

@@ -48,7 +48,7 @@ module Payload {
         # Commands
         # ----------------------------------------------------------------------
 
-        @ Set camera action
+        @ Set camera action -> Change to take action
         async command SetAction(
             cameraAction: CameraAction @< State where camera either saves or takes photo
             ) \
