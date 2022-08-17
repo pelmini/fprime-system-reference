@@ -51,10 +51,10 @@ int init_device(const char *device_name, int fd) {
     }
   }
 
-  if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
-    fprintf(stderr, "%s is not a video capture device \n", device_name);
-    return -1;
-  }
+  //if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
+  //  fprintf(stderr, "%s is not a video capture device \n", device_name);
+  //  return -1;
+  //}
 
   if (!(cap.capabilities & V4L2_CAP_READWRITE)) {
     fprintf(stderr, "%s does not support read i/o \n", device_name);
