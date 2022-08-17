@@ -184,6 +184,17 @@ module SystemReference {
        """
     }
 
+  instance saveImageBufferLogger: Svc.BufferLogger base id 0x0F00 \
+    queue size 30 \
+    stack size Default.stackSize \
+    priority 100
+
+
+   instance processImage: Payload.PhotoConverter base id 0x1000 \
+    queue size 30 \
+    stack size Default.stackSize \
+    priority 100
+
 
   # ----------------------------------------------------------------------
   # Queued component instances
