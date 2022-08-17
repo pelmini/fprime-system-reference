@@ -187,7 +187,23 @@ module SystemReference {
   instance saveImageBufferLogger: Svc.BufferLogger base id 0x0F00 \
     queue size 30 \
     stack size Default.stackSize \
-    priority 100
+    priority 100 \
+    {
+        phase Fpp.ToCpp.Phases.configConstants """
+        enum {
+            WARN = 10,
+            FATAL = 10,
+            };
+        """
+
+        phase Fpp.ToCpp.Phases.configComponents """
+        fileDownlink.configure(
+            ConfigConstants::saveImageBufferLogger::WARN,
+            ConfigConstants::saveImageBufferLogger::FATAL
+        );
+        """
+
+    }
 
 
    instance processImage: Payload.PhotoConverter base id 0x1000 \
