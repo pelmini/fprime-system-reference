@@ -177,7 +177,9 @@ module SystemReference {
     priority 100 \
     {
        phase Fpp.ToCpp.Phases.configComponents"""
-       camera.open("/dev/video0");
+       if (!camera.open("/dev/video0")){
+           printf("Failed to open camera device %s\n", "/dev/video0")
+       }
        """
     }
 

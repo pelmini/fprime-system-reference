@@ -25,11 +25,13 @@ void Camera ::init(const NATIVE_INT_TYPE queueDepth,
   CameraComponentBase::init(queueDepth, instance);
 }
 
-void Camera ::open(const char *dev_name) {
+bool Camera ::open(const char *dev_name) {
   if ((init_device(dev_name, m_fileDescriptor)) ||
       (open_device(dev_name, m_fileDescriptor)) != 0) {
     this->log_WARNING_HI_CameraOpenError(dev_name);
+    return false;
   }
+  return true;
 }
 Camera ::~Camera() { close_device(m_fileDescriptor); }
 
