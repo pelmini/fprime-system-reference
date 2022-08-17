@@ -50,6 +50,8 @@ void Camera ::SetAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
     this->log_ACTIVITY_LO_CameraProcess();
     this->tlmWrite_photosTaken(m_photoCount++);
   } else if (cameraAction == CameraAction::SAVE) {
+    int fd = ::open("/home/pi/image.raw", O_CREAT | O_WRONLY);
+    write(fd, imgBuffer.getData(), imgBuffer.getSize());
     this->save_out(0, imgBuffer);
     this->log_ACTIVITY_LO_CameraSave();
     this->tlmWrite_photosTaken(m_photoCount++);
