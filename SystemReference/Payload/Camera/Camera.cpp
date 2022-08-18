@@ -9,7 +9,7 @@
 #include <SystemReference/Payload/Camera/Capture.h>
 
 const int MAX_EXPOSURE_TIME = 100000;
-const int BUFFER_SIZE = 1024*1024*32;
+//const int BUFFER_SIZE = 1024*1024*32;
 
 namespace Payload {
 
@@ -44,7 +44,9 @@ void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
                                    Payload::CameraAction cameraAction) {
   Fw::Buffer imgBuffer = readImage();
 
-  if (cameraAction == CameraAction::PROCESS) {
+  if (imgBuffer.getSize() == 0){
+    m_validCommand = false;
+  } else if (cameraAction == CameraAction::PROCESS) {
     this->process_out(0, imgBuffer);
     this->log_ACTIVITY_LO_CameraProcess();
     this->tlmWrite_photosTaken(m_photoCount++);
@@ -127,7 +129,11 @@ void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
 Fw::Buffer Camera::readImage() {
   size_t readSize = 0;
   int readStatus = 0;
-  Fw::Buffer imageBuffer = this->allocate_out(0, BUFFER_SIZE);
+  Fw::Buffer imageBuffer = this->allocate_out(0, m_imgSize);
+
+  if(imageBuffer.getSize() == 0) {
+    return imageBuffer;
+  }
 
   readStatus =
       read_frame(imageBuffer.getData(), m_imgSize, &readSize, m_fileDescriptor);

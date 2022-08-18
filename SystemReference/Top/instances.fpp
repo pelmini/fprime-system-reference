@@ -191,15 +191,19 @@ module SystemReference {
     {
         phase Fpp.ToCpp.Phases.configConstants """
         enum {
-            WARN = 10,
-            FATAL = 10,
+            MAX_FILE_SIZE = 1024*1024,
+            SIZE_OF_SIZE = 4,
             };
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
-        fileDownlink.configure(
-            ConfigConstants::saveImageBufferLogger::WARN,
-            ConfigConstants::saveImageBufferLogger::FATAL
+        const char* const name = "/home/pi/rawImage";
+        const char* const type = ".data";
+        saveImageBufferLogger.initLog(
+            name,
+            type,
+            ConfigConstants::saveImageBufferLogger::MAX_FILE_SIZE,
+            ConfigConstants::saveImageBufferLogger::SIZE_OF_SIZE
         );
         """
 
