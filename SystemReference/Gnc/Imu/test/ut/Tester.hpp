@@ -86,9 +86,6 @@ namespace Gnc {
       //!
       void initComponents();
 
-      //! Pick an error status
-      static Drv::I2cStatus pickErrorStatus();
-
     private:
 
       // ----------------------------------------------------------------------

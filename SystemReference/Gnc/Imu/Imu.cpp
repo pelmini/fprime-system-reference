@@ -84,36 +84,30 @@ Drv::I2cStatus Imu::readRegisterBlock(U8 registerAdd, Fw::Buffer &buffer){
 
 void Imu::updateAccel(){
   Fw::Buffer buffer;
-  Fw::Buffer test;
-  U32 value;
   U8 data[IMU_MAX_DATA_SIZE];
-  U8 dataTest[IMU_MAX_DATA_SIZE];
 
   Gnc::Vector vector;
 
   buffer.setData(data);
   buffer.setSize(IMU_MAX_DATA_SIZE);
 
-  test.setData(dataTest);
-  test.setSize(IMU_MAX_DATA_SIZE);
-
   Drv::I2cStatus statusAccelerate = readRegisterBlock(IMU_RAW_ACCEL_ADDR, buffer);
-
-  Drv::I2cStatus statusRegisterConfig = readRegisterBlock(0x28, buffer);
-  if (statusRegisterConfig == Drv::I2cStatus::I2C_OK){
-    value = static_cast<F32>((((U16)dataTest[0]) << 8) | ((U16)dataTest[0]));
-    printf("DEFAULT ACCEL CONFIG VALUE: %d \n", value);
-  }
 
   if (statusAccelerate == Drv::I2cStatus::I2C_OK) {
     FW_ASSERT(IMU_MAX_DATA_SIZE >= 6);
     m_accel.setstatus(Svc::MeasurementStatus::OK);
 
+    // Default full scale range is set to +/- 2g
     vector[0] = static_cast<F32>((((U16)data[0]) << 8) | ((U16)data[1]));
     vector[1] = static_cast<F32>((((U16)data[2]) << 8) | ((U16)data[3]));
     vector[2] = static_cast<F32>((((U16)data[4]) << 8) | ((U16)data[5]));
 
-    //IMU CONVERSION
+    // Convert raw data to usable units, need to divide the raw values by
+    // 16384 for a range of +-2g
+    vector[0] = vector[0]/16384;
+    vector[1] = vector[1]/16384;
+    vector[2] = vector[2]/16384;
+
     m_accel.setvector(vector);
     m_accel.settime(this->getTime());
 
@@ -134,25 +128,21 @@ void Imu::updateGyro(){
 
   Drv::I2cStatus statusGyro = readRegisterBlock(IMU_RAW_GYRO_ADDR, buffer);
 
-  Fw::Buffer test;
-  U32 value;
-  U8 dataTest[IMU_MAX_DATA_SIZE];
-  test.setData(dataTest);
-  test.setSize(IMU_MAX_DATA_SIZE);
-
-  Drv::I2cStatus statusRegisterConfig = readRegisterBlock(0x28, buffer);
-  if (statusRegisterConfig == Drv::I2cStatus::I2C_OK){
-    value = static_cast<F32>((((U16)dataTest[0]) << 8) | ((U16)dataTest[0]));
-    printf("DEFAULT ACCEL CONFIG VALUE: %d \n", value);
-  }
-
   if (statusGyro == Drv::I2cStatus::I2C_OK) {
     FW_ASSERT(IMU_MAX_DATA_SIZE >= 6);
     m_gyro.setstatus(Svc::MeasurementStatus::OK);
 
+    // Default full scale range is set to +/- 250
     vector[0] =  static_cast<F32>((((U16)data[0]) << 8) | ((U16)data[1]));
     vector[1] = static_cast<F32>((((U16)data[2]) << 8) | ((U16)data[3]));
     vector[2] = static_cast<F32>((((U16)data[4]) << 8) | ((U16)data[5]));
+
+    // Convert raw data to usable units, need to divide the raw values by
+    // 131 for a range of +-250 deg/s
+    vector[0] = vector[0]/131;
+    vector[1] = vector[1]/131;
+    vector[2] = vector[2]/131;
+
     m_gyro.setvector(vector);
     m_gyro.settime(this->getTime());
 

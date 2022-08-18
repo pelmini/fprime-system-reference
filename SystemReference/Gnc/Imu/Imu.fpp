@@ -48,11 +48,10 @@ module Gnc {
         ) \
         severity warning high \
         format "Telemetry request failed with status {}" \
-        throttle 1 \
 
         # ----------------------------------------------------------------------
         # Telemetry
-        # ----------------------------------------------------------------------
+        # ---------------------------------------------------------------------
 
         @ X, Y, Z acceleration from accelerometer
         telemetry accelerometer: Vector id 0 update always

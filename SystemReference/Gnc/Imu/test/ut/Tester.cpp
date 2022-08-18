@@ -64,8 +64,8 @@ void Tester ::testGetGyroTlm(){
 
 void Tester::testError() {
 
-  this->m_writeStatus = pickErrorStatus();
-  this->m_readStatus = pickErrorStatus();
+  this->m_writeStatus = Drv::I2cStatus::I2C_WRITE_ERR;
+  this->m_readStatus = Drv::I2cStatus::I2C_READ_ERR;
   this->invoke_to_Run(0,0);
   ASSERT_EVENTS_SIZE(2);
   ASSERT_EVENTS_TelemetryError_SIZE(2);
@@ -148,15 +148,6 @@ void Tester ::connectPorts() {
 void Tester ::initComponents() {
   this->init();
   this->component.init(INSTANCE);
-}
-
-Drv::I2cStatus Tester ::
-    pickErrorStatus()
-{
-  const Drv::I2cStatus status = static_cast<const Drv::I2cStatus::t>(
-      STest::Pick::lowerUpper(1, Drv::I2cStatus::NUM_CONSTANTS - 1));
-  FW_ASSERT(status != Drv::I2cStatus::I2C_OK);
-  return status;
 }
 
 } // end namespace Gnc
