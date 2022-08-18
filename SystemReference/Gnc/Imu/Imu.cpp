@@ -98,15 +98,15 @@ void Imu::updateAccel(){
     m_accel.setstatus(Svc::MeasurementStatus::OK);
 
     // Default full scale range is set to +/- 2g
-    vector[0] = static_cast<F32>((((U16)data[0]) << 8) | ((U16)data[1]));
-    vector[1] = static_cast<F32>((((U16)data[2]) << 8) | ((U16)data[3]));
-    vector[2] = static_cast<F32>((((U16)data[4]) << 8) | ((U16)data[5]));
+    vector[0] = static_cast<F32>((((I16)data[0]) << 8) | ((I16)data[1]));
+    vector[1] = static_cast<F32>((((I16)data[2]) << 8) | ((I16)data[3]));
+    vector[2] = static_cast<F32>((((I16)data[4]) << 8) | ((I16)data[5]));
 
     // Convert raw data to usable units, need to divide the raw values by
     // 16384 for a range of +-2g
-    vector[0] = vector[0]/16384;
-    vector[1] = vector[1]/16384;
-    vector[2] = vector[2]/16384;
+    vector[0] = vector[0]/16384.0f;
+    vector[1] = vector[1]/16384.0f;
+    vector[2] = vector[2]/16384.0f;
 
     m_accel.setvector(vector);
     m_accel.settime(this->getTime());
@@ -133,9 +133,9 @@ void Imu::updateGyro(){
     m_gyro.setstatus(Svc::MeasurementStatus::OK);
 
     // Default full scale range is set to +/- 250
-    vector[0] =  static_cast<F32>((((U16)data[0]) << 8) | ((U16)data[1]));
-    vector[1] = static_cast<F32>((((U16)data[2]) << 8) | ((U16)data[3]));
-    vector[2] = static_cast<F32>((((U16)data[4]) << 8) | ((U16)data[5]));
+    vector[0] =  static_cast<F32>((((I16)data[0]) << 8) | ((I16)data[1]));
+    vector[1] = static_cast<F32>((((I16)data[2]) << 8) | ((I16)data[3]));
+    vector[2] = static_cast<F32>((((I16)data[4]) << 8) | ((I16)data[5]));
 
     // Convert raw data to usable units, need to divide the raw values by
     // 131 for a range of +-250 deg/s
