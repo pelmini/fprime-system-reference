@@ -44,12 +44,17 @@ void Imu::setup() {
 
   FW_ASSERT(sizeof(data) > 0);
   data[0] = GYRO_CONFIG_ADDR;
-  data[1] = 0;
+  data[1] = 0x00;
   write_out(0, I2C_DEV0_ADDR, buffer);
+  read_out(0, GYRO_CONFIG_ADDR, buffer);
+  printf("VALUE AT GYRO CONFIG ADDRESS %d \n", data[1]);
+
 
   data[0] = ACCEL_CONFIG_ADDR;
-  data[1] = 0;
+  data[1] = 0x00;
   write_out(0, I2C_DEV0_ADDR, buffer);
+  read_out(0, ACCEL_CONFIG_ADDR, buffer);
+  printf("VALUE AT ACCEL CONFIG ADDRESS %d \n", data[1]);
 }
 
 Imu ::~Imu() {}
@@ -150,7 +155,7 @@ void Imu::updateGyro(){
     FW_ASSERT(IMU_MAX_DATA_SIZE >= 6);
     m_gyro.setstatus(Svc::MeasurementStatus::OK);
 
-    // Default full scale range is set to +/- 250
+    // Default full scale range is set to +/- 250 deg/sec
     vector[0] =  static_cast<F32>((((I16)data[0]) << 8) | ((I16)data[1]));
     vector[1] = static_cast<F32>((((I16)data[2]) << 8) | ((I16)data[3]));
     vector[2] = static_cast<F32>((((I16)data[4]) << 8) | ((I16)data[5]));
