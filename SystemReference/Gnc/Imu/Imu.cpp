@@ -156,15 +156,21 @@ void Imu::updateGyro(){
     m_gyro.setstatus(Svc::MeasurementStatus::OK);
 
     // Default full scale range is set to +/- 250 deg/sec
-    vector[0] =  static_cast<F32>((((I16)data[0]) << 8) | ((I16)data[1]));
-    vector[1] = static_cast<F32>((((I16)data[2]) << 8) | ((I16)data[3]));
-    vector[2] = static_cast<F32>((((I16)data[4]) << 8) | ((I16)data[5]));
+    short int tmp;
+    tmp = data[0] << 8 | data[1];
+    vector[0] = tmp; //  static_cast<F32>((((I16)data[0]) << 8) | ((I16)data[1]));
+    tmp = data[2] << 8 | data[5];
+
+    vector[1] = tmp; //static_cast<F32>((((I16)data[2]) << 8) | ((I16)data[3]));
+    tmp = data[4] << 8 | data[1];
+
+    vector[2] = tmp; static_cast<F32>((((I16)data[4]) << 8) | ((I16)data[5]));
 
     // Convert raw data to usable units, need to divide the raw values by
     // 131 for a range of +-250 deg/s
-    vector[0] = vector[0]/65.5f;
-    vector[1] = vector[1]/65.5f;
-    vector[2] = vector[2]/65.5f;
+    vector[0] = vector[0]/131.0f;
+    vector[1] = vector[1]/131.0f;
+    vector[2] = vector[2]/131.0f;
 
     m_gyro.setvector(vector);
     m_gyro.settime(this->getTime());
