@@ -42,19 +42,17 @@ void Imu::setup() {
   buffer.setData(data);
   buffer.setSize(sizeof(data));
 
+  // create evr event
   FW_ASSERT(sizeof(data) > 0);
   data[0] = GYRO_CONFIG_ADDR;
   data[1] = 0x00;
   write_out(0, I2C_DEV0_ADDR, buffer);
   read_out(0, GYRO_CONFIG_ADDR, buffer);
-  printf("VALUE AT GYRO CONFIG ADDRESS %d \n", data[1]);
-
 
   data[0] = ACCEL_CONFIG_ADDR;
   data[1] = 0x00;
   write_out(0, I2C_DEV0_ADDR, buffer);
   read_out(0, ACCEL_CONFIG_ADDR, buffer);
-  printf("VALUE AT ACCEL CONFIG ADDRESS %d \n", data[1]);
 }
 
 Imu ::~Imu() {}
@@ -121,9 +119,9 @@ void Imu::updateAccel(){
     m_accel.setstatus(Svc::MeasurementStatus::OK);
 
     // Default full scale range is set to +/- 2g
-    vector[0] = static_cast<F32>((((I16)data[0]) << 8) | ((I16)data[1]));
-    vector[1] = static_cast<F32>((((I16)data[2]) << 8) | ((I16)data[3]));
-    vector[2] = static_cast<F32>((((I16)data[4]) << 8) | ((I16)data[5]));
+    vector[0] = static_cast<F32>(static_cast<I16>(data[0] << 8 | data[1]));
+    vector[1] = static_cast<F32>(static_cast<I16>(data[2] << 8 | data[3]));
+    vector[2] = static_cast<F32>(static_cast<I16>(data[4] << 8 | data[5]));
 
     // Convert raw data to usable units, need to divide the raw values by
     // 16384 for a range of +-2g
@@ -156,15 +154,9 @@ void Imu::updateGyro(){
     m_gyro.setstatus(Svc::MeasurementStatus::OK);
 
     // Default full scale range is set to +/- 250 deg/sec
-    short int tmp;
-    tmp = data[0] << 8 | data[1];
-    vector[0] = tmp; //  static_cast<F32>((((I16)data[0]) << 8) | ((I16)data[1]));
-    tmp = data[2] << 8 | data[5];
-
-    vector[1] = tmp; //static_cast<F32>((((I16)data[2]) << 8) | ((I16)data[3]));
-    tmp = data[4] << 8 | data[1];
-
-    vector[2] = tmp; static_cast<F32>((((I16)data[4]) << 8) | ((I16)data[5]));
+    vector[0] = static_cast<F32>(static_cast<I16>(data[0] << 8 | data[1]));
+    vector[1] = static_cast<F32>(static_cast<I16>(data[2] << 8 | data[3]));
+    vector[2] = static_cast<F32>(static_cast<I16>(data[4] << 8 | data[5]));
 
     // Convert raw data to usable units, need to divide the raw values by
     // 131 for a range of +-250 deg/s
