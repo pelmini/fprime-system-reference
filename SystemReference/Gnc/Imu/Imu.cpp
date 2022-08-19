@@ -162,9 +162,9 @@ void Imu::updateGyro(){
 
     // Convert raw data to usable units, need to divide the raw values by
     // 131 for a range of +-250 deg/s
-    vector[0] = vector[0]/131.0f;
-    vector[1] = vector[1]/131.0f;
-    vector[2] = vector[2]/131.0f;
+    vector[0] = vector[0]/65.5f;
+    vector[1] = vector[1]/65.5f;
+    vector[2] = vector[2]/65.5f;
 
     m_gyro.setvector(vector);
     m_gyro.settime(this->getTime());
