@@ -19,10 +19,13 @@ public:
   // ----------------------------------------------------------------------
 
   static const U8 I2C_DEV0_ADDR = 0x68;
+  static const U8 POWER_MGMT_ADDR = 0x6B;
   static const U16 IMU_MAX_DATA_SIZE = 6;
   static const U16 IMU_REG_SIZE = 1;
   static const U8 IMU_RAW_ACCEL_ADDR = 0x3B;
   static const U8 IMU_RAW_GYRO_ADDR = 0x43;
+  static const U8 GYRO_CONFIG_ADDR = 0x1B;
+  static const U8 ACCEL_CONFIG_ADDR = 0x1C;
 
   // ----------------------------------------------------------------------
   // Construction, initialization, and destruction
@@ -41,6 +44,8 @@ public:
   //! Force device to wake up
   //!
   void powerOn();
+
+  void setup();
 
 
   //! Destroy object Imu

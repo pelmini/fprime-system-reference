@@ -30,9 +30,26 @@ void Imu::powerOn(){
     buffer.setSize(sizeof(data));
 
     FW_ASSERT(sizeof(data) > 0);
-    data[0] = 0x6B;
+    data[0] = POWER_MGMT_ADDR;
     data[1] = 0;
+    // Take MPU6050 out of sleep mode
     write_out(0, I2C_DEV0_ADDR, buffer);
+}
+
+void Imu::setup() {
+  Fw::Buffer buffer;
+  U8 data[IMU_REG_SIZE*2];
+  buffer.setData(data);
+  buffer.setSize(sizeof(data));
+
+  FW_ASSERT(sizeof(data) > 0);
+  data[0] = GYRO_CONFIG_ADDR;
+  data[1] = 0;
+  write_out(0, I2C_DEV0_ADDR, buffer);
+
+  data[0] = ACCEL_CONFIG_ADDR;
+  data[1] = 0;
+  write_out(0, I2C_DEV0_ADDR, buffer);
 }
 
 Imu ::~Imu() {}
@@ -45,6 +62,7 @@ void Imu ::Run_handler(const NATIVE_INT_TYPE portNum,
                        NATIVE_UINT_TYPE context) {
     if (!m_setup){
       powerOn();
+      setup();
       m_setup = true;
     }
     updateAccel();
@@ -139,9 +157,9 @@ void Imu::updateGyro(){
 
     // Convert raw data to usable units, need to divide the raw values by
     // 131 for a range of +-250 deg/s
-    vector[0] = vector[0]/131;
-    vector[1] = vector[1]/131;
-    vector[2] = vector[2]/131;
+    vector[0] = vector[0]/131.0f;
+    vector[1] = vector[1]/131.0f;
+    vector[2] = vector[2]/131.0f;
 
     m_gyro.setvector(vector);
     m_gyro.settime(this->getTime());
