@@ -3,7 +3,6 @@
 // ----------------------------------------------------------------------
 
 #include "Tester.hpp"
-#include <STest/STest/Random/Random.hpp>
 
 TEST(Nominal, getGyroscope) {
     Gnc::Tester tester;
@@ -15,13 +14,17 @@ TEST(Nominal, getAccelerometer) {
   tester.testGetAccelTlm();
 }
 
-TEST(Nominal, Error) {
+TEST(Nominal, TelemetryError) {
   Gnc::Tester tester;
-  tester.testError();
+  tester.testTlmError();
+}
+
+TEST(Nominal, SetupError) {
+  Gnc::Tester tester;
+  tester.testSetupError();
 }
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
-    STest::Random::seed();
     return RUN_ALL_TESTS();
 }

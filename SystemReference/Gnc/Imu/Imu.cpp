@@ -38,21 +38,34 @@ void Imu::powerOn(){
 
 void Imu::setup() {
   Fw::Buffer buffer;
+  Drv::I2cStatus readStatus;
+  Drv::I2cStatus writeStatus;
   U8 data[IMU_REG_SIZE*2];
   buffer.setData(data);
   buffer.setSize(sizeof(data));
 
-  // create evr event
   FW_ASSERT(sizeof(data) > 0);
+
+  // Set gyro range to +-250 deg/s
   data[0] = GYRO_CONFIG_ADDR;
   data[1] = 0x00;
-  write_out(0, I2C_DEV0_ADDR, buffer);
-  read_out(0, GYRO_CONFIG_ADDR, buffer);
 
+  writeStatus = write_out(0, GYRO_CONFIG_ADDR, buffer);
+  readStatus = read_out(0, GYRO_CONFIG_ADDR, buffer);
+
+  if (readStatus != writeStatus){
+    this->log_WARNING_HI_SetUpError(readStatus, writeStatus);
+  }
+
+  // Set accel range to +- 2g
   data[0] = ACCEL_CONFIG_ADDR;
   data[1] = 0x00;
-  write_out(0, I2C_DEV0_ADDR, buffer);
-  read_out(0, ACCEL_CONFIG_ADDR, buffer);
+  writeStatus = write_out(0, ACCEL_CONFIG_ADDR, buffer);
+  readStatus = read_out(0, ACCEL_CONFIG_ADDR, buffer);
+
+  if (readStatus != writeStatus){
+    this->log_WARNING_HI_SetUpError(readStatus, writeStatus);
+  }
 }
 
 Imu ::~Imu() {}
