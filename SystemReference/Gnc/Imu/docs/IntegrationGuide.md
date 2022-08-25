@@ -41,12 +41,12 @@ capture:
 5. Overall system integration 
 
 Using the MPU6050 IMU sensor as an example, requirements can be derived by the following process. 
-We begin by determining that in accordance to Application Manager Driver Pattern which layer the component would fall under.
+We begin by determining that in accordance to the Application Manager Driver Pattern which layer the component would fall under.
 In the case of the MPU6050 IMU sensor it would be integrated into the system project at the manager level.
 This is because the IMU component is defined to only know its current orientation and acceleration, and the driver it should
 talk to in order to collect data. Besides, these aspects the IMU component does not know how the data will be 
 used by the GNC application or even if the collected data will be used at all. The next step is to determine the type of 
-assumptions that are being made in regard to the interface. In the case of MPU6050 IMU sensor, information about the interface
+assumptions that are being made in regard to the interface. In the case of the MPU6050 IMU sensor, information about the interface
 is provided by the data sheet given by the manufacturer. Therefore, the requirements, design and implementation will be 
 based on the implicit assumption that the provided information on the data sheet is accurate in order to interact with
 the sensor. From these considerations the example requirements derived are shown below:
@@ -109,7 +109,7 @@ In this example, the IMU component will define one event:
 ### 2.4 Telemetry Design
 
 Component implementors are free to define whatever telemetry/channels are needed for their project. Typically, Gnc
-components emit telemetry representing the stat of the given GNC sensor.
+components emit telemetry representing the state of the given GNC sensor.
 
 In this example, the IMU component will define two telemetry channels one for each of the sensor readings taken:
 
@@ -127,10 +127,11 @@ In this example, no commands were defined.
 
 ## Implementation and Testing
 
-Projects will need to implement the port handlers and implementation for their Gnc components on their own.
+Projects will need to implement the port handlers and implementation for their GNC components on their own.
 Specific implementations will diverge based on hardware and design choices.
 
-In order to help in this process, the example component implementation is available for [reference](https://github.com/fprime-community/fprime-system-reference/blob/devel/SystemReference/Gnc/Imu/Imu.cpp).
+In order to help in this process, the example component implementation is available for 
+[reference](https://github.com/fprime-community/fprime-system-reference/blob/devel/SystemReference/Gnc/Imu/Imu.cpp).
 
 
 ## Topology Integration

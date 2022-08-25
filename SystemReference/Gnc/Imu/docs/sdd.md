@@ -18,19 +18,22 @@ More information can be found from the [data sheet](https://learn.adafruit.com/m
 provided by the manufacturer.
 
 ## 2. Requirements
-
-| Requirement | Description                                                                                     | Verification Method |
-|-------------|-------------------------------------------------------------------------------------------------|---------------------|
-| GNC-IMU-001 | The 'Gnc::Imu' component shall produce telemetry of accelerometer data in vector form           | Unit Test           |
-| GNC-IMU-002 | The 'Gnc::Imu' component shall produce telemetry of gyroscope data in vector form               | Unit Test           |
-| GNC-IMU-003 | The 'Gnc::Imu' component shall interact with the MPU-6050 via I2C                               | Inspection          |
-| GNC-IMU-004 | The 'Gnc::Imu' component shall supply the latest accelerometer an gyroscope data upon port call | Unit-Test           |
+| Requirement ID  | Description                                                                                      | Verification Method |
+|-----------------|--------------------------------------------------------------------------------------------------|---------------------|
+| GNC-IMU-001     | The Gnc::Imu component shall produce telemetry of accelerometer data at 1Hz                      | Unit Test           |
+| GNC-IMU-002     | The Gnc::Imu component shall produce telemetry of gyroscope data at 1Hz                          | Unit Test           |
+| GNC-IMU-003     | The Gnc::Imu component shall be able to communicate with the MPU6050 over I2C                    | Inspection          |
+| GNC-IMU-004     | The Gnc::IMu component shall produce the latest gyroscope and accelerometer data via a port call | Unit Test           |
 
 ## 3. Design 
 The diagram below shows the `Imu` component.
 
 ![IMU Design](./img/imu.png)
 
+### 3.1. Assumptions
+
+The design of `Imu` assumes the following:
+1. Data collected by the Imu arrives through a pull interface
 
 ### 3.2. Ports
 `Imu` has the following ports: 
@@ -65,28 +68,28 @@ The `getGyroscope` port handler does the following:
 #### 3.4.3. Run
 Ensures that the sensor has been properly setup and calls the `updateAccel` and `updateGyro` helper functions. 
 
-### 3.6. Helper Functions
+### 3.5. Helper Functions
 
-#### 3.6.1 read 
+#### 3.5.1 read 
 Returns the read data from the sensor.
 
-#### 3.6.2 setupReadRegister
+#### 3.5.2 setupReadRegister
 Returns the written data from the sensor in order for the data to be read. 
 
-#### 3.6.3 readRegisterBlock
+#### 3.5.3 readRegisterBlock
 Reads the data from the sensors registers. Returns a status of type `Drv::I2cStatus` if the read was successful or not. 
 
-#### 3.6.4 updateAccel
+#### 3.5.4 updateAccel
 Reads the data from the accelerometer registers of the sensor. Depending on the status of the read it will either store 
 the accelerometer data and emit it as telemetry while setting the measurement status as `OK`, or it will emit an event 
 that a telemetry error occurred while setting the measurement status as `FAILURE`. 
 
-#### 3.6.5 updateGyro
+#### 3.5.5 updateGyro
 Reads the data from the gyroscope registers of the sensor. Depending on the status of the read it will either store the
 gyroscope data and emit it as telemetry while setting the measurement status as `OK`, or it will emit an event that 
 telemetry error occurred while setting the measurement status as `FAILURE`.
 
-#### 3.6.6 powerOn
+#### 3.5.6 powerOn
 Activates the sensor, by setting the Power Management 1 register to 0. 
 
 ## 4. Sequence Diagram

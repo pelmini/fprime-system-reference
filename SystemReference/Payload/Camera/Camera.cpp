@@ -5,61 +5,92 @@
 // ======================================================================
 
 #include "Fw/Types/BasicTypes.hpp"
+#include "opencv2/opencv.hpp"
 #include <SystemReference/Payload/Camera/Camera.hpp>
-#include <SystemReference/Payload/Camera/Capture.h>
-
-const int MAX_EXPOSURE_TIME = 100000;
-//const int BUFFER_SIZE = 1024*1024*32;
 
 namespace Payload {
 
 // ----------------------------------------------------------------------
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
+const int MAX_EXPOSURE_TIME = 100000;
 
 Camera ::Camera(const char *const compName)
     : CameraComponentBase(compName), m_cmdCount(0), m_photoCount(0),
-      m_imgSize(0), m_fileDescriptor(-1), m_validCommand(true) {}
+      m_validCommand(true) {}
 
 void Camera ::init(const NATIVE_INT_TYPE queueDepth,
                    const NATIVE_INT_TYPE instance) {
   CameraComponentBase::init(queueDepth, instance);
 }
 
-bool Camera ::open(const char *dev_name) {
-  m_fileDescriptor = open_device(dev_name);
-  if ((m_fileDescriptor < 0) || (init_device(dev_name, m_fileDescriptor) != 0)) {
-    this->log_WARNING_HI_CameraOpenError(dev_name);
+bool Camera::open() {
+  // open default video camera based on device index
+  m_capture.open(0);
+  if (!m_capture.isOpened()) {
+    this->log_WARNING_HI_CameraOpenError();
     return false;
   }
   return true;
 }
-Camera ::~Camera() { close_device(m_fileDescriptor); }
+
+Camera ::~Camera() {
+  m_capture.release();
+}
 
 // ----------------------------------------------------------------------
 // Command handler implementations
 // ----------------------------------------------------------------------
 
 void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
-                                   Payload::CameraAction cameraAction) {
-  Fw::Buffer imgBuffer = readImage();
+                                    Payload::CameraAction cameraAction) {
+  cv::Mat frame;
+  RawImageData rawImageData;
+  bool saveStatus;
+  std::vector<uchar> buffer;
+  Fw::Buffer imgBuffer;
 
-  if (imgBuffer.getSize() == 0){
-    m_validCommand = false;
-  } else if (cameraAction == CameraAction::PROCESS) {
-    this->process_out(0, imgBuffer);
-    this->log_ACTIVITY_LO_CameraProcess();
-    this->tlmWrite_photosTaken(m_photoCount++);
-  } else if (cameraAction == CameraAction::SAVE) {
-//    int fd = ::open("/home/pi/image.raw", O_CREAT | O_WRONLY);
-//    write(fd, imgBuffer.getData(), imgBuffer.getSize());
-    this->save_out(0, imgBuffer);
-    this->log_ACTIVITY_LO_CameraSave();
-    this->tlmWrite_photosTaken(m_photoCount++);
-  } else {
-    m_validCommand = false;
+  while (true) {
+    m_capture >> frame;
+
+    if (frame.empty()) {
+      this->log_WARNING_HI_BlankFrame();
+      m_validCommand = false;
+      break;
+    }
+
+
+    // Set up buffer for image data
+    U32 imgSize = frame.rows*frame.cols*frame.channels();
+    memcpy(imgBuffer.getData(), frame.data, imgSize);
+    imgBuffer.setSize(imgSize);
+
+    rawImageData.setimgData(imgBuffer);
+    rawImageData.setheight(m_height);
+    rawImageData.setwidth(m_width);
+
+    if (cameraAction == CameraAction::PROCESS) {
+      this->log_ACTIVITY_LO_CameraProcess();
+      this->process_out(0, rawImageData);
+      this->tlmWrite_photosTaken(m_photoCount++);
+      break;
+    } else if (cameraAction == CameraAction::SAVE) {
+
+      // Debug
+      saveStatus = cv::imwrite("image.raw", frame);
+      if (!saveStatus) {
+        this->log_WARNING_HI_SaveError();
+      }
+      this->save_out(0, imgBuffer);
+      this->log_ACTIVITY_LO_CameraSave();
+      this->tlmWrite_photosTaken(m_photoCount++);
+      break;
+    } else {
+      m_validCommand = false;
+      this->log_WARNING_HI_InvalidTakeCmd();
+      break;
+    }
   }
-
   this->tlmWrite_commandNum(m_cmdCount++);
   this->cmdResponse_out(opCode, cmdSeq,
                         m_validCommand ? Fw::CmdResponse::OK
@@ -67,9 +98,11 @@ void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
 }
 
 void Camera ::ExposureTime_cmdHandler(const FwOpcodeType opCode,
-                                      const U32 cmdSeq, uint32_t time) {
+                                      const U32 cmdSeq, U32 time) {
   if (time <= MAX_EXPOSURE_TIME) {
-    set_exposure_time(time, m_fileDescriptor);
+    // Set camera exposure to manual mode
+    m_capture.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.25);
+    m_capture.set(cv::CAP_PROP_EXPOSURE, time);
     this->log_ACTIVITY_HI_ExposureTimeSet(time); // Make activity
     this->tlmWrite_commandNum(m_cmdCount++);
   } else {
@@ -82,73 +115,40 @@ void Camera ::ExposureTime_cmdHandler(const FwOpcodeType opCode,
 }
 
 void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
-                                   ImgResolution resolution, ColorFormat format) {
-  uint32_t V4L2Format = 0;
-  uint32_t width = 0;
-  uint32_t height = 0;
-
+                                   Payload::ImgResolution resolution,
+                                   Payload::ColorFormat format) {
+#if TGT_OS_TYPE_LINUX
   if (format == ColorFormat::YUYV) {
-    V4L2Format = V4L2_PIX_FMT_YUYV;
+    m_capture.set(cv::CAP_PROP_MODE, cv::CAP_MODE_YUYV);
   } else if (format == ColorFormat::RGB) {
-    V4L2Format = V4L2_PIX_FMT_RGB24;
+    m_capture.set(cv::CAP_PROP_MODE, cv::CAP_MODE_RGB);
   } else {
     this->log_WARNING_HI_InvalidFormatCmd(format);
     m_validCommand = false;
   }
-
+#endif
   if (resolution == ImgResolution::SIZE_640x480) {
-    width = 640;
-    height = 480;
+    m_width = 640;
+    m_height = 480;
+    m_capture.set(cv::CAP_PROP_FRAME_WIDTH, 640);
+    m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
   } else if (resolution == ImgResolution::SIZE_800x600) {
-    width = 800;
-    height = 600;
+    m_width = 800;
+    m_height = 600;
+    m_capture.set(cv::CAP_PROP_FRAME_WIDTH, 800);
+    m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, 600);
   } else {
     this->log_WARNING_HI_InvalidSizeCmd(resolution);
     m_validCommand = false;
   }
 
   if (m_validCommand) {
-    m_imgSize = set_format(height, width, V4L2Format, m_fileDescriptor);
-    if (m_imgSize < 0) {
-      this->log_WARNING_HI_SetFormatError(m_imgSize);
-    } else {
-      this->log_ACTIVITY_HI_SetImgConfig(resolution, format);
-    }
-
-    this->tlmWrite_commandNum(m_cmdCount++);
+    this->log_ACTIVITY_HI_SetImgConfig(resolution, format);
   }
+  this->tlmWrite_commandNum(m_cmdCount++);
   this->cmdResponse_out(opCode, cmdSeq,
                         m_validCommand ? Fw::CmdResponse::OK
                                        : Fw::CmdResponse::EXECUTION_ERROR);
-}
-
-// ----------------------------------------------------------------------
-// Helper Functions
-// ----------------------------------------------------------------------
-
-Fw::Buffer Camera::readImage() {
-  size_t readSize = 0;
-  int readStatus = 0;
-  Fw::Buffer imageBuffer = this->allocate_out(0, m_imgSize);
-
-  if(imageBuffer.getSize() == 0) {
-    return imageBuffer;
-  }
-
-  readStatus =
-      read_frame(imageBuffer.getData(), m_imgSize, &readSize, m_fileDescriptor);
-
-  if (readStatus == -1) {
-    this->log_WARNING_HI_invalidFrame(readSize);
-    imageBuffer.setSize(0);
-  } else if (readStatus == -2) {
-    this->log_WARNING_LO_retryRead();
-    imageBuffer.setSize(0);
-  } else if (readSize != m_imgSize) {
-    this->log_WARNING_LO_partialImgCapture(readSize);
-  }
-
-  return imageBuffer;
 }
 
 } // end namespace Payload

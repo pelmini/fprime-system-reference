@@ -46,9 +46,13 @@ namespace Gnc {
       //!
       void testGetAccelTlm();
 
-      //! Test to check Telemetry Error
+      //! Test to check event of bad telemetry request
       //!
-      void testError();
+      void testTlmError();
+
+      //! Test to check setup error
+      //!
+      void testSetupError();
 
     private:
 

@@ -49,6 +49,13 @@ module Gnc {
         severity warning high \
         format "Telemetry request failed with status {}" \
 
+        event SetUpError(
+            readStatus: Drv.I2cStatus @< the status of reading from device
+            writeStatus: Drv.I2cStatus @< the status of writing data to device
+        ) \
+        severity warning high \
+        format "Setup Error: read status {} does not match write status {}" \
+
         # ----------------------------------------------------------------------
         # Telemetry
         # ---------------------------------------------------------------------

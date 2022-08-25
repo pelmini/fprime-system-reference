@@ -172,14 +172,13 @@ module SystemReference {
   }
 
   instance camera: Payload.Camera base id 0x0E00 \
-    queue size Default.stackSize \
+    queue size Default.queueSize \
     stack size Default.stackSize \
     priority 100 \
     {
        phase Fpp.ToCpp.Phases.configComponents"""
-       const char* const devPath = "/dev/video0";
-       if (!camera.open(devPath)){
-           printf("Failed to open camera device %s\\n", devPath);
+       if (!camera.open()){
+           printf("Failed to open camera device\\n");
        }
        """
     }
@@ -210,10 +209,30 @@ module SystemReference {
     }
 
 
-   instance processImage: Payload.PhotoConverter base id 0x1000 \
+   instance imageProcessor: Payload.imageProcessor base id 0x1000 \
     queue size 30 \
     stack size Default.stackSize \
-    priority 100
+    priority 100 \
+    {
+            phase Fpp.ToCpp.Phases.configConstants """
+            enum {
+                MAX_FILE_SIZE = 1024*1024,
+                SIZE_OF_SIZE = 4,
+                };
+            """
+
+            phase Fpp.ToCpp.Phases.configComponents """
+            const char* const name = "/home/pi/image";
+            const char* const type = ".data";
+            saveImageBufferLogger.initLog(
+                name,
+                type,
+                ConfigConstants::saveImageBufferLogger::MAX_FILE_SIZE,
+                ConfigConstants::saveImageBufferLogger::SIZE_OF_SIZE
+            );
+            """
+
+    }
 
 
   # ----------------------------------------------------------------------

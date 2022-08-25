@@ -62,22 +62,24 @@ void Tester ::testGetGyroTlm(){
   }
 }
 
-void Tester::testError() {
-
-  this->m_writeStatus = Drv::I2cStatus::I2C_WRITE_ERR;
-  this->m_readStatus = Drv::I2cStatus::I2C_READ_ERR;
+void Tester::testTlmError() {
+  this->m_readStatus = Drv::I2cStatus::I2C_OTHER_ERR;
+  this->m_writeStatus = Drv::I2cStatus::I2C_OTHER_ERR;
   this->invoke_to_Run(0,0);
   ASSERT_EVENTS_SIZE(2);
   ASSERT_EVENTS_TelemetryError_SIZE(2);
   ASSERT_EQ(invoke_to_getAcceleration(0).getstatus(),Svc::MeasurementStatus::FAILURE);
+  ASSERT_EVENTS_TelemetryError(0, m_readStatus);
   ASSERT_EQ(invoke_to_getGyroscope(0).getstatus(),Svc::MeasurementStatus::FAILURE);
-  if (m_writeStatus != Drv::I2cStatus::I2C_OK) {
-    ASSERT_EVENTS_TelemetryError(0, m_writeStatus);
-  }
-  else {
-    ASSERT_EVENTS_TelemetryError(0, m_readStatus);
-  }
+  ASSERT_EVENTS_TelemetryError(0, m_readStatus);
+}
 
+void Tester::testSetupError() {
+  this->m_readStatus = Drv::I2cStatus::I2C_READ_ERR;
+  this->m_writeStatus = Drv::I2cStatus::I2C_WRITE_ERR;
+  this->invoke_to_Run(0,0);
+  ASSERT_EVENTS_SetUpError_SIZE(2);
+  ASSERT_EVENTS_SetUpError(0, m_readStatus, m_writeStatus);
 }
 // ----------------------------------------------------------------------
 // Handlers for typed from ports
@@ -91,7 +93,7 @@ Drv::I2cStatus Tester ::from_read_handler(const NATIVE_INT_TYPE portNum,
     // Fill buffer with random data
     U8 *const data = (U8*) serBuffer.getData();
     const U32 size = serBuffer.getSize();
-    FW_ASSERT(size == Imu::IMU_MAX_DATA_SIZE);
+    FW_ASSERT(size <= Imu::IMU_MAX_DATA_SIZE);
     for (U32 i = 0; i < size; ++i) {
       data[i] = STest::Pick::any();
     }
