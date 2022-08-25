@@ -212,8 +212,8 @@ module SystemReference {
    instance imageProcessor: Payload.imageProcessor base id 0x1000 \
     queue size 30 \
     stack size Default.stackSize \
-    priority 100
-     {
+    priority 100 \
+    {
             phase Fpp.ToCpp.Phases.configConstants """
             enum {
                 MAX_FILE_SIZE = 1024*1024,
@@ -232,7 +232,7 @@ module SystemReference {
             );
             """
 
-        }
+    }
 
 
   # ----------------------------------------------------------------------
