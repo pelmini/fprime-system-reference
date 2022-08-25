@@ -172,13 +172,12 @@ module SystemReference {
   }
 
   instance camera: Payload.Camera base id 0x0E00 \
-    queue size Default.stackSize \
+    queue size Default.queueSize \
     stack size Default.stackSize \
     priority 100 \
     {
        phase Fpp.ToCpp.Phases.configComponents"""
-       const char* const devPath = "/dev/video0";
-       if (!camera.open(devPath)){
+       if (!camera.open()){
            printf("Failed to open camera device %s\\n", devPath);
        }
        """
@@ -210,7 +209,7 @@ module SystemReference {
     }
 
 
-   instance processImage: Payload.PhotoConverter base id 0x1000 \
+   instance imageProcessor: Payload.imageProcessor base id 0x1000 \
     queue size 30 \
     stack size Default.stackSize \
     priority 100

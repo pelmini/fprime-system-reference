@@ -11,3 +11,8 @@ set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/PhotoConverter.cpp"
         )
 register_fprime_module()
+if (NOT DEFINED FPRIME_PRESCAN)
+get_module_name("${CMAKE_CURRENT_LIST_DIR}")
+target_link_libraries(${MODULE_NAME} PUBLIC ${OpenCV_LIBS})
+endif()
+

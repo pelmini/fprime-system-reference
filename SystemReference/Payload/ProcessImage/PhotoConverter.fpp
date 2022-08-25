@@ -11,7 +11,7 @@ module Payload {
         @ Sends photo to another component to get processed
         async input port preProcess: Fw.BufferSend
 
-        @ Save photo to disk via buffer logger
+        @ Save photo to buffer logger
         output port postProcess: Fw.BufferSend
 
         # ----------------------------------------------------------------------
@@ -56,7 +56,7 @@ module Payload {
         @ Event where error occurred when setting up camera
         event ProcessError \
         severity warning high \
-        format "Process Failure" \
+        format "Process Failure: Failed to decode image" \
 
         @ Event file format has been set
         event SetFileFormat(
@@ -71,6 +71,11 @@ module Payload {
             ) \
         severity warning high \
         format "{} is an invalid file format" \
+
+        @ Save image error event
+        event SaveError \
+        severity warning high \
+        format "Failed to save image" \
 
         # ----------------------------------------------------------------------
         # Telemetry

@@ -11,12 +11,12 @@ module Payload {
         # ----------------------------------------------------------------------
 
         @ Sends photo to another component to get processed
-        output port process: Fw.BufferSend
+        output port process: ImageData
 
         @ Allocates memory to hold photo buffers
         output port allocate: Fw.BufferGet
 
-        @ Save photo to disk via buffer logger
+        @ Save photo to disk
         output port $save: Fw.BufferSend
 
         # ----------------------------------------------------------------------
@@ -71,11 +71,9 @@ module Payload {
         # ----------------------------------------------------------------------
 
         @ Event where error occurred when setting up camera
-        event CameraOpenError(
-            device: string size 256 @< Device name
-            ) \
+        event CameraOpenError \
         severity warning high \
-        format "{} setup failed" \
+        format "Camera failed to open" \
 
         event CameraSave \
         severity activity low \
@@ -98,7 +96,7 @@ module Payload {
             $format: ColorFormat @< Image format
             ) \
         severity activity high \
-        format "The image has size {}, and the format {}" \
+        format "The image has size {}, and the color format {}" \
 
         @ Error event where given format for image configuration is invalid
         event InvalidFormatCmd(
@@ -121,27 +119,17 @@ module Payload {
         severity warning high \
         format "{} is an invalid time"
 
-        event SetFormatError(
-            imgSize : U32 @< return image size from set format function
-            ) \
+        event BlankFrame \
         severity warning high \
-        format "Set format function failed with error code {}" \
+        format "Error: Blank frame was grabbed"
 
-        event invalidFrame(
-            readSize: U32 @< read size
-        ) \
+        event SaveError \
         severity warning high \
-        format "Read frame failed with read size {}" \
+        format "Failed to save image"
 
-        event retryRead \
-        severity warning low \
-        format "Read of image frame needs to be redone" \
-
-        event partialImgCapture(
-             readSize : U32 @< size of image that has been read so far
-        ) \
-        severity warning low \
-        format "Image of size {} was partially captured" \
+        event InvalidTakeCmd \
+        severity warning high \
+        format "Invalid camera take command"
 
         # ----------------------------------------------------------------------
         # Telemetry

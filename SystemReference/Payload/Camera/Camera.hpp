@@ -8,10 +8,8 @@
 #define Camera_HPP
 
 #include "SystemReference/Payload/Camera/CameraComponentAc.hpp"
-#include "Fw/Types/MemAllocator.hpp"
-extern "C" {
-#include "SystemReference/Payload/Camera/Capture.h"
-};
+#include <opencv2/opencv.hpp>
+
 
 namespace Payload {
 
@@ -38,11 +36,14 @@ namespace Payload {
           const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
       );
 
-      bool open(const char *dev_name);
+      //! Startup camera device
+      //!
+      bool open();
+
+
       //! Destroy object Camera
       //!
       ~Camera();
-
 
     PRIVATE:
 
@@ -50,22 +51,22 @@ namespace Payload {
       // Command handler implementations
       // ----------------------------------------------------------------------
 
-       //! Implementation for SetAction command handler
-       //! Set camera action
-       void TakeAction_cmdHandler(
+      //! Implementation for TakeAction command handler
+      //! Set the action that camera should take
+      void TakeAction_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
-          const U32 cmdSeq,          /*!< The command sequence number*/
-          Payload::CameraAction cameraAction /*!< State where camera either
-                                              * saves or takes photo */
-       );
-
+          const U32 cmdSeq, /*!< The command sequence number*/
+          Payload::CameraAction cameraAction /*!< 
+          State where camera either saves or takes photo
+          */
+      );
 
       //! Implementation for ExposureTime command handler
-      //! Command to set the exposure time
+      //! Set the exposure time
       void ExposureTime_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          uint32_t time /*!< The exposure time*/
+          U32 time 
       );
 
       //! Implementation for ConfigImg command handler
@@ -73,22 +74,17 @@ namespace Payload {
       void ConfigImg_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          ImgResolution resolution, /*!< The image size*/
-          ColorFormat format /*!< The image format*/
+          Payload::ImgResolution resolution, 
+          Payload::ColorFormat format 
       );
-
-      // ----------------------------------------------------------------------
-      // Helper Functions
-      // ----------------------------------------------------------------------
-
-      Fw::Buffer readImage();
 
       U32 m_cmdCount;
       U32 m_photoCount;
-      NATIVE_INT_TYPE m_imgSize;
       bool m_validCommand;
-      NATIVE_INT_TYPE m_fileDescriptor;
-
+      cv::VideoCapture m_capture;
+      cv::Mat m_imgFrame;
+      U32 m_width;
+      U32 m_height;
     };
 
 } // end namespace Payload
