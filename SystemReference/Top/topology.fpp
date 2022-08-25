@@ -143,12 +143,8 @@ module SystemReference {
 
     connections Camera {
          camera.$save -> saveImageBufferLogger.bufferSendIn
-         camera.process -> imageProcessor.preProcess
+         camera.process -> imageProcessor.ImageData
          camera.allocate -> fileUplinkBufferManager.bufferGetCallee
-    }
-
-    connections SaveImage {
-        saveImageBufferLogger.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
     }
 
     connections ProcessImage {
