@@ -209,7 +209,7 @@ module SystemReference {
     }
 
 
-   instance imageProcessor: Payload.imageProcessor base id 0x1000 \
+   instance imageProcessor: Payload.ImageProcessor base id 0x1000 \
     queue size 30 \
     stack size Default.stackSize \
     priority 100 \
@@ -221,12 +221,13 @@ module SystemReference {
                 };
             """
 
+            # Ask for revision
             phase Fpp.ToCpp.Phases.configComponents """
-            const char* const name = "/home/pi/image";
-            const char* const type = ".data";
+            const char* const fileName = "/home/pi/image";
+            const char* const fileType = ".data";
             saveImageBufferLogger.initLog(
-                name,
-                type,
+                fileName,
+                fileType,
                 ConfigConstants::saveImageBufferLogger::MAX_FILE_SIZE,
                 ConfigConstants::saveImageBufferLogger::SIZE_OF_SIZE
             );

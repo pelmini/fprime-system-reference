@@ -117,16 +117,16 @@ void Camera ::ExposureTime_cmdHandler(const FwOpcodeType opCode,
 void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
                                    Payload::ImgResolution resolution,
                                    Payload::ColorFormat format) {
-#if TGT_OS_TYPE_LINUX
+//#if TGT_OS_TYPE_LINUX
   if (format == ColorFormat::YUYV) {
-    m_capture.set(cv::CAP_PROP_MODE, cv::CAP_MODE_YUYV);
+    m_capture.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('Y', 'U', 'Y', 'V'));
   } else if (format == ColorFormat::RGB) {
-    m_capture.set(cv::CAP_PROP_MODE, cv::CAP_MODE_RGB);
+    m_capture.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('R', 'G', 'B', '3'));
   } else {
     this->log_WARNING_HI_InvalidFormatCmd(format);
     m_validCommand = false;
   }
-#endif
+//#endif
   if (resolution == ImgResolution::SIZE_640x480) {
     m_width = 640;
     m_height = 480;
