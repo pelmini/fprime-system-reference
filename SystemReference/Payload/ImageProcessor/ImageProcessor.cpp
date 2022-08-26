@@ -34,7 +34,20 @@ void ImageProcessor ::imageData_handler(const NATIVE_INT_TYPE portNum,
 
   Fw::Buffer imgBuffer;
   std::vector<uchar> buffer;
-  cv::Mat image(ImageData.getheight(), ImageData.getwidth(), CV_8UC3, (void *)ImageData.getimgData().getData());
+  int type = 0;
+
+  switch (ImageData.getcolorFormat().e){
+    case Payload::ColorFormat::YUYV:
+      type = CV_8UC2;
+      break;
+    case Payload::ColorFormat::RGB:
+      type = CV_8UC3;
+      break;
+    default:
+      FW_ASSERT(0);
+  }
+
+  cv::Mat image(ImageData.getheight(), ImageData.getwidth(), type, (void *)ImageData.getimgData().getData());
 
   if (!image.data) {
     this->log_WARNING_HI_ProcessError();

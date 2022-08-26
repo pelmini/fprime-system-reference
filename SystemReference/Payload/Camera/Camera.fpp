@@ -1,7 +1,6 @@
 module Payload {
 
     enum ImgResolution { SIZE_640x480 = 0 , SIZE_800x600 = 1 }
-    enum ColorFormat { RGB = 0, YUYV = 1 }
     enum CameraAction { SAVE = 0, PROCESS = 1 }
 
     @ Component for Camera
@@ -63,7 +62,8 @@ module Payload {
         @ Command to configure image
         async command ConfigImg(
             resolution: ImgResolution
-            $format: ColorFormat) \
+            $format: ColorFormat
+            ) \
         opcode 0x03
 
         # ----------------------------------------------------------------------
