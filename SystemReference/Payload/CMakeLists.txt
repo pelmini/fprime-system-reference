@@ -1,4 +1,4 @@
-find_package(OpenCV REQUIRED)
+find_package(OpenCV REQUIRED PATHS "${CMAKE_CURRENT_LIST_DIR}/opencv/opt/opencv-4.1.0")
 #Ports
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ImagePort")
 # Components
