@@ -3,6 +3,7 @@ if(DEFINED SYSTEM_REFERENCE_OPENCV_PATH)
 endif()
 if (NOT DEFINED FPRIME_PRESCAN)
     find_package(OpenCV REQUIRED)
+    set(OpenCV_STATIC ON)
 endif()
 
 #Ports
