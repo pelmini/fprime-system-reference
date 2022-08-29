@@ -62,11 +62,13 @@ void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
       m_validCommand = false;
       break;
     }
-    cv::imshow("image", frame);
+//    cv::imshow("image", frame);
 
 
     // Set up buffer for image data
     U32 imgSize = frame.rows*frame.cols*frame.channels();
+    imgBuffer = allocate_out(0, imgSize);
+    FW_ASSERT(imgBuffer.getSize() > 0); 
     memcpy(imgBuffer.getData(), frame.data, imgSize);
     imgBuffer.setSize(imgSize);
 
