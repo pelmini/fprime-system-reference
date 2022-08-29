@@ -34,7 +34,7 @@ void ImageProcessor ::imageData_handler(const NATIVE_INT_TYPE portNum,
 
 //  Fw::Buffer imgBuffer;
   std::vector<uchar> buffer(10*1024*1024);
-  int type = 0;
+  I32 type = 0;
 
   cv::Mat image(ImageData.getheight(), ImageData.getwidth(), type, (void *)ImageData.getimgData().getData());
 
