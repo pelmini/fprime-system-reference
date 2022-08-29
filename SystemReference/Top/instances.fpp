@@ -212,13 +212,13 @@ module SystemReference {
    instance imageProcessor: Payload.ImageProcessor base id 0x1000 \
     queue size 30 \
     stack size Default.stackSize \
-    priority 100 \
+    priority 100 
 
-    instance processedImageBufferLogger: Svc.BufferLogger base id 0x0F00 \
-     queue size 30 \
-     stack size Default.stackSize \
-     priority 100 \
-     {
+   instance processedImageBufferLogger: Svc.BufferLogger base id 0x1100 \
+    queue size 30 \
+    stack size Default.stackSize \
+    priority 100 \
+    {
         phase Fpp.ToCpp.Phases.configConstants """
         enum {
             MAX_FILE_SIZE = 1024*1024,

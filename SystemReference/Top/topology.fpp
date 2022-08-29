@@ -145,7 +145,7 @@ module SystemReference {
          camera.allocate -> fileUplinkBufferManager.bufferGetCallee
          camera.$save -> saveImageBufferLogger.bufferSendIn
 
-         saveImageBufferLogger.bufferSendOut -> fileUpLinkBufferManager.bufferSendIn
+         saveImageBufferLogger.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
 
          camera.process->imageProcessor.imageData
          imageProcessor.postProcess -> processedImageBufferLogger.bufferSendIn

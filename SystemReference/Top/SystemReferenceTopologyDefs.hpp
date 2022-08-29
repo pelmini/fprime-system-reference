@@ -53,6 +53,7 @@ namespace SystemReference {
     namespace rateGroup3Comp { enum { WARN = 3, FATAL = 5 }; }
     namespace saveImageBufferLogger { enum {WARN = 3, FATAL = 5}; }
     namespace imageProcessor { enum {WARN = 3, FATAL = 5}; }
+    namespace processedImageBufferLogger { enum {WARN = 3, FATAL = 5}; }
   }
 
 }
