@@ -1,7 +1,7 @@
 
 module Gnc {
 
-    @ Component for IMU
+    @ Component for IMU data is received using a poll model
     passive component Imu {
         # ----------------------------------------------------------------------
         # General ports

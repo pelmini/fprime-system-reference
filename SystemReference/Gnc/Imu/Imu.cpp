@@ -48,7 +48,7 @@ void Imu::setup() {
 
   // Set gyro range to +-250 deg/s
   data[0] = GYRO_CONFIG_ADDR;
-  data[1] = 0x00;
+  data[1] = 0;
 
   writeStatus = write_out(0, GYRO_CONFIG_ADDR, buffer);
   readStatus = read_out(0, GYRO_CONFIG_ADDR, buffer);
@@ -59,7 +59,7 @@ void Imu::setup() {
 
   // Set accel range to +- 2g
   data[0] = ACCEL_CONFIG_ADDR;
-  data[1] = 0x00;
+  data[1] = 0;
   writeStatus = write_out(0, ACCEL_CONFIG_ADDR, buffer);
   readStatus = read_out(0, ACCEL_CONFIG_ADDR, buffer);
 
