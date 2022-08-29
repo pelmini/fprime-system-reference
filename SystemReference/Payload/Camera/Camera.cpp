@@ -68,7 +68,7 @@ void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
     // Set up buffer for image data
     U32 imgSize = frame.rows*frame.cols*frame.channels();
     imgBuffer = allocate_out(0, imgSize);
-    FW_ASSERT(imgBuffer.getSize() > 0); 
+    FW_ASSERT(imgBuffer.getSize() > 0);
     memcpy(imgBuffer.getData(), frame.data, imgSize);
     imgBuffer.setSize(imgSize);
 
@@ -84,10 +84,10 @@ void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
     } else if (cameraAction == CameraAction::SAVE) {
 
       // Debug
-      saveStatus = cv::imwrite("image.raw", frame);
-      if (!saveStatus) {
-        this->log_WARNING_HI_SaveError();
-      }
+//      saveStatus = cv::imwrite("image.raw", frame);
+//      if (!saveStatus) {
+//        this->log_WARNING_HI_SaveError();
+//      }
       this->save_out(0, imgBuffer);
       this->log_ACTIVITY_LO_CameraSave();
       this->tlmWrite_photosTaken(m_photoCount++);
