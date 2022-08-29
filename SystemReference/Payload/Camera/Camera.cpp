@@ -44,12 +44,14 @@ Camera ::~Camera() {
 
 void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
                                     Payload::CameraAction cameraAction) {
-  cv::Mat frame;
   RawImageData rawImageData;
   bool saveStatus;
   std::vector<uchar> buffer;
   Fw::Buffer imgBuffer;
+  cv::Mat frame;
 
+  // read initial frame to prevent failing on first iteration of loop
+  m_capture.read(frame);
   while (true) {
     m_capture >> frame;
 
@@ -58,6 +60,7 @@ void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
       m_validCommand = false;
       break;
     }
+    cv::imshow("image", frame);
 
 
     // Set up buffer for image data
