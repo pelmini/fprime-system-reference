@@ -32,7 +32,7 @@ ImageProcessor ::~ImageProcessor() {}
 void ImageProcessor ::imageData_handler(const NATIVE_INT_TYPE portNum,
                                         Payload::RawImageData &ImageData) {
 
-  Fw::Buffer imgBuffer;
+//  Fw::Buffer imgBuffer;
   std::vector<uchar> buffer;
   int type = 0;
 
@@ -56,15 +56,15 @@ void ImageProcessor ::imageData_handler(const NATIVE_INT_TYPE portNum,
   cv::imencode(m_fileFormat, image, buffer);
 
   //debug purposes
-  char *name = "image";
-  cv::imwrite(strcat(name, m_fileFormat), image);
+//  char *name = "image";
+//  cv::imwrite(strcat(name, m_fileFormat), image);
+//  FW_ASSERT(imgBuffer.getSize() >= buffer.size());
 
-  FW_ASSERT(imgBuffer.getSize() >= buffer.size());
+  memcpy(ImageData.getimgData().getData(), buffer.data(), buffer.size());
+  const_cast<Fw::Buffer &>(ImageData.getimgData()).setSize(buffer.size());
+//  imgBuffer.setSize(buffer.size());
 
-  memcpy(imgBuffer.getData(), buffer.data(), buffer.size());
-  imgBuffer.setSize(buffer.size());
-
-  this->postProcess_out(0, imgBuffer);
+  this->postProcess_out(0, const_cast<Fw::Buffer &>(ImageData.getimgData()));
 }
 
 // ----------------------------------------------------------------------
