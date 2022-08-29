@@ -63,7 +63,7 @@ public:
               fileFormat /*!< Type of file format to convert to*/
       );
 
-  const char *m_fileFormat;
+  std::string m_fileFormat;
 };
 
 } // end namespace Payload

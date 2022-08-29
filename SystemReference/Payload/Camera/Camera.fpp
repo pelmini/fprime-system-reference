@@ -15,7 +15,7 @@ module Payload {
         @ Allocates memory to hold photo buffers
         output port allocate: Fw.BufferGet
 
-        @ Save photo to disk
+        @ Save photo to disk, send image to buffer logger
         output port $save: Fw.BufferSend
 
         # ----------------------------------------------------------------------

@@ -33,19 +33,8 @@ void ImageProcessor ::imageData_handler(const NATIVE_INT_TYPE portNum,
                                         Payload::RawImageData &ImageData) {
 
 //  Fw::Buffer imgBuffer;
-  std::vector<uchar> buffer;
+  std::vector<uchar> buffer(10*1024*1024);
   int type = 0;
-
-  switch (ImageData.getcolorFormat().e){
-    case Payload::ColorFormat::YUYV:
-      type = CV_8UC2;
-      break;
-    case Payload::ColorFormat::RGB:
-      type = CV_8UC3;
-      break;
-    default:
-      FW_ASSERT(0);
-  }
 
   cv::Mat image(ImageData.getheight(), ImageData.getwidth(), type, (void *)ImageData.getimgData().getData());
 
@@ -53,15 +42,15 @@ void ImageProcessor ::imageData_handler(const NATIVE_INT_TYPE portNum,
     this->log_WARNING_HI_ProcessError();
   }
 
-  cv::imencode(m_fileFormat, image, buffer);
+//  cv::imencode(m_fileFormat, image, buffer);
 
   //debug purposes
 //  char *name = "image";
 //  cv::imwrite(strcat(name, m_fileFormat), image);
 //  FW_ASSERT(imgBuffer.getSize() >= buffer.size());
 
-  memcpy(ImageData.getimgData().getData(), buffer.data(), buffer.size());
-  const_cast<Fw::Buffer &>(ImageData.getimgData()).setSize(buffer.size());
+//  memcpy(ImageData.getimgData().getData(), buffer.data(), buffer.size());
+//  const_cast<Fw::Buffer &>(ImageData.getimgData()).setSize(buffer.size());
 //  imgBuffer.setSize(buffer.size());
 
   this->postProcess_out(0, const_cast<Fw::Buffer &>(ImageData.getimgData()));
