@@ -196,7 +196,7 @@ module SystemReference {
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
-        const char* const name = "/home/pi/rawImage";
+        const char* const name = "/home/pi/saveImage";
         const char* const type = ".data";
         saveImageBufferLogger.initLog(
             name,
@@ -213,28 +213,31 @@ module SystemReference {
     queue size 30 \
     stack size Default.stackSize \
     priority 100 \
-    {
-            phase Fpp.ToCpp.Phases.configConstants """
-            enum {
-                MAX_FILE_SIZE = 1024*1024,
-                SIZE_OF_SIZE = 4,
-                };
-            """
 
-            # Ask for revision
-            phase Fpp.ToCpp.Phases.configComponents """
-            const char* const fileName = "/home/pi/image";
-            const char* const fileType = ".data";
-            saveImageBufferLogger.initLog(
-                fileName,
-                fileType,
-                ConfigConstants::saveImageBufferLogger::MAX_FILE_SIZE,
-                ConfigConstants::saveImageBufferLogger::SIZE_OF_SIZE
-            );
-            """
+    instance processedImageBufferLogger: Svc.BufferLogger base id 0x0F00 \
+     queue size 30 \
+     stack size Default.stackSize \
+     priority 100 \
+     {
+        phase Fpp.ToCpp.Phases.configConstants """
+        enum {
+            MAX_FILE_SIZE = 1024*1024,
+            SIZE_OF_SIZE = 4,
+            };
+        """
+
+        phase Fpp.ToCpp.Phases.configComponents """
+        const char* const filename = "/home/pi/ProcessedImage";
+        const char* const filetype = ".data";
+        saveImageBufferLogger.initLog(
+            filename,
+            filetype,
+            ConfigConstants::saveImageBufferLogger::MAX_FILE_SIZE,
+            ConfigConstants::saveImageBufferLogger::SIZE_OF_SIZE
+        );
+        """
 
     }
-
 
   # ----------------------------------------------------------------------
   # Queued component instances

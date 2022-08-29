@@ -50,7 +50,7 @@ module SystemReference {
     instance camera
     instance saveImageBufferLogger
     instance imageProcessor
-
+    instance processedImageBufferLogger
     # ----------------------------------------------------------------------
     # Pattern graph specifiers
     # ----------------------------------------------------------------------
@@ -142,12 +142,15 @@ module SystemReference {
     }
 
     connections Camera {
-         camera.$save -> saveImageBufferLogger.bufferSendIn
          camera.allocate -> fileUplinkBufferManager.bufferGetCallee
-    }
+         camera.$save -> saveImageBufferLogger.bufferSendIn
 
-    connections ProcessImage {
-        imageProcessor.postProcess -> fileUplinkBufferManager.bufferSendIn
+         saveImageBufferLogger.bufferSendOut -> fileUpLinkBufferManager.bufferSendIn
+
+         camera.process->imageProcessor.imageData
+         imageProcessor.postProcess -> processedImageBufferLogger.bufferSendIn
+         processedImageBufferLogger.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
+
     }
 
   }
