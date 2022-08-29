@@ -227,13 +227,13 @@ module SystemReference {
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
-        const char* const filename = "/home/pi/ProcessedImage";
+        const char* const filename = "/home/pi/processedImage";
         const char* const filetype = ".data";
-        saveImageBufferLogger.initLog(
+        processedImageBufferLogger.initLog(
             filename,
             filetype,
-            ConfigConstants::saveImageBufferLogger::MAX_FILE_SIZE,
-            ConfigConstants::saveImageBufferLogger::SIZE_OF_SIZE
+            ConfigConstants::processedImageBufferLogger::MAX_FILE_SIZE,
+            ConfigConstants::processedImageBufferLogger::SIZE_OF_SIZE
         );
         """
 

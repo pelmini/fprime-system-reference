@@ -76,7 +76,7 @@ void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
     rawImageData.setimgData(imgBuffer);
     rawImageData.setheight(frame.rows);
     rawImageData.setwidth(frame.cols);
-    rawImageData.setcolorFormat(frame.type());
+    rawImageData.settypeFormat(frame.type());
 
     if (cameraAction == CameraAction::PROCESS) {
       this->log_ACTIVITY_LO_CameraProcess();
