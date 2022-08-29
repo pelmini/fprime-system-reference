@@ -51,9 +51,11 @@ void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
   cv::Mat frame;
 
   // read initial frame to prevent failing on first iteration of loop
-  m_capture.read(frame);
+//  m_capture.read(frame);
   while (true) {
-    m_capture >> frame;
+//    m_capture >> frame;
+    m_capture.read(frame);
+//    bool frameStatus = m_capture.read(frame);
 
     if (frame.empty()) {
       this->log_WARNING_HI_BlankFrame();
