@@ -9,6 +9,7 @@
 #include <SystemReference/Payload/ImageProcessor/ImageProcessor.hpp>
 #include <opencv2/opencv.hpp>
 
+static const NATIVE_INT_TYPE BUFFER_SIZE = 10*1024*1024;
 namespace Payload {
 
 // ----------------------------------------------------------------------
@@ -32,26 +33,18 @@ ImageProcessor ::~ImageProcessor() {}
 void ImageProcessor ::imageData_handler(const NATIVE_INT_TYPE portNum,
                                         Payload::RawImageData &ImageData) {
 
-//  Fw::Buffer imgBuffer;
-  std::vector<uchar> buffer(10*1024*1024);
-  I32 type = 0;
+  std::vector<uchar> buffer(BUFFER_SIZE);
 
-  cv::Mat image(ImageData.getheight(), ImageData.getwidth(), type, (void *)ImageData.getimgData().getData());
+  cv::Mat image(ImageData.getheight(), ImageData.getwidth(), ImageData.getpixelFormat(), (void *)ImageData.getimgData().getData());
 
   if (!image.data) {
     this->log_WARNING_HI_ProcessError();
   }
 
-//  cv::imencode(m_fileFormat, image, buffer);
+  cv::imencode(m_fileFormat, image, buffer);
 
-  //debug purposes
-//  char *name = "image";
-//  cv::imwrite(strcat(name, m_fileFormat), image);
-//  FW_ASSERT(imgBuffer.getSize() >= buffer.size());
-
-//  memcpy(ImageData.getimgData().getData(), buffer.data(), buffer.size());
-//  const_cast<Fw::Buffer &>(ImageData.getimgData()).setSize(buffer.size());
-//  imgBuffer.setSize(buffer.size());
+  memcpy(ImageData.getimgData().getData(), buffer.data(), buffer.size());
+  const_cast<Fw::Buffer &>(ImageData.getimgData()).setSize(buffer.size());
 
   this->postProcess_out(0, const_cast<Fw::Buffer &>(ImageData.getimgData()));
 }
@@ -63,16 +56,20 @@ void ImageProcessor ::imageData_handler(const NATIVE_INT_TYPE portNum,
 void ImageProcessor ::SetFormat_cmdHandler(const FwOpcodeType opCode,
                                            const U32 cmdSeq,
                                            Payload::FileFormat fileFormat) {
-  bool validFormat = true;
+  bool validFormat = false;
 
-  if (fileFormat == FileFormat::JPG) {
-    m_fileFormat = ".jpg";
-  } else if (fileFormat == FileFormat::PNG) {
-    m_fileFormat = ".png";
-  } else {
-    this->log_WARNING_HI_InvalidFormatCmd(fileFormat);
-    validFormat = false;
-  }
+  switch (fileFormat.e){
+      case FileFormat::JPG:
+      m_fileFormat = ".jpg";
+      validFormat = true;
+      break;
+    case FileFormat::PNG:
+      m_fileFormat = ".png";
+      validFormat = true;
+      break;
+    default:
+      FW_ASSERT(0);
+    }
 
   this->log_ACTIVITY_HI_SetFileFormat(fileFormat);
   this->cmdResponse_out(opCode, cmdSeq,

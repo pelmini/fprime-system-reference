@@ -183,6 +183,7 @@ module SystemReference {
        """
     }
 
+  # saves two images before closing
   instance saveImageBufferLogger: Svc.BufferLogger base id 0x0F00 \
     queue size 30 \
     stack size Default.stackSize \
@@ -196,7 +197,7 @@ module SystemReference {
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
-        const char* const name = "/home/pi/saveImage";
+        const char* const name = "/home/pi/images/save/saveImage";
         const char* const type = ".data";
         saveImageBufferLogger.initLog(
             name,
@@ -227,7 +228,7 @@ module SystemReference {
         """
 
         phase Fpp.ToCpp.Phases.configComponents """
-        const char* const filename = "/home/pi/processedImage";
+        const char* const filename = "/home/pi/images/process/processedImage";
         const char* const filetype = ".data";
         processedImageBufferLogger.initLog(
             filename,
