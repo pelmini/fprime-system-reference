@@ -25,7 +25,9 @@ void Imu ::init(const NATIVE_INT_TYPE instance) {
 
 void Imu::powerOn(){
     Fw::Buffer buffer;
+    Drv::I2cStatus writePowerStatus;
     U8 data[IMU_REG_SIZE*2];
+    // check the power status
     buffer.setData(data);
     buffer.setSize(sizeof(data));
 
@@ -33,13 +35,16 @@ void Imu::powerOn(){
     data[0] = POWER_MGMT_ADDR;
     data[1] = 0;
     // Take MPU6050 out of sleep mode
-    write_out(0, I2C_DEV0_ADDR, buffer);
+    writePowerStatus = write_out(0, I2C_DEV0_ADDR, buffer);
+    if(writePowerStatus != Drv::I2cStatus::I2C_OK){
+      this->log_WARNING_HI_PowerModeError(writePowerStatus);
+    }
 }
 
 void Imu::setup() {
   Fw::Buffer buffer;
-  Drv::I2cStatus readStatus;
-  Drv::I2cStatus writeStatus;
+  Drv::I2cStatus writeAccelStatus;
+  Drv::I2cStatus writeGyroStatus;
   U8 data[IMU_REG_SIZE*2];
   buffer.setData(data);
   buffer.setSize(sizeof(data));
@@ -50,21 +55,19 @@ void Imu::setup() {
   data[0] = GYRO_CONFIG_ADDR;
   data[1] = 0;
 
-  writeStatus = write_out(0, GYRO_CONFIG_ADDR, buffer);
-  readStatus = read_out(0, GYRO_CONFIG_ADDR, buffer);
+  writeGyroStatus = write_out(0, I2C_DEV0_ADDR, buffer);
 
-  if (readStatus != writeStatus){
-    this->log_WARNING_HI_SetUpError(readStatus, writeStatus);
+  if (writeGyroStatus != Drv::I2cStatus::I2C_OK){
+    this->log_WARNING_HI_SetUpConfigError(writeGyroStatus);
   }
 
   // Set accel range to +- 2g
   data[0] = ACCEL_CONFIG_ADDR;
   data[1] = 0;
-  writeStatus = write_out(0, ACCEL_CONFIG_ADDR, buffer);
-  readStatus = read_out(0, ACCEL_CONFIG_ADDR, buffer);
+  writeAccelStatus = write_out(0, I2C_DEV0_ADDR, buffer);
 
-  if (readStatus != writeStatus){
-    this->log_WARNING_HI_SetUpError(readStatus, writeStatus);
+  if (writeAccelStatus != Drv::I2cStatus::I2C_OK){
+    this->log_WARNING_HI_PowerModeError(writeAccelStatus);
   }
 }
 

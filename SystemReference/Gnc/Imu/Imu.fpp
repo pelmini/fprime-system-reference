@@ -1,7 +1,7 @@
 
 module Gnc {
 
-    @ Component for IMU data is received using a poll model
+    @ Component for receiving IMU data via poll method
     passive component Imu {
         # ----------------------------------------------------------------------
         # General ports
@@ -49,13 +49,19 @@ module Gnc {
         severity warning high \
         format "Telemetry request failed with status {}" \
 
-        event SetUpError(
-            readStatus: Drv.I2cStatus @< the status of reading from device
+        @ Error where configuration failed
+        event SetUpConfigError(
             writeStatus: Drv.I2cStatus @< the status of writing data to device
         ) \
         severity warning high \
-        format "Setup Error: read status {} does not match write status {}" \
+        format "Setup Error: Write status failed with code {}" \
 
+        @ Error where device was not taken out of sleep mode
+        event PowerModeError(
+            writeStatus: Drv.I2cStatus @< the status of writing data to device
+        ) \
+        severity warning high \
+        format "Setup Error: Power mode failed to set up with write code {}" \
         # ----------------------------------------------------------------------
         # Telemetry
         # ---------------------------------------------------------------------
