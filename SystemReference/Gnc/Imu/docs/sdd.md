@@ -17,7 +17,12 @@ The full scale range of the digital output from the accelerometer can be adjuste
 More information can be found from the [data sheet](https://learn.adafruit.com/mpu6050-6-dof-accelerometer-and-gyro/downloads), 
 provided by the manufacturer.
 
-## 2. Requirements
+## 2. Assumptions
+The design of `Imu` assumes the following:
+1. Data collected by the Imu arrives through a pull interface
+
+
+## 3. Requirements
 | Requirement ID  | Description                                                                                      | Verification Method |
 |-----------------|--------------------------------------------------------------------------------------------------|---------------------|
 | GNC-IMU-001     | The Gnc::Imu component shall produce telemetry of accelerometer data at 1Hz                      | Unit Test           |
@@ -25,17 +30,14 @@ provided by the manufacturer.
 | GNC-IMU-003     | The Gnc::Imu component shall be able to communicate with the MPU6050 over I2C                    | Inspection          |
 | GNC-IMU-004     | The Gnc::IMu component shall produce the latest gyroscope and accelerometer data via a port call | Unit Test           |
 
-## 3. Design 
+## 4. Design 
+
+### 4.1. Component Diagram
 The diagram below shows the `Imu` component.
 
 ![IMU Design](./img/imu.png)
 
-### 3.1. Assumptions
-
-The design of `Imu` assumes the following:
-1. Data collected by the Imu arrives through a pull interface
-
-### 3.2. Ports
+### 4.2. Ports
 `Imu` has the following ports: 
 
 | Kind            | Name              | Port Type         | Usage                                              |
@@ -46,56 +48,56 @@ The design of `Imu` assumes the following:
 | `guarded input` | `getAcceleration` | `Gnc.ImuDataPort` | Port that returns acceleration data                |
 | `guarded input` | `run`             | `Svc.Sched`       | Port that updates accelerometer and gyroscope data |
 
-### 3.3. State
+### 4.3. State
 `Imu` maintains the following state:
 1. `m_gyro`: An instance of `Gnc::ImuData` that stores the latest gyroscope data
 2. `m_accel`: An instance of `Gnc::ImuData` that stores the latest acceleration data
 3. `m_i2cDevAddress`: A type `U8` that stores the address of the MPU6050 sensor
 4. `m_setup`: An instance of `bool` that indicates if sensor has been properly activated or not
 
-### 3.4. Port Handlers
+### 4.4. Port Handlers
 
-#### 3.4.1. getAcceleration
+#### 4.4.1. getAcceleration
 The `getAcceleration` port handler does the following: 
 1. Sets the measurement status to `STALE`
 2. Returns the acceleration data
 
-#### 3.4.2. getGyroscope
+#### 4.4.2. getGyroscope
 The `getGyroscope` port handler does the following:
 1. Sets the measurement status to `STALE`
 2. Returns the gyroscope data
 
-#### 3.4.3. Run
+#### 4.4.3. Run
 Ensures that the sensor has been properly setup and calls the `updateAccel` and `updateGyro` helper functions. 
 
-### 3.5. Helper Functions
+### 4.5. Helper Functions
 
-#### 3.5.1 read 
+#### 4.5.1 read 
 Returns the read data from the sensor.
 
-#### 3.5.2 setupReadRegister
+#### 4.5.2 setupReadRegister
 Returns the written data from the sensor in order for the data to be read. 
 
-#### 3.5.3 readRegisterBlock
+#### 4.5.3 readRegisterBlock
 Reads the data from the sensors registers. Returns a status of type `Drv::I2cStatus` if the read was successful or not. 
 
-#### 3.5.4 updateAccel
+#### 4.5.4 updateAccel
 Reads the data from the accelerometer registers of the sensor. Depending on the status of the read it will either store 
 the accelerometer data and emit it as telemetry while setting the measurement status as `OK`, or it will emit an event 
 that a telemetry error occurred while setting the measurement status as `FAILURE`. 
 
-#### 3.5.5 updateGyro
+#### 4.5.5 updateGyro
 Reads the data from the gyroscope registers of the sensor. Depending on the status of the read it will either store the
 gyroscope data and emit it as telemetry while setting the measurement status as `OK`, or it will emit an event that 
 telemetry error occurred while setting the measurement status as `FAILURE`.
 
-#### 3.5.6 powerOn
+#### 4.5.6 powerOn
 Activates the sensor, by setting the Power Management 1 register to 0. 
 
-## 4. Sequence Diagram
+## 5. Sequence Diagram
 
 
-## 5. Change Log
+## 6. Change Log
 
 | Date       | Description   |
 |------------|---------------|
