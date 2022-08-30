@@ -3,7 +3,7 @@ module Payload {
     enum ImgResolution { SIZE_640x480 = 0 , SIZE_800x600 = 1 }
     enum CameraAction { SAVE = 0, PROCESS = 1 }
 
-    @ Component for Camera
+    @ Component to capture raw images
     active component Camera {
         # ----------------------------------------------------------------------
         # General ports

@@ -83,8 +83,6 @@ namespace Payload {
       bool m_validCommand;
       cv::VideoCapture m_capture;
       cv::Mat m_imgFrame;
-      U32 m_width;
-      U32 m_height;
     };
 
 } // end namespace Payload

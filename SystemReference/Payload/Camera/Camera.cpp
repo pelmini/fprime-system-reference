@@ -45,25 +45,18 @@ Camera ::~Camera() {
 void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
                                     Payload::CameraAction cameraAction) {
   RawImageData rawImageData;
-  bool saveStatus;
   std::vector<uchar> buffer;
   Fw::Buffer imgBuffer;
   cv::Mat frame;
 
-  // read initial frame to prevent failing on first iteration of loop
-//  m_capture.read(frame);
   while (true) {
-//    m_capture >> frame;
     m_capture.read(frame);
-//    bool frameStatus = m_capture.read(frame);
 
     if (frame.empty()) {
       this->log_WARNING_HI_BlankFrame();
       m_validCommand = false;
       break;
     }
-//    cv::imshow("image", frame);
-
 
     // Set up buffer for image data
     U32 imgSize = frame.rows*frame.cols*frame.channels();
@@ -78,27 +71,23 @@ void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
     rawImageData.setwidth(frame.cols);
     rawImageData.setpixelFormat(frame.type());
 
-    if (cameraAction == CameraAction::PROCESS) {
+    switch (cameraAction.e){
+    case CameraAction::PROCESS:
       this->log_ACTIVITY_LO_CameraProcess();
       this->process_out(0, rawImageData);
       this->tlmWrite_photosTaken(m_photoCount++);
       break;
-    } else if (cameraAction == CameraAction::SAVE) {
-
-      // Debug
-//      saveStatus = cv::imwrite("image.raw", frame);
-//      if (!saveStatus) {
-//        this->log_WARNING_HI_SaveError();
-//      }
+    case CameraAction::SAVE:
       this->save_out(0, imgBuffer);
       this->log_ACTIVITY_LO_CameraSave();
       this->tlmWrite_photosTaken(m_photoCount++);
       break;
-    } else {
+    default:
       m_validCommand = false;
       this->log_WARNING_HI_InvalidTakeCmd();
-      break;
+      FW_ASSERT(0);
     }
+
   }
   this->tlmWrite_commandNum(m_cmdCount++);
   this->cmdResponse_out(opCode, cmdSeq,
@@ -126,29 +115,32 @@ void Camera ::ExposureTime_cmdHandler(const FwOpcodeType opCode,
 void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
                                    Payload::ImgResolution resolution,
                                    Payload::ColorFormat format) {
-//#if TGT_OS_TYPE_LINUX
-  if (format == ColorFormat::YUYV) {
+  switch (format.e){
+  case ColorFormat::YUYV:
     m_capture.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('Y', 'U', 'Y', 'V'));
-  } else if (format == ColorFormat::RGB) {
+    break;
+  case ColorFormat::RGB:
     m_capture.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('R', 'G', 'B', '3'));
-  } else {
-    this->log_WARNING_HI_InvalidFormatCmd(format);
+    break;
+  default:
     m_validCommand = false;
+    this->log_WARNING_HI_InvalidFormatCmd(format);
+    FW_ASSERT(0);
   }
-//#endif
-  if (resolution == ImgResolution::SIZE_640x480) {
-    m_width = 640;
-    m_height = 480;
+
+  switch (resolution.e){
+  case ImgResolution::SIZE_640x480:
     m_capture.set(cv::CAP_PROP_FRAME_WIDTH, 640);
     m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
-  } else if (resolution == ImgResolution::SIZE_800x600) {
-    m_width = 800;
-    m_height = 600;
+    break;
+  case ImgResolution::SIZE_800x600:
     m_capture.set(cv::CAP_PROP_FRAME_WIDTH, 800);
     m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, 600);
-  } else {
+    break;
+  default:
     this->log_WARNING_HI_InvalidSizeCmd(resolution);
     m_validCommand = false;
+    FW_ASSERT(0);
   }
 
   if (m_validCommand) {
