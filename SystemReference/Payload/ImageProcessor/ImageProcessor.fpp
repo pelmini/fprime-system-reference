@@ -72,11 +72,6 @@ module Payload {
         severity warning high \
         format "{} is an invalid file format" \
 
-        @ Save image error event
-        event SaveError \
-        severity warning high \
-        format "Failed to save image" \
-
         # ----------------------------------------------------------------------
         # Telemetry
         # ----------------------------------------------------------------------

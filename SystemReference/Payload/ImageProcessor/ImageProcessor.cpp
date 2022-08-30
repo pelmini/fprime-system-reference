@@ -34,18 +34,13 @@ void ImageProcessor ::imageData_handler(const NATIVE_INT_TYPE portNum,
                                         Payload::RawImageData &ImageData) {
 
   std::vector<uchar> buffer(BUFFER_SIZE);
-
   cv::Mat image(ImageData.getheight(), ImageData.getwidth(), ImageData.getpixelFormat(), (void *)ImageData.getimgData().getData());
-
   if (!image.data) {
     this->log_WARNING_HI_ProcessError();
   }
-
   cv::imencode(m_fileFormat, image, buffer);
-
   memcpy(ImageData.getimgData().getData(), buffer.data(), buffer.size());
   const_cast<Fw::Buffer &>(ImageData.getimgData()).setSize(buffer.size());
-
   this->postProcess_out(0, const_cast<Fw::Buffer &>(ImageData.getimgData()));
 }
 
@@ -62,17 +57,18 @@ void ImageProcessor ::SetFormat_cmdHandler(const FwOpcodeType opCode,
       case FileFormat::JPG:
       m_fileFormat = ".jpg";
       validFormat = true;
+      this->log_ACTIVITY_HI_SetFileFormat(fileFormat);
       break;
     case FileFormat::PNG:
       m_fileFormat = ".png";
       validFormat = true;
+      this->log_ACTIVITY_HI_SetFileFormat(fileFormat);
       break;
     default:
+      this->log_WARNING_HI_InvalidFormatCmd(fileFormat);
       FW_ASSERT(0);
     }
-
-  this->log_ACTIVITY_HI_SetFileFormat(fileFormat);
-  this->cmdResponse_out(opCode, cmdSeq,
+    this->cmdResponse_out(opCode, cmdSeq,
                         validFormat ? Fw::CmdResponse::OK
                                     : Fw::CmdResponse::EXECUTION_ERROR);
 }
