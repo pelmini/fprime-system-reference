@@ -38,7 +38,7 @@ namespace Payload {
 
       //! Startup camera device
       //!
-      bool open();
+      bool open(I32 deviceIndex = 0);
 
 
       //! Destroy object Camera
@@ -78,11 +78,8 @@ namespace Payload {
           Payload::ColorFormat format 
       );
 
-      U32 m_cmdCount;
       U32 m_photoCount;
-      bool m_validCommand;
       cv::VideoCapture m_capture;
-      cv::Mat m_imgFrame;
     };
 
 } // end namespace Payload

@@ -2,6 +2,7 @@ module Payload {
 
     enum ImgResolution { SIZE_640x480 = 0 , SIZE_800x600 = 1 }
     enum CameraAction { SAVE = 0, PROCESS = 1 }
+    enum ColorFormat { RGB = 0, YUYV = 1 }
 
     @ Component to capture raw images
     active component Camera {
@@ -75,6 +76,11 @@ module Payload {
         severity warning high \
         format "Camera failed to open" \
 
+        @ Event where camera is already open
+        event CameraAlreadyOpen \
+        severity activity low \
+        format "The Camera is already open" \
+
         event CameraSave \
         severity activity low \
         format "Image was saved"
@@ -117,19 +123,51 @@ module Payload {
             $time: U32 @< Exposure time
             ) \
         severity warning high \
-        format "{} is an invalid time"
+        format "{} seconds is an invalid time" \
 
+        @ Exposure time failed to set
+        event ExposureTimeFail(
+            $time: U32 @< Exposure time
+            ) \
+        severity warning high \
+        format "Exposure time of {} seconds failed to set" \
+
+        @ Failed to set size and color format
+        event ImgConfigSetFail(
+            resolution: ImgResolution @< Image size
+            $format: ColorFormat @< Image format
+            ) \
+        severity warning high \
+        format "Image resolution of {} and color format {} failed to set" \
+
+        @ Blank frame Error
         event BlankFrame \
         severity warning high \
-        format "Error: Blank frame was grabbed"
+        format "Error: Blank frame was grabbed" \
 
+        @ Image failed to save
         event SaveError \
         severity warning high \
-        format "Failed to save image"
+        format "Failed to save image" \
 
+        @ Invalid take command error
         event InvalidTakeCmd \
         severity warning high \
-        format "Invalid camera take command"
+        format "Invalid camera take command" \
+
+        @ Invalid buffer size error
+        event InvalidBufferSizeError(
+            imgBufferSize: U32 @< size of imgBuffer to hold image data
+            imgSize: U32 @< size of image
+        ) \
+        severity warning high \
+        format "imgBuffer of size {} is less than imgSize of size {}"
+
+        @ Captured frane is not continuous
+        event NotContinuous \
+        severity warning high \
+        format "Captured matrix frame has gaps."
+
 
         # ----------------------------------------------------------------------
         # Telemetry
@@ -137,9 +175,6 @@ module Payload {
 
         @ Total number of files captured
         telemetry photosTaken: U32 id 0 update on change
-
-        @ Total number of commands received
-        telemetry commandNum: U32 id 1 update on change
 
     }
 }
