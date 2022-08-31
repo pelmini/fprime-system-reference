@@ -96,10 +96,3 @@ Activates the sensor, by setting the Power Management 1 register to 0.
 
 ## 5. Sequence Diagram
 
-
-## 6. Change Log
-
-| Date       | Description   |
-|------------|---------------|
-| 2022-07-19 | Initial Draft |
-| 2022-08-3  | Edit          |

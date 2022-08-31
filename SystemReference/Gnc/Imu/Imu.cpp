@@ -7,6 +7,10 @@
 #include "Fw/Types/BasicTypes.hpp"
 #include <SystemReference/Gnc/Imu/Imu.hpp>
 
+static const float accelScaleFactor = 16384.0f;
+static const float gyroScaleFactor = 131.0f;
+
+
 namespace Gnc {
 
 // ----------------------------------------------------------------------
@@ -15,18 +19,20 @@ namespace Gnc {
 
 Imu ::Imu(const char *const compName)
     : ImuComponentBase(compName), m_setup(false) {
-  this->m_i2cDevAddress = I2C_DEV0_ADDR;
-
 }
 
 void Imu ::init(const NATIVE_INT_TYPE instance) {
   ImuComponentBase::init(instance);
 }
 
+void Imu::setup(U8 devAddress){
+  m_i2cDevAddress = devAddress;
+}
+
 void Imu::powerOn(){
     Fw::Buffer buffer;
     Drv::I2cStatus writePowerStatus;
-    U8 data[IMU_REG_SIZE*2];
+    U8 data[IMU_REG_SIZE_BYTES*2];
     // check the power status
     buffer.setData(data);
     buffer.setSize(sizeof(data));
@@ -35,17 +41,16 @@ void Imu::powerOn(){
     data[0] = POWER_MGMT_ADDR;
     data[1] = 0;
     // Take MPU6050 out of sleep mode
-    writePowerStatus = write_out(0, I2C_DEV0_ADDR, buffer);
+    writePowerStatus = write_out(0, m_i2cDevAddress, buffer);
     if(writePowerStatus != Drv::I2cStatus::I2C_OK){
       this->log_WARNING_HI_PowerModeError(writePowerStatus);
     }
 }
 
-void Imu::setup() {
+void Imu::config() {
   Fw::Buffer buffer;
-  Drv::I2cStatus writeAccelStatus;
-  Drv::I2cStatus writeGyroStatus;
-  U8 data[IMU_REG_SIZE*2];
+  Drv::I2cStatus writeStatus;
+  U8 data[IMU_REG_SIZE_BYTES*2];
   buffer.setData(data);
   buffer.setSize(sizeof(data));
 
@@ -55,19 +60,19 @@ void Imu::setup() {
   data[0] = GYRO_CONFIG_ADDR;
   data[1] = 0;
 
-  writeGyroStatus = write_out(0, I2C_DEV0_ADDR, buffer);
+  writeStatus = write_out(0, m_i2cDevAddress, buffer);
 
-  if (writeGyroStatus != Drv::I2cStatus::I2C_OK){
-    this->log_WARNING_HI_SetUpConfigError(writeGyroStatus);
+  if (writeStatus != Drv::I2cStatus::I2C_OK){
+    this->log_WARNING_HI_SetUpConfigError(writeStatus);
   }
 
   // Set accel range to +- 2g
   data[0] = ACCEL_CONFIG_ADDR;
   data[1] = 0;
-  writeAccelStatus = write_out(0, I2C_DEV0_ADDR, buffer);
+  writeStatus = write_out(0, m_i2cDevAddress, buffer);
 
-  if (writeAccelStatus != Drv::I2cStatus::I2C_OK){
-    this->log_WARNING_HI_PowerModeError(writeAccelStatus);
+  if (writeStatus != Drv::I2cStatus::I2C_OK){
+    this->log_WARNING_HI_PowerModeError(writeStatus);
   }
 }
 
@@ -81,7 +86,7 @@ void Imu ::Run_handler(const NATIVE_INT_TYPE portNum,
                        NATIVE_UINT_TYPE context) {
     if (!m_setup){
       powerOn();
-      setup();
+      config();
       m_setup = true;
     }
     updateAccel();
@@ -121,17 +126,17 @@ Drv::I2cStatus Imu::readRegisterBlock(U8 registerAdd, Fw::Buffer &buffer){
 
 void Imu::updateAccel(){
   Fw::Buffer buffer;
-  U8 data[IMU_MAX_DATA_SIZE];
+  U8 data[IMU_MAX_DATA_SIZE_BYTES];
 
   Gnc::Vector vector;
 
   buffer.setData(data);
-  buffer.setSize(IMU_MAX_DATA_SIZE);
+  buffer.setSize(IMU_MAX_DATA_SIZE_BYTES);
 
   Drv::I2cStatus statusAccelerate = readRegisterBlock(IMU_RAW_ACCEL_ADDR, buffer);
 
   if (statusAccelerate == Drv::I2cStatus::I2C_OK) {
-    FW_ASSERT(IMU_MAX_DATA_SIZE >= 6);
+    static_assert( IMU_MAX_DATA_SIZE_BYTES >= 6);
     m_accel.setstatus(Svc::MeasurementStatus::OK);
 
     // Default full scale range is set to +/- 2g
@@ -141,9 +146,9 @@ void Imu::updateAccel(){
 
     // Convert raw data to usable units, need to divide the raw values by
     // 16384 for a range of +-2g
-    vector[0] = vector[0]/16384.0f;
-    vector[1] = vector[1]/16384.0f;
-    vector[2] = vector[2]/16384.0f;
+    vector[0] = vector[0]/accelScaleFactor;
+    vector[1] = vector[1]/accelScaleFactor;
+    vector[2] = vector[2]/accelScaleFactor;
 
     m_accel.setvector(vector);
     m_accel.settime(this->getTime());
@@ -157,16 +162,16 @@ void Imu::updateAccel(){
 
 void Imu::updateGyro(){
   Fw::Buffer buffer;
-  U8 data[IMU_MAX_DATA_SIZE];
+  U8 data[IMU_MAX_DATA_SIZE_BYTES];
   Vector vector;
 
   buffer.setData(data);
-  buffer.setSize(IMU_MAX_DATA_SIZE);
+  buffer.setSize(IMU_MAX_DATA_SIZE_BYTES);
 
   Drv::I2cStatus statusGyro = readRegisterBlock(IMU_RAW_GYRO_ADDR, buffer);
 
   if (statusGyro == Drv::I2cStatus::I2C_OK) {
-    FW_ASSERT(IMU_MAX_DATA_SIZE >= 6);
+    static_assert( IMU_MAX_DATA_SIZE_BYTES >= 6);
     m_gyro.setstatus(Svc::MeasurementStatus::OK);
 
     // Default full scale range is set to +/- 250 deg/sec
@@ -176,9 +181,9 @@ void Imu::updateGyro(){
 
     // Convert raw data to usable units, need to divide the raw values by
     // 131 for a range of +-250 deg/s
-    vector[0] = vector[0]/131.0f;
-    vector[1] = vector[1]/131.0f;
-    vector[2] = vector[2]/131.0f;
+    vector[0] = vector[0]/gyroScaleFactor;
+    vector[1] = vector[1]/gyroScaleFactor;
+    vector[2] = vector[2]/gyroScaleFactor;
 
     m_gyro.setvector(vector);
     m_gyro.settime(this->getTime());
@@ -192,9 +197,9 @@ void Imu::updateGyro(){
 
 Drv::I2cStatus Imu ::setupReadRegister(U8 dev_addr, U8 reg) {
   Fw::Buffer buffer;
-  U8 data[IMU_REG_SIZE];
+  U8 data[IMU_REG_SIZE_BYTES];
   buffer.setData(data);
-  buffer.setSize(IMU_REG_SIZE);
+  buffer.setSize(IMU_REG_SIZE_BYTES);
 
   FW_ASSERT(sizeof(data) > 0);
   data[0] = reg;
