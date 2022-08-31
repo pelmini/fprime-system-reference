@@ -150,7 +150,6 @@ module SystemReference {
          camera.process->imageProcessor.imageData
          imageProcessor.postProcess -> processedImageBufferLogger.bufferSendIn
          processedImageBufferLogger.bufferSendOut -> fileUplinkBufferManager.bufferSendIn
-
     }
 
   }

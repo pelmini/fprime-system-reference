@@ -177,8 +177,8 @@ module SystemReference {
     priority 100 \
     {
        phase Fpp.ToCpp.Phases.configComponents"""
-       if (!camera.open()){
-           printf("Failed to open camera device\\n");
+       if (!camera.open(0)){
+           Os::logger("Failed to open camera device\\n");
        }
        """
     }
@@ -392,12 +392,16 @@ module SystemReference {
 
   instance systemResources: Svc.SystemResources base id 0x4B00
 
-  instance imu: Gnc.Imu base id 0x4C00
+  instance imu: Gnc.Imu base id 0x4C00 {
+    phase Fpp.ToCpp.Phases.configComponents """
+     imu.setup(Gnc::Imu::I2C_DEV0_ADDR)
+     """
+  }
 
   instance imuI2cBus: Drv.LinuxI2cDriver  base id 0x4D00 {
     phase Fpp.ToCpp.Phases.configComponents """
     if (!imuI2cBus.open("/dev/i2c-1")) {
-        printf("Failed to open I2C device %s\n", "/dev/i2c-1");
+        Os::logger("Failed to open I2C device %s\n", "/dev/i2c-1");
     }
     """
   }
