@@ -94,7 +94,7 @@ module Payload {
             $time: U32 @< Exposure time
             ) \
         severity activity high \
-        format "The exposure time has been set to {} seconds" \
+        format "The exposure time has been set to {} milli-seconds" \
 
         @ Event image configuration has been set
         event SetImgConfig(
@@ -130,7 +130,7 @@ module Payload {
             $time: U32 @< Exposure time
             ) \
         severity warning high \
-        format "Exposure time of {} seconds failed to set" \
+        format "Exposure time of {} milli-seconds failed to set" \
 
         @ Failed to set size and color format
         event ImgConfigSetFail(
