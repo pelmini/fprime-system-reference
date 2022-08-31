@@ -14,6 +14,12 @@ module Payload {
         @ Image data to be processed
         async input port imageData: ImageData
 
+        @ Port for allocating Fw::Buffer objects from a buffer manager.
+        output port bufferAllocate: Fw.BufferGet
+
+        @ Port for deallocating Fw::Buffer objects from a buffer manager.
+        output port bufferDeallocate: Fw.BufferSend
+
         # ----------------------------------------------------------------------
         # Special ports
         # ----------------------------------------------------------------------
@@ -71,6 +77,14 @@ module Payload {
             ) \
         severity warning high \
         format "{} is an invalid file format" \
+
+        @ Event bad buffer size
+        event BadBufferSize(
+            encodeSize: U32 @< Size of allocated buffer to store output buffer from imencode
+            bufferSize: U32 @< Size of output buffer from imencode
+        ) \
+        severity warning high \
+        format "Encode buffer of size {} is smaller than buffer of size {}"
 
         # ----------------------------------------------------------------------
         # Telemetry

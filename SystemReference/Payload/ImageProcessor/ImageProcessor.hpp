@@ -10,7 +10,6 @@
 #include "SystemReference/Payload/ImageProcessor/ImageProcessorComponentAc.hpp"
 
 
-
 namespace Payload {
 
 class ImageProcessor : public ImageProcessorComponentBase {
@@ -65,7 +64,11 @@ public:
               fileFormat /*!< Type of file format to convert to*/
       );
 
-  std::string m_fileFormat;
+  const std::string m_PNG = ".png";
+  const std::string m_JPG = ".jpg";
+
+  // create as a pointer
+  const std::string *m_fileFormat;
 };
 
 } // end namespace Payload
