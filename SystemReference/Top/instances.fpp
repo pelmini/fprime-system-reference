@@ -178,7 +178,7 @@ module SystemReference {
     {
        phase Fpp.ToCpp.Phases.configComponents"""
        if (!camera.open(0)){
-           Os::log("Failed to open camera device\\n");
+           Fw::Logger::logMsg("[ERROR] Failed to open camera device\\n");
        }
        """
     }
@@ -401,7 +401,7 @@ module SystemReference {
   instance imuI2cBus: Drv.LinuxI2cDriver  base id 0x4D00 {
     phase Fpp.ToCpp.Phases.configComponents """
     if (!imuI2cBus.open("/dev/i2c-1")) {
-        Os::log("Failed to open I2C device %s\n", "/dev/i2c-1");
+         Fw::Logger::logMsg("[ERROR] Failed to open I2C device %s\\n", "/dev/i2c-1");
     }
     """
   }
