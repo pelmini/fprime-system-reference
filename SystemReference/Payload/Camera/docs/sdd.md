@@ -32,11 +32,11 @@ The diagram below shows the `Camera` component.
 ### 4.2. Ports
 `Camera` has the following ports:
 
-| Kind            | Name              | Port Type       | Usage                                                             |
-|-----------------|-------------------|-----------------|-------------------------------------------------------------------|
-| `output`        | `process`         | `Fw.BufferSend` | Port that outputs image data to get utilized by another component |
-| `output`        | `allocate`        | `Fw.BufferGet`  | Port that allocates memory to hold image buffers                  |
-| `output`        | `$save`           | `Fw.BufferSend` | Port that saves image to disk                                     |
+| Kind            | Name             | Port Type       | Usage                                                             |
+|-----------------|------------------|-----------------|-------------------------------------------------------------------|
+| `output`        | `process`        | `Fw.BufferSend` | Port that outputs image data to get utilized by another component |
+| `output`        | `allocate`       | `Fw.BufferGet`  | Port that allocates memory to hold image buffers                  |
+| `output`        | `save`           | `Fw.BufferSend` | Port that saves image to disk                                     |
 **Note:** standard event, telemetry, and command ports are not listed above.
 
 
@@ -70,10 +70,3 @@ The `ConfigImg` port handler does the following:
 Activates the camera and ensures that it is open.
 
 ## 4. Sequence Diagram
-
-
-## 5. Change Log
-
-| Date       | Description   |
-|------------|---------------|
-| 2022-08-25 | Initial Draft |
