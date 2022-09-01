@@ -136,7 +136,7 @@ void Imu::updateAccel(){
   Drv::I2cStatus statusAccelerate = readRegisterBlock(IMU_RAW_ACCEL_ADDR, buffer);
 
   if (statusAccelerate == Drv::I2cStatus::I2C_OK) {
-    static_assert( IMU_MAX_DATA_SIZE_BYTES >= 6);
+    static_assert( IMU_MAX_DATA_SIZE_BYTES >= 6, "IMU data must be at least 6 bytes or more");
     m_accel.setstatus(Svc::MeasurementStatus::OK);
 
     // Default full scale range is set to +/- 2g
@@ -171,7 +171,7 @@ void Imu::updateGyro(){
   Drv::I2cStatus statusGyro = readRegisterBlock(IMU_RAW_GYRO_ADDR, buffer);
 
   if (statusGyro == Drv::I2cStatus::I2C_OK) {
-    static_assert( IMU_MAX_DATA_SIZE_BYTES >= 6);
+    static_assert( IMU_MAX_DATA_SIZE_BYTES >= 6, "IMU data must be at least 6 bytes or more");
     m_gyro.setstatus(Svc::MeasurementStatus::OK);
 
     // Default full scale range is set to +/- 250 deg/sec

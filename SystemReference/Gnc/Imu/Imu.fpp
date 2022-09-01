@@ -67,12 +67,10 @@ module Gnc {
         # ---------------------------------------------------------------------
 
         @ X, Y, Z acceleration from accelerometer
-        telemetry accelerometer: Vector id 0 update always \
-        format "{} g" \
+        telemetry accelerometer: Vector id 0 update always format "{} g" \
 
         @ X, Y, Z degrees from gyroscope
-        telemetry gyroscope: Vector id 1 update always \
-        format "{} deg/s"
+        telemetry gyroscope: Vector id 1 update always format "{} deg/s"
 
     }
 }
