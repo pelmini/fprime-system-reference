@@ -74,8 +74,7 @@ namespace Payload {
       void ConfigImg_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          Payload::ImgResolution resolution, 
-          Payload::ColorFormat format 
+          Payload::ImgResolution resolution
       );
 
       U32 m_photoCount;

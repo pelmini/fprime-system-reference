@@ -76,6 +76,7 @@ void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
   memcpy(imgBuffer.getData(), frame.data, imgSize);
   imgBuffer.setSize(imgSize);
 
+
   switch (cameraAction.e) {
     case CameraAction::PROCESS:
       rawImageData.setimgData(imgBuffer);
@@ -104,7 +105,7 @@ void Camera ::ExposureTime_cmdHandler(const FwOpcodeType opCode,
   bool setExposureMode = false;
   if (time <= MAX_EXPOSURE_TIME_MS) {
     // Set camera exposure to manual mode
-    setExposureMode = m_capture.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.25);
+    setExposureMode = m_capture.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.75);
     setExposureTime = m_capture.set(cv::CAP_PROP_EXPOSURE, time);
 
     if(setExposureMode && setExposureTime){
@@ -119,25 +120,24 @@ void Camera ::ExposureTime_cmdHandler(const FwOpcodeType opCode,
 }
 
 void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
-                                   Payload::ImgResolution resolution,
-                                   Payload::ColorFormat format) {
-  bool colorStatus = false;
+                                   Payload::ImgResolution resolution) {
+//  bool colorStatus = false;
   bool widthStatus = false;
   bool heightStatus = false;
 
-  switch (format.e) {
-    case ColorFormat::YUYV:
-      colorStatus = m_capture.set(cv::CAP_PROP_FOURCC,
-                  cv::VideoWriter::fourcc('Y', 'U', 'Y', 'V'));
-      break;
-    case ColorFormat::RGB:
-      colorStatus = m_capture.set(cv::CAP_PROP_FOURCC,
-                  cv::VideoWriter::fourcc('R', 'G', 'B', '3'));
-      break;
-    default:
-      this->log_WARNING_HI_InvalidFormatCmd(format);
-      FW_ASSERT(0);
-  }
+//  switch (format.e) {
+//    case ColorFormat::YUYV:
+//      colorStatus = m_capture.set(cv::CAP_PROP_FOURCC,
+//                  cv::VideoWriter::fourcc('Y', 'U', 'Y', 'V'));
+//      break;
+//    case ColorFormat::RGB:
+//      colorStatus = m_capture.set(cv::CAP_PROP_FOURCC,
+//                  cv::VideoWriter::fourcc('R', 'G', 'B', '3'));
+//      break;
+//    default:
+//      this->log_WARNING_HI_InvalidFormatCmd(format);
+//      FW_ASSERT(0);
+//  }
 
   switch (resolution.e) {
     case ImgResolution::SIZE_640x480:
@@ -153,10 +153,10 @@ void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
       FW_ASSERT(0);
   }
 
-  if(colorStatus && heightStatus && widthStatus){
-    this->log_ACTIVITY_HI_SetImgConfig(resolution, format);
+  if(heightStatus && widthStatus){
+    this->log_ACTIVITY_HI_SetImgConfig(resolution);
   } else {
-    this->log_WARNING_HI_ImgConfigSetFail(resolution, format);
+    this->log_WARNING_HI_ImgConfigSetFail(resolution);
   }
 
   this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
