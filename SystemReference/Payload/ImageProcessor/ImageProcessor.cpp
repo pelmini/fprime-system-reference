@@ -42,6 +42,8 @@ void ImageProcessor ::imageData_handler(const NATIVE_INT_TYPE portNum,
   Fw::Buffer encodeBuffer = bufferAllocate_out(0, buffer.size());
   if(encodeBuffer.getSize() < buffer.size()){
     this->log_WARNING_HI_BadBufferSize(encodeBuffer.getSize(), buffer.size());
+    this->bufferDeallocate_out(0, const_cast<Fw::Buffer &>(ImageData.getimgData()));
+    this->bufferDeallocate_out(0, encodeBuffer);
     return;
   }
   memcpy(encodeBuffer.getData(), buffer.data(), buffer.size());
