@@ -63,9 +63,10 @@ void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
   imgBuffer = allocate_out(0, imgSize);
   if (imgBuffer.getSize() < imgSize){
     this->log_WARNING_HI_InvalidBufferSizeError(imgBuffer.getSize(), imgSize);
+    this->deallocate_out(0, imgBuffer);
     return;
   }
-  FW_ASSERT(imgSize < frame.total()*frame.elemSize(), imgSize, frame.total()*frame.elemSize());
+  FW_ASSERT(imgSize = frame.total()*frame.elemSize(), imgSize, frame.total()*frame.elemSize());
 
   if(!frame.isContinuous()){
     this->log_WARNING_HI_NotContinuous();
