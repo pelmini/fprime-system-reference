@@ -72,7 +72,7 @@ void Imu::config() {
   writeStatus = write_out(0, m_i2cDevAddress, buffer);
 
   if (writeStatus != Drv::I2cStatus::I2C_OK){
-    this->log_WARNING_HI_PowerModeError(writeStatus);
+    this->log_WARNING_HI_SetUpConfigError(writeStatus);
   }
 }
 
