@@ -13,8 +13,6 @@ namespace Payload {
 // ----------------------------------------------------------------------
 // Construction, initialization, and destruction
 // ----------------------------------------------------------------------
-// rpi converts milliseconds to seconds
-const int MAX_EXPOSURE_TIME_MS = 100000;
 
 Camera ::Camera(const char *const compName)
     : CameraComponentBase(compName), m_photoCount(0){}
@@ -66,16 +64,11 @@ void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
     this->deallocate_out(0, imgBuffer);
     return;
   }
-  FW_ASSERT(imgSize = frame.total()*frame.elemSize(), imgSize, frame.total()*frame.elemSize());
-
-  if(!frame.isContinuous()){
-    this->log_WARNING_HI_NotContinuous();
-    return;
-  }
+  FW_ASSERT(imgSize == frame.total()*frame.elemSize(), imgSize, frame.total()*frame.elemSize());
+  FW_ASSERT(frame.isContinuous());
 
   memcpy(imgBuffer.getData(), frame.data, imgSize);
   imgBuffer.setSize(imgSize);
-
 
   switch (cameraAction.e) {
     case CameraAction::PROCESS:
@@ -99,46 +92,10 @@ void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
   this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 
-void Camera ::ExposureTime_cmdHandler(const FwOpcodeType opCode,
-                                      const U32 cmdSeq, U32 time) {
-  bool setExposureTime = false;
-  bool setExposureMode = false;
-  if (time <= MAX_EXPOSURE_TIME_MS) {
-    // Set camera exposure to manual mode
-    setExposureMode = m_capture.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.75);
-    setExposureTime = m_capture.set(cv::CAP_PROP_EXPOSURE, time);
-
-    if(setExposureMode && setExposureTime){
-      this->log_ACTIVITY_HI_ExposureTimeSet(time);
-    } else {
-      this->log_WARNING_HI_ExposureTimeFail(time);
-    }
-  } else {
-    this->log_WARNING_HI_InvalidExposureTimeCmd(time);
-  }
-  this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
-}
-
 void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
                                    Payload::ImgResolution resolution) {
-//  bool colorStatus = false;
-  bool widthStatus = false;
-  bool heightStatus = false;
-
-//  switch (format.e) {
-//    case ColorFormat::YUYV:
-//      colorStatus = m_capture.set(cv::CAP_PROP_FOURCC,
-//                  cv::VideoWriter::fourcc('Y', 'U', 'Y', 'V'));
-//      break;
-//    case ColorFormat::RGB:
-//      colorStatus = m_capture.set(cv::CAP_PROP_FOURCC,
-//                  cv::VideoWriter::fourcc('R', 'G', 'B', '3'));
-//      break;
-//    default:
-//      this->log_WARNING_HI_InvalidFormatCmd(format);
-//      FW_ASSERT(0);
-//  }
-
+  bool widthStatus = true;
+  bool heightStatus = true;
   switch (resolution.e) {
     case ImgResolution::SIZE_640x480:
       widthStatus = m_capture.set(cv::CAP_PROP_FRAME_WIDTH, 640);
@@ -153,12 +110,12 @@ void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
       FW_ASSERT(0);
   }
 
-  if(heightStatus && widthStatus){
-    this->log_ACTIVITY_HI_SetImgConfig(resolution);
-  } else {
+  if((widthStatus == 0) || (heightStatus == 0)){
     this->log_WARNING_HI_ImgConfigSetFail(resolution);
+    return;
   }
 
+  this->log_ACTIVITY_HI_SetImgConfig(resolution);
   this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
 

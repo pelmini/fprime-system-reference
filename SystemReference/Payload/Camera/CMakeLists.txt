@@ -17,10 +17,10 @@ if (NOT DEFINED FPRIME_PRESCAN)
 endif()
 
 # Register the unit test build
-#set(UT_SOURCE_FILES
-#	"${CMAKE_CURRENT_LIST_DIR}/Camera.fpp"
-#        "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
-#        "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
-#		)
-#set(UT_MOD_DEPS STest MockV4L2CameraLib)
-#register_fprime_ut()
+set(UT_SOURCE_FILES
+	"${CMAKE_CURRENT_LIST_DIR}/Camera.fpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/TestMain.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/test/ut/Tester.cpp"
+		)
+set(UT_MOD_DEPS STest)
+register_fprime_ut()

@@ -56,17 +56,7 @@ namespace Payload {
       void TakeAction_cmdHandler(
           const FwOpcodeType opCode, /*!< The opcode*/
           const U32 cmdSeq, /*!< The command sequence number*/
-          Payload::CameraAction cameraAction /*!< 
-          State where camera either saves or takes photo
-          */
-      );
-
-      //! Implementation for ExposureTime command handler
-      //! Set the exposure time
-      void ExposureTime_cmdHandler(
-          const FwOpcodeType opCode, /*!< The opcode*/
-          const U32 cmdSeq, /*!< The command sequence number*/
-          U32 time 
+          Payload::CameraAction cameraAction /*!< State where camera either saves or takes photo*/
       );
 
       //! Implementation for ConfigImg command handler

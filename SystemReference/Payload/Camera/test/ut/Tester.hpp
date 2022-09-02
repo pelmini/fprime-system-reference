@@ -9,13 +9,9 @@
 
 #include "GTestBase.hpp"
 #include "SystemReference/Payload/Camera/Camera.hpp"
-#include "STest/Random/Random.hpp"
-#include "STest/Pick/Pick.hpp"
 #include <Fw/Types/BasicTypes.hpp>
+#include <opencv2/opencv.hpp>
 
-extern "C"{
-#include "SystemReference/Payload/Camera/test/ut/CaptureMock.h"
-};
 
 namespace Payload {
 
@@ -43,20 +39,6 @@ namespace Payload {
       // Tests
       // ----------------------------------------------------------------------
 
-      //! Test to check if image is properly configured
-      //!
-      void testImgConfiguration1();
-
-      void testImgConfiguration2();
-
-      void testImgConfiguration3();
-
-      void testImgConfiguration4();
-
-      //! Test to check if exposure time is properly set
-      //!
-      void testExposureTime();
-
       //! Test to check camera save command
       //!
       void testCameraActionSave();
@@ -65,45 +47,9 @@ namespace Payload {
       //!
       void testCameraActionProcess();
 
-      //! Check setup
-      //!
-      void testSetup();
+      void testBlankFrame();
 
-      //! Check setup error
-      //!
-      void testSetupError();
-
-      //! Check invalid size error
-      //!
-      void testInvalidSize();
-
-      //! Check invalid action command
-      //!
-      void testInvalidAction();
-
-      //! Check invalid format error
-      //!
-      void testInvalidFormat();
-
-      //! Check invalid time error
-      //!
-      void testInvalidTime();
-
-      //! Check set format error
-      //!
-      void testSetFormatError();
-
-      //! Check invalid frame error
-      //!
-      void testInvalidFrame();
-
-      //! Check retry read
-      //!
-      void testRetryRead();
-
-      //! Check partial image capture
-      //!
-      void testPartialImgCapture();
+      void testBadBuffer();
 
     private:
 
@@ -118,11 +64,18 @@ namespace Payload {
           U32 size 
       );
 
+      //! Handler for from_deallocate
+      //!
+      void from_deallocate_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          Fw::Buffer &fwBuffer
+      );
+
       //! Handler for from_process
       //!
       void from_process_handler(
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
-          Fw::Buffer &fwBuffer
+          Payload::RawImageData &ImageData /*!< Port that carries raw image data*/
       );
 
       //! Handler for from_save
@@ -146,8 +99,6 @@ namespace Payload {
       //!
       void initComponents();
 
-      //! Pick an exposure time
-      static NATIVE_UINT_TYPE pickExposureTime();
 
     private:
 
@@ -158,6 +109,8 @@ namespace Payload {
       //! The component under test
       //!
       Camera component;
+
+      U32 m_bufferSize;
 
   };
 

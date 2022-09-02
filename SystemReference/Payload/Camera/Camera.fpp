@@ -56,12 +56,6 @@ module Payload {
             ) \
         opcode 0x01
 
-        @ Set the exposure time
-        async command ExposureTime(
-            $time: U32
-            ) \
-        opcode 0x02
-
         @ Command to configure image
         async command ConfigImg(
             resolution: ImgResolution
@@ -90,13 +84,6 @@ module Payload {
         severity activity low \
         format "Image will be processed" \
 
-        @ Event where exposure time is set
-        event ExposureTimeSet(
-            $time: U32 @< Exposure time
-            ) \
-        severity activity high \
-        format "The exposure time has been set to {} milli-seconds" \
-
         @ Event image configuration has been set
         event SetImgConfig(
             resolution: ImgResolution @< Image size,
@@ -110,20 +97,6 @@ module Payload {
             ) \
         severity warning high \
         format "{} is an invalid size" \
-
-        @ Error event for invalid time for exposure time
-        event InvalidExposureTimeCmd(
-            $time: U32 @< Exposure time
-            ) \
-        severity warning high \
-        format "{} seconds is an invalid time" \
-
-        @ Exposure time failed to set
-        event ExposureTimeFail(
-            $time: U32 @< Exposure time
-            ) \
-        severity warning high \
-        format "Exposure time of {} milli-seconds failed to set" \
 
         @ Failed to set size and color format
         event ImgConfigSetFail(
