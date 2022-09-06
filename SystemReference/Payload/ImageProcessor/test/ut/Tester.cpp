@@ -55,9 +55,10 @@ void Tester::testSetFormatPng() {
   ASSERT_CMD_RESPONSE(0, ImageProcessor::OPCODE_SETFORMAT, 0, Fw::CmdResponse::OK);
 }
 
-void Tester::testImgProcess() {
-  // 67 is the size that imencode resizes the buffer to
-  m_bufferSize = 67;
+void Tester::testImgProcessPng() {
+  // Buffer of image that has 3 color channels and resolution of 640x480
+  m_bufferSize = 640*480*3;
+  const char *pngHeader = "PNG";
   Fw::Buffer encodeBuffer(new U8[m_bufferSize], m_bufferSize);
   this->component.m_fileFormat = &this->component.m_PNG;
   RawImageData rawImageData(1, 1, 1, encodeBuffer);
@@ -66,6 +67,38 @@ void Tester::testImgProcess() {
 
   ASSERT_from_bufferDeallocate_SIZE(1);
   ASSERT_from_postProcess_SIZE(1);
+
+  Fw::Buffer encodeBufferOut = this->fromPortHistory_postProcess->at(0).fwBuffer;
+  // Check that size of encode buffer is greater than the size of its header
+  ASSERT_GT(encodeBuffer.getSize(), 8);
+  // Check that file was encoded to proper format
+  for(int index = 0; index < 3; index++){
+    ASSERT_EQ(pngHeader[index], encodeBufferOut.getData()[index+1]);
+  }
+}
+
+void Tester::testImgProcessJpg() {
+  // Buffer of image that has 3 color channels and resolution of 640x480
+  m_bufferSize = 640*480*3;
+  const unsigned char jpgHeader[3] = {0xFF, 0xD8, 0xFF};
+  char encodeBuffOutHeader[3];
+  Fw::Buffer encodeBuffer(new U8[m_bufferSize], m_bufferSize);
+  this->component.m_fileFormat = &this->component.m_JPG;
+  RawImageData rawImageData(1, 1, 1, encodeBuffer);
+  this->invoke_to_imageData(0, rawImageData);
+  this->component.doDispatch();
+
+  ASSERT_from_bufferDeallocate_SIZE(1);
+  ASSERT_from_postProcess_SIZE(1);
+
+  Fw::Buffer encodeBufferOut = this->fromPortHistory_postProcess->at(0).fwBuffer;
+
+  // Check that size of encode buffer is greater than the size of its header
+  ASSERT_GT(encodeBuffer.getSize(), 3);
+  // Check that file was encoded to proper format
+  for(int index = 0; index < 3; index++){
+    ASSERT_EQ(jpgHeader[index], encodeBufferOut.getData()[index]);
+  }
 }
 
 void Tester::testNoImgData() {

@@ -41,9 +41,13 @@ public:
   //!
   void testSetFormatPng();
 
-  //! Test that image process behavior is correct
+  //! Test that image process behavior is correct for png files
   //!
-  void testImgProcess();
+  void testImgProcessPng();
+
+  //! Test that image process behavior is correct for jpg files
+  //!
+  void testImgProcessJpg();
 
   //! Test for bad buffer size event
   //!

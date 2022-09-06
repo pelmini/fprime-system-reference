@@ -14,9 +14,14 @@ TEST(Nominal, testPngFormat) {
   tester.testSetFormatPng();
 }
 
-TEST(Nominal, testProcess) {
+TEST(Nominal, testProcessPng) {
   Payload::Tester tester;
-  tester.testImgProcess();
+  tester.testImgProcessPng();
+}
+
+TEST(Nominal, testProcessJpg) {
+  Payload::Tester tester;
+  tester.testImgProcessJpg();
 }
 
 TEST(Nominal, testBadBuffer) {
