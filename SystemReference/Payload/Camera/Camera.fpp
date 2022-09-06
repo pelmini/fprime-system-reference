@@ -91,13 +91,6 @@ module Payload {
         severity activity high \
         format "The image has resolution {}" \
 
-        @ Error event where given size for image configuration is invalid
-        event InvalidSizeCmd(
-            resolution: ImgResolution @< Image size
-            ) \
-        severity warning high \
-        format "{} is an invalid size" \
-
         @ Failed to set size and color format
         event ImgConfigSetFail(
             resolution: ImgResolution @< Image size
@@ -110,16 +103,6 @@ module Payload {
         severity warning high \
         format "Error: Blank frame was grabbed" \
 
-        @ Image failed to save
-        event SaveError \
-        severity warning high \
-        format "Failed to save image" \
-
-        @ Invalid take command error
-        event InvalidTakeCmd \
-        severity warning high \
-        format "Invalid camera take command" \
-
         @ Invalid buffer size error
         event InvalidBufferSizeError(
             imgBufferSize: U32 @< size of imgBuffer to hold image data
@@ -127,12 +110,6 @@ module Payload {
         ) \
         severity warning high \
         format "imgBuffer of size {} is less than imgSize of size {}"
-
-        @ Captured frane is not continuous
-        event NotContinuous \
-        severity warning high \
-        format "Captured matrix frame has gaps."
-
 
         # ----------------------------------------------------------------------
         # Telemetry

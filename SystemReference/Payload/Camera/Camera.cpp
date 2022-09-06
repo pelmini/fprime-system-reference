@@ -84,7 +84,6 @@ void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
       this->log_ACTIVITY_LO_CameraSave();
       break;
     default:
-      this->log_WARNING_HI_InvalidTakeCmd();
       FW_ASSERT(0);
     }
   m_photoCount++;
@@ -106,7 +105,6 @@ void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
       heightStatus = m_capture.set(cv::CAP_PROP_FRAME_HEIGHT, 600);
       break;
     default:
-      this->log_WARNING_HI_InvalidSizeCmd(resolution);
       FW_ASSERT(0);
   }
 

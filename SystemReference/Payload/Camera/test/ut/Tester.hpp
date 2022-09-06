@@ -39,17 +39,21 @@ namespace Payload {
       // Tests
       // ----------------------------------------------------------------------
 
-      //! Test to check camera save command
+      //! Test for camera save command
       //!
       void testCameraActionSave();
 
-      //! Check camera process command
+      //! Test for camera process command
       //!
       void testCameraActionProcess();
 
+      //! Test for blank frame event
+      //!
       void testBlankFrame();
 
-      void testBadBuffer();
+      //! Test for bad buffer size event for raw image
+      //!
+      void testBadBufferRawImg();
 
     private:
 

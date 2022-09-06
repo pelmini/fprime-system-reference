@@ -21,7 +21,7 @@ TEST(Nominal, blankFrame) {
 
 TEST(Nominal, badBuffer) {
   Payload::Tester tester;
-  tester.testBadBuffer();
+  tester.testBadBufferRawImg();
 }
 
 int main(int argc, char **argv) {

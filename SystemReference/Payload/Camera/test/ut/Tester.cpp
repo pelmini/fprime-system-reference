@@ -69,7 +69,7 @@ void Tester::testBlankFrame() {
   ASSERT_EVENTS_BlankFrame_SIZE(1);
 }
 
-void Tester::testBadBuffer() {
+void Tester::testBadBufferRawImg() {
     m_bufferSize = 0;
     cv::Mat frame;
     this->component.m_capture.read(frame);
