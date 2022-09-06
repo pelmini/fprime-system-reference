@@ -60,9 +60,9 @@ module Payload {
         # ----------------------------------------------------------------------
 
         @ Event where error occurred when setting up camera
-        event ProcessError \
+        event NoImgData \
         severity warning high \
-        format "Process Failure: Failed to decode image" \
+        format "Image has not data to process" \
 
         @ Event file format has been set
         event SetFileFormat(
@@ -70,13 +70,6 @@ module Payload {
             ) \
         severity activity high \
         format "The image will be converted to {}" \
-
-        @ Error event where given format for image configuration is invalid
-        event InvalidFormatCmd(
-            fileFormat: FileFormat @< file format to convert to
-            ) \
-        severity warning high \
-        format "{} is an invalid file format" \
 
         @ Event bad buffer size
         event BadBufferSize(

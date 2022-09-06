@@ -9,7 +9,7 @@
 #include <SystemReference/Payload/ImageProcessor/ImageProcessor.hpp>
 #include <opencv2/opencv.hpp>
 
-static const NATIVE_INT_TYPE BUFFER_SIZE = 10*1024*1024;
+//static const NATIVE_INT_TYPE BUFFER_SIZE = 10*1024*1024;
 namespace Payload {
 
 // ----------------------------------------------------------------------
@@ -35,8 +35,9 @@ void ImageProcessor ::imageData_handler(const NATIVE_INT_TYPE portNum,
 
   std::vector<uchar> buffer(BUFFER_SIZE);
   cv::Mat image(ImageData.getheight(), ImageData.getwidth(), ImageData.getpixelFormat(), (void *)ImageData.getimgData().getData());
-  if (!image.data) {
-    this->log_WARNING_HI_ProcessError();
+  if (image.empty()) {
+    this->log_WARNING_HI_NoImgData();
+    return;
   }
   cv::imencode(*m_fileFormat, image, buffer);
   Fw::Buffer encodeBuffer = bufferAllocate_out(0, buffer.size());
@@ -60,7 +61,7 @@ void ImageProcessor ::SetFormat_cmdHandler(const FwOpcodeType opCode,
                                            const U32 cmdSeq,
                                            Payload::FileFormat fileFormat) {
   switch (fileFormat.e){
-      case FileFormat::JPG:
+    case FileFormat::JPG:
       m_fileFormat = &m_JPG;
       this->log_ACTIVITY_HI_SetFileFormat(fileFormat);
       break;
@@ -69,7 +70,6 @@ void ImageProcessor ::SetFormat_cmdHandler(const FwOpcodeType opCode,
       this->log_ACTIVITY_HI_SetFileFormat(fileFormat);
       break;
     default:
-      this->log_WARNING_HI_InvalidFormatCmd(fileFormat);
       FW_ASSERT(0);
     }
     this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);

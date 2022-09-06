@@ -9,7 +9,7 @@
 
 #include "SystemReference/Payload/ImageProcessor/ImageProcessorComponentAc.hpp"
 
-
+#define BUFFER_SIZE 10*1024*1024
 namespace Payload {
 
 class ImageProcessor : public ImageProcessorComponentBase {
