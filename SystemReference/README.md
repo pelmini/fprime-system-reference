@@ -74,4 +74,6 @@ After logging into the Raspberry Pi via SSH, you can run the Ref deployment as f
 ```
 ./SystemReference -a <ground system ip> -p 50000
 ```
-### Device Wiring 
+### Device Wiring
+
+![wiring diagram](../img/wiringDiagram.png)
