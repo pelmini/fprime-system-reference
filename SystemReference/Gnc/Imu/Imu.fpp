@@ -1,4 +1,5 @@
-
+@ The power state enumeration
+enum PowerState {OFF, ON}
 module Gnc {
 
     @ Component for receiving IMU data via poll method
@@ -23,8 +24,27 @@ module Gnc {
         output port write: Drv.I2c
 
         # ----------------------------------------------------------------------
+        # Commands
+        # ----------------------------------------------------------------------
+
+        @ Command to turn on the device
+        guarded command PowerSwitch(
+            powerState: PowerState
+        ) \
+        opcode 0x01
+
+        # ----------------------------------------------------------------------
         # Special ports
         # ----------------------------------------------------------------------
+
+        @ Command receive
+        command recv port cmdIn
+
+        @ Command registration
+        command reg port cmdRegOut
+
+        @ Command response
+        command resp port cmdResponseOut
 
         @ Port for emitting events
         event port Log
@@ -62,6 +82,12 @@ module Gnc {
         ) \
         severity warning high \
         format "Setup Error: Power mode failed to set up with write code {}" \
+
+        event PowerStatus(
+            powerStatus: PowerState @< power state of device
+        ) \
+        severity activity high \
+        format "The device has been turned {}" \
         # ----------------------------------------------------------------------
         # Telemetry
         # ---------------------------------------------------------------------
