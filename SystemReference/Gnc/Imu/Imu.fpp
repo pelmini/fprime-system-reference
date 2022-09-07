@@ -1,6 +1,6 @@
-@ The power state enumeration
-enum PowerState {OFF, ON}
 module Gnc {
+    @ The power state enumeration
+    enum PowerState {OFF, ON}
 
     @ Component for receiving IMU data via poll method
     passive component Imu {
