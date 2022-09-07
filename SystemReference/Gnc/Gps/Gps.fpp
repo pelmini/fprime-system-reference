@@ -1,21 +1,29 @@
 module Gnc {
 
-    @ Component for Gps
+    @ Component for Gps, data is received by using a push model
     active component Gps {
         # ----------------------------------------------------------------------
         # General ports
         # ----------------------------------------------------------------------
 
-        @ Port to receive serial data
-        async input port serialReceive: Drv.SerialRead
+        @ Port for receiving GPS serial data
+        async input port gpsIn: Drv.ByteStreamRecv
 
-        @ Port to provide buffers for serial driver to use
-        output port serialBufferOut: Fw.BufferSend
+        @ Port to deallocate buffers received on gpsIn
+        output port deallocate: Fw.BufferSend
+
+        @ Port to allocate buffers from buffer manager
+        output port allocate: Fw.BufferGet
+
+        @ Port to provide buffers for the serial driver to use
+        output port gpsBuffer: Fw.BufferSend
+
+        @ Port to get current GPS data
+        guarded input port getGpsData: GpsDataPort
 
         # ----------------------------------------------------------------------
         # Special ports
         # ----------------------------------------------------------------------
-
         @ Command receive
         command recv port cmdIn
 
@@ -80,19 +88,19 @@ module Gnc {
 
         # ----------------------------------------------------------------------
         # Telemetry
-        # ----------------------------------------------------------------------
+        # ---------------------------------------------------------------------
 
         @ The current latitude
-        telemetry latitude: F32 update always
-
-        @ The current longitude
-        telemetry longitude: F32 update always
+        telemetry coordinates: Coordinates update always
 
         @ The current altitude
         telemetry altitude: F32 update always
 
         @ The current number of satellites
         telemetry satelliteCount: U32 update always
+
+        @ The current lock status
+        telemetry lockStatus: U32 update on change
 
     }
 }
