@@ -37,7 +37,7 @@ To build OpenCV in order to run the camera subsystem in this project the user wi
 first create a build directory, make the build directory current and then run the following command: 
 
 ```
-cmake -D CMAKE_BUILD_TYPE=RELEASE -DCMAKE_TOOLCHAIN_FILE=<path to fprime-system-reference>/fprime/cmake/toolchain/raspberrypi.cmake -DBUILD_TESTS=ON -DBUILD_DOCS=OFF -DWITH_V4L=ON -DWITH_LIBV4L=ON -DCMAKE_INSTALL_PREFIX=opt/ -DOpenCV_DIR=/Payload/build/ -DBUILD_SHARED_LIBS=OFF ../opencv/```
+cmake -D CMAKE_BUILD_TYPE=RELEASE -DCMAKE_TOOLCHAIN_FILE=<path to fprime-system-reference>/fprime/cmake/toolchain/raspberrypi.cmake -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTS=ON -DBUILD_DOCS=OFF -DWITH_V4L=ON -DWITH_LIBV4L=ON -DCMAKE_INSTALL_PREFIX=opt/ -DOpenCV_DIR=/Payload/build/ -DBUILD_SHARED_LIBS=OFF ../opencv/```
 ```
 Then run make in the build directory: 
 ```
@@ -45,6 +45,10 @@ make
 ```
 More details on how to set up cross compilation for OpenCV can be found [here](https://docs.opencv.org/4.x/d0/d76/tutorial_arm_crosscompile_with_cmake.html).
 
+To generate fprime with OpenCV use the following command:
+```
+fprime-util generate -DSYSTEM_REFERENCE_OPENCV_PATH=/home/pel/fprime-system-reference/SystemReference/Payload/build/opt/
+```
 **Note**
 The command to build OpenCV for unit tests is slightly different. Therefore, OpenCV will need to be built again using:
 ```
