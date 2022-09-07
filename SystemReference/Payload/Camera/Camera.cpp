@@ -5,7 +5,6 @@
 // ======================================================================
 
 #include "Fw/Types/BasicTypes.hpp"
-#include "opencv2/opencv.hpp"
 #include <SystemReference/Payload/Camera/Camera.hpp>
 
 namespace Payload {
@@ -33,8 +32,8 @@ bool Camera::open(I32 deviceIndex) {
     this->log_WARNING_HI_CameraOpenError();
     return false;
   }
-  return true;
 #endif
+  return true;
 }
 
 Camera ::~Camera() {}

@@ -8,6 +8,7 @@
 #define ProcessImage_HPP
 
 #include "SystemReference/Payload/ImageProcessor/ImageProcessorComponentAc.hpp"
+#include <string>
 
 namespace Payload {
 
