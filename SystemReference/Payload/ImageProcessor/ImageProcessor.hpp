@@ -9,7 +9,6 @@
 
 #include "SystemReference/Payload/ImageProcessor/ImageProcessorComponentAc.hpp"
 
-#define BUFFER_SIZE 10*1024*1024
 namespace Payload {
 
 class ImageProcessor : public ImageProcessorComponentBase {
@@ -18,7 +17,7 @@ public:
   // ----------------------------------------------------------------------
   // Construction, initialization, and destruction
   // ----------------------------------------------------------------------
-
+  static const U32 BUFFER_SIZE = 10*1024*1024;
   //! Construct object ProcessImage
   //!
   ImageProcessor(const char *const compName /*!< The component name*/

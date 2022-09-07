@@ -33,7 +33,7 @@ ImageProcessor ::~ImageProcessor() {}
 void ImageProcessor ::imageData_handler(const NATIVE_INT_TYPE portNum,
                                         Payload::RawImageData &ImageData) {
 
-  std::vector<uchar> buffer(BUFFER_SIZE);
+  std::vector<uchar> buffer(ImageProcessor::BUFFER_SIZE);
   cv::Mat image(ImageData.getheight(), ImageData.getwidth(), ImageData.getpixelFormat(), (void *)ImageData.getimgData().getData());
   if (image.empty()) {
     this->bufferDeallocate_out(0, const_cast<Fw::Buffer &>(ImageData.getimgData()));

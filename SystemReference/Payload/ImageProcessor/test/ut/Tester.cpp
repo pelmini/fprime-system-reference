@@ -82,7 +82,6 @@ void Tester::testImgProcessJpg() {
   // Buffer of image that has 3 color channels and resolution of 640x480
   m_bufferSize = 640*480*3;
   const unsigned char jpgHeader[3] = {0xFF, 0xD8, 0xFF};
-  char encodeBuffOutHeader[3];
   Fw::Buffer encodeBuffer(new U8[m_bufferSize], m_bufferSize);
   this->component.m_fileFormat = &this->component.m_JPG;
   RawImageData rawImageData(1, 1, 1, encodeBuffer);
