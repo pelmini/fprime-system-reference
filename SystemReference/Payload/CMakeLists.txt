@@ -1,10 +1,10 @@
-if(DEFINED SYSTEM_REFERENCE_OPENCV_PATH)
+if(DEFINED SYSTEM_REFERENCE_OPENCV_PATH AND NOT DEFINED FPRIME_PRESCAN)
     set(OpenCV_DIR "${SYSTEM_REFERENCE_OPENCV_PATH}/lib/cmake/opencv4/")
-endif()
-if (NOT DEFINED FPRIME_PRESCAN)
     find_package(OpenCV REQUIRED)
     set(OpenCV_STATIC ON)
+    add_compile_definitions(-DUSES_OPENCV)
 endif()
+
 
 #Ports
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/ImagePort")

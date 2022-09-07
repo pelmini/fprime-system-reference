@@ -8,8 +8,9 @@
 #define Camera_HPP
 
 #include "SystemReference/Payload/Camera/CameraComponentAc.hpp"
+#ifdef USES_OPENCV
 #include <opencv2/opencv.hpp>
-
+#endif
 
 namespace Payload {
 
@@ -68,7 +69,9 @@ namespace Payload {
       );
 
       U32 m_photoCount;
+#ifdef USES_OPENCV
       cv::VideoCapture m_capture;
+#endif
     };
 
 } // end namespace Payload

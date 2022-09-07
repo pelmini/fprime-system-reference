@@ -5,9 +5,10 @@
 // ======================================================================
 
 #include "Fw/Types/BasicTypes.hpp"
-#include "opencv2/imgcodecs.hpp"
 #include <SystemReference/Payload/ImageProcessor/ImageProcessor.hpp>
+#ifdef USES_OPENCV
 #include <opencv2/opencv.hpp>
+#endif
 
 //static const NATIVE_INT_TYPE BUFFER_SIZE = 10*1024*1024;
 namespace Payload {
@@ -32,7 +33,7 @@ ImageProcessor ::~ImageProcessor() {}
 
 void ImageProcessor ::imageData_handler(const NATIVE_INT_TYPE portNum,
                                         Payload::RawImageData &ImageData) {
-
+#ifdef USES_OPENCV
   std::vector<uchar> buffer(ImageProcessor::BUFFER_SIZE);
   cv::Mat image(ImageData.getheight(), ImageData.getwidth(), ImageData.getpixelFormat(), (void *)ImageData.getimgData().getData());
   if (image.empty()) {
@@ -51,6 +52,7 @@ void ImageProcessor ::imageData_handler(const NATIVE_INT_TYPE portNum,
   memcpy(encodeBuffer.getData(), buffer.data(), buffer.size());
   encodeBuffer.setSize(buffer.size());
   this->postProcess_out(0, encodeBuffer);
+#endif
   this->bufferDeallocate_out(0, const_cast<Fw::Buffer &>(ImageData.getimgData()));
 }
 

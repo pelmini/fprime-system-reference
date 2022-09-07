@@ -23,7 +23,7 @@ void Camera ::init(const NATIVE_INT_TYPE queueDepth,
 }
 
 bool Camera::open(I32 deviceIndex) {
-
+#ifdef USES_OPENCV
   if (m_capture.isOpened()) {
     this->log_ACTIVITY_LO_CameraAlreadyOpen();
     return true;
@@ -34,6 +34,7 @@ bool Camera::open(I32 deviceIndex) {
     return false;
   }
   return true;
+#endif
 }
 
 Camera ::~Camera() {}
@@ -45,10 +46,10 @@ Camera ::~Camera() {}
 void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
                                     Payload::CameraAction cameraAction) {
   RawImageData rawImageData;
-  std::vector<uchar> buffer;
   Fw::Buffer imgBuffer;
+#ifdef USES_OPENCV
+  std::vector<uchar> buffer;
   cv::Mat frame;
-
   m_capture.read(frame);
 
   if (frame.empty()) {
@@ -86,6 +87,7 @@ void Camera ::TakeAction_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
     default:
       FW_ASSERT(0);
     }
+#endif
   m_photoCount++;
   this->tlmWrite_photosTaken(m_photoCount);
   this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
@@ -95,6 +97,7 @@ void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
                                    Payload::ImgResolution resolution) {
   bool widthStatus = true;
   bool heightStatus = true;
+#ifdef USES_OPENCV
   switch (resolution.e) {
     case ImgResolution::SIZE_640x480:
       widthStatus = m_capture.set(cv::CAP_PROP_FRAME_WIDTH, 640);
@@ -112,7 +115,7 @@ void Camera ::ConfigImg_cmdHandler(const FwOpcodeType opCode, const U32 cmdSeq,
     this->log_WARNING_HI_ImgConfigSetFail(resolution);
     return;
   }
-
+#endif
   this->log_ACTIVITY_HI_SetImgConfig(resolution);
   this->cmdResponse_out(opCode, cmdSeq, Fw::CmdResponse::OK);
 }
