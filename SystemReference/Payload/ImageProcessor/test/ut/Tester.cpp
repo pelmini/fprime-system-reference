@@ -75,6 +75,7 @@ void Tester::testImgProcessPng() {
   for(int index = 0; index < 3; index++){
     ASSERT_EQ(pngHeader[index], encodeBufferOut.getData()[index+1]);
   }
+  cleanUp();
 }
 
 void Tester::testImgProcessJpg() {
@@ -99,6 +100,7 @@ void Tester::testImgProcessJpg() {
   for(int index = 0; index < 3; index++){
     ASSERT_EQ(jpgHeader[index], encodeBufferOut.getData()[index]);
   }
+  cleanUp();
 }
 
 void Tester::testNoImgData() {
@@ -109,10 +111,11 @@ void Tester::testNoImgData() {
   this->component.doDispatch();
   ASSERT_EVENTS_SIZE(1);
   ASSERT_EVENTS_NoImgData_SIZE(1);
+  cleanUp();
 }
 
 void Tester::testBadBufferProcess() {
-  m_bufferSize = 1;
+  m_bufferSize = 0;
   Fw::Buffer buffer(new U8[m_bufferSize], m_bufferSize);
   RawImageData rawImageData(1, 1, 1, buffer);
   this->component.m_fileFormat = &this->component.m_PNG;
@@ -120,6 +123,7 @@ void Tester::testBadBufferProcess() {
   this->component.doDispatch();
   ASSERT_EVENTS_SIZE(1);
   ASSERT_EVENTS_BadBufferSize_SIZE(1);
+  cleanUp();
 }
 
 // ----------------------------------------------------------------------
@@ -191,6 +195,13 @@ void Tester ::connectPorts() {
 void Tester ::initComponents() {
   this->init();
   this->component.init(QUEUE_DEPTH, INSTANCE);
+}
+
+void Tester::cleanUp() {
+  for (int i = 0; i < this->fromPortHistory_postProcess->size(); i++) {
+    delete[] this->fromPortHistory_postProcess->at(i).fwBuffer.getData();
+  }
+  this->fromPortHistory_postProcess->clear();
 }
 
 } // end namespace Payload

@@ -36,17 +36,18 @@ void ImageProcessor ::imageData_handler(const NATIVE_INT_TYPE portNum,
   std::vector<uchar> buffer(BUFFER_SIZE);
   cv::Mat image(ImageData.getheight(), ImageData.getwidth(), ImageData.getpixelFormat(), (void *)ImageData.getimgData().getData());
   if (image.empty()) {
+    this->bufferDeallocate_out(0, const_cast<Fw::Buffer &>(ImageData.getimgData()));
     this->log_WARNING_HI_NoImgData();
     return;
   }
   cv::imencode(*m_fileFormat, image, buffer);
   Fw::Buffer encodeBuffer = bufferAllocate_out(0, buffer.size());
-  if(encodeBuffer.getSize() < buffer.size()){
+  if(encodeBuffer.getSize() == 0){
     this->log_WARNING_HI_BadBufferSize(encodeBuffer.getSize(), buffer.size());
     this->bufferDeallocate_out(0, const_cast<Fw::Buffer &>(ImageData.getimgData()));
-    this->bufferDeallocate_out(0, encodeBuffer);
     return;
   }
+  FW_ASSERT(encodeBuffer.getSize() >= buffer.size(), encodeBuffer.getSize(), buffer.size());
   memcpy(encodeBuffer.getData(), buffer.data(), buffer.size());
   encodeBuffer.setSize(buffer.size());
   this->postProcess_out(0, encodeBuffer);
